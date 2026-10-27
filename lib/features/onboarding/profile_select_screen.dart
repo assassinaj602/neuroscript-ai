@@ -1,0 +1,133 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/theme/app_palettes.dart';
+import '../../core/widgets/app_button.dart';
+import '../providers.dart';
+
+class ProfileSelectScreen extends ConsumerStatefulWidget {
+  const ProfileSelectScreen({super.key});
+
+  @override
+  ConsumerState<ProfileSelectScreen> createState() => _ProfileSelectScreenState();
+}
+
+class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
+  ProfileType _selected = ProfileType.dyslexia;
+  bool _isLoading = false;
+
+  Future<void> _handleContinue() async {
+    setState(() => _isLoading = true);
+    try {
+      final repo = ref.read(profileRepositoryProvider);
+      await repo.saveProfile(_selected);
+      ref.invalidate(activeProfileProvider);
+
+      if (mounted) {
+        context.go('/library');
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Choose Your Learning Profile')),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Personalize Your Experience',
+                style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Select the profile that best fits your focus and reading style. You can change this anytime in Settings.',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onBackground.withOpacity(0.75),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Expanded(
+                child: ListView(
+                  children: ProfileType.values.map((p) {
+                    final isSelected = p == _selected;
+                    return Semantics(
+                      selected: isSelected,
+                      child: Card(
+                        elevation: isSelected ? 3 : 1,
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: BorderSide(
+                            color: isSelected ? colorScheme.primary : colorScheme.outline.withOpacity(0.5),
+                            width: isSelected ? 2.2 : 1.0,
+                          ),
+                        ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () => setState(() => _selected = p),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Radio<ProfileType>(
+                                  value: p,
+                                  groupValue: _selected,
+                                  activeColor: colorScheme.primary,
+                                  onChanged: (val) {
+                                    if (val != null) setState(() => _selected = val);
+                                  },
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        p.displayName,
+                                        style: theme.textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        p.description,
+                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                          color: colorScheme.onSurface.withOpacity(0.85),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              AppButton(
+                label: 'Save & Continue',
+                icon: Icons.check,
+                isLoading: _isLoading,
+                onPressed: _handleContinue,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

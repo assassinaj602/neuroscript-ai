@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "title": "Binary Search & Divide-and-Conquer",
+  "meta": {
+    "profile": "Autism",
+    "source": "seed",
+    "promptVersion": "v1"
+  },
+  "rawNotes": "1: Binary search finds the position of a target value within a sorted array.\n2: Step 1: Compare the target value to the middle element of the array.\n3: Step 2: If target equals middle element, the search terminates successfully.\n4: Step 3: If target is smaller than middle, eliminate the right half and repeat search on left subarray.\n5: Step 4: If target is larger than middle, eliminate the left half and repeat search on right subarray.\n6: Binary search runs in O(log n) logarithmic time complexity and requires O(1) auxiliary space.\n7: Precondition: The input array MUST be monotonically sorted prior to searching.",
+  "conceptMap": {
+    "nodes": [
+      { "id": "n1", "label": "Binary Search", "sourceLines": [1] },
+      { "id": "n2", "label": "Sorted Array Precondition", "sourceLines": [1, 7] },
+      { "id": "n3", "label": "Middle Element Comparison", "sourceLines": [2, 3] },
+      { "id": "n4", "label": "Half Space Elimination", "sourceLines": [4, 5] },
+      { "id": "n5", "label": "Logarithmic Complexity O(log n)", "sourceLines": [6] }
+    ],
+    "edges": [
+      { "from": "n1", "to": "n2", "label": "requires" },
+      { "from": "n1", "to": "n3", "label": "step 1" },
+      { "from": "n3", "to": "n4", "label": "branches to" },
+      { "from": "n4", "to": "n5", "label": "achieves" }
+    ]
+  },
+  "flashcards": [
+    {
+      "id": "c1",
+      "question": "What fundamental precondition must an array satisfy for binary search?",
+      "answer": "The array elements must be strictly sorted in monotonic ascending or descending order.",
+      "sourceLines": [1, 7],
+      "chunks": ["Monotonically sorted array"]
+    },
+    {
+      "id": "c2",
+      "question": "What is the worst-case time complexity of binary search?",
+      "answer": "O(log n) logarithmic time complexity, halving the search space each step.",
+      "sourceLines": [6],
+      "chunks": ["O(log n) time"]
+    },
+    {
+      "id": "c3",
+      "question": "What is the auxiliary space complexity of iterative binary search?",
+      "answer": "O(1) constant auxiliary space.",
+      "sourceLines": [6],
+      "chunks": ["O(1) constant space"]
+    },
+    {
+      "id": "c4",
+      "question": "What action occurs when the target is strictly less than the middle element?",
+      "answer": "The upper right half is discarded, and the high pointer moves to mid - 1.",
+      "sourceLines": [4],
+      "chunks": ["Discard right half", "high = mid - 1"]
+    },
+    {
+      "id": "c5",
+      "question": "What comparison determines immediate algorithm termination with success?",
+      "answer": "When the array element at the midpoint exactly equals the target value.",
+      "sourceLines": [3],
+      "chunks": ["array[mid] == target"]
+    }
+  ],
+  "verificationQuestion": {
+    "question": "What is the asymptotic auxiliary space requirement of iterative binary search?",
+    "sourceLines": [6]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NeuroScriptLesson",
+  "description": "Standard Lesson JSON contract across seed, mock, Gemini, and on-device SLM generators.",
+  "type": "object",
+  "required": ["schemaVersion", "title", "meta", "conceptMap", "flashcards"],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "meta": {
+      "type": "object",
+      "required": ["profile", "source", "promptVersion"],
+      "properties": {
+        "profile": {
+          "type": "string",
+          "enum": ["ADHD", "Dyslexia", "Autism"]
+        },
+        "source": {
+          "type": "string",
+          "enum": ["seed", "mock", "cloud", "device"]
+        },
+        "promptVersion": {
+          "type": "string"
+        }
+      }
+    },
+    "conceptMap": {
+      "type": "object",
+      "required": ["nodes", "edges"],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "label", "sourceLines"],
+            "properties": {
+              "id": { "type": "string" },
+              "label": { "type": "string" },
+              "sourceLines": {
+                "type": "array",
+                "items": { "type": "integer", "minimum": 1 }
+              }
+            }
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from", "to", "label"],
+            "properties": {
+              "from": { "type": "string" },
+              "to": { "type": "string" },
+              "label": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "flashcards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "question", "answer", "sourceLines"],
+        "properties": {
+          "id": { "type": "string" },
+          "question": { "type": "string" },
+          "answer": { "type": "string" },
+          "sourceLines": {
+            "type": "array",
+            "items": { "type": "integer", "minimum": 1 }
+          },
+          "chunks": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "verificationQuestion": {
+      "type": "object",
+      "properties": {
+        "question": { "type": "string" },
+        "sourceLines": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 }
+        }
+      }
+    }
+  }
+}
