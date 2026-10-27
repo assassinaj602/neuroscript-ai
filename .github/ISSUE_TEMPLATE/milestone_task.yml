@@ -1,0 +1,41 @@
+name: Milestone Task (Work Package)
+description: Track an official work package from the Milestone Execution Plan
+title: "[TASK]: "
+labels: ["milestone-task"]
+body:
+  - type: dropdown
+    id: milestone
+    attributes:
+      label: Milestone
+      options:
+        - "M1: Planning & Design (Oct-Nov)"
+        - "M2: Frontend & Database (Nov-Dec)"
+        - "M3: Core Logic & CV (Dec-Jan)"
+        - "M4: AI & Validation (Jan-Feb)"
+        - "M5: Accessibility & QA (Feb-Mar)"
+        - "M6: Finalisation (Mar-Apr)"
+    validations:
+      required: true
+  - type: input
+    id: work_package_id
+    attributes:
+      label: Work Package ID
+      placeholder: "e.g., WP 1.1, WP 2.3"
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Subtasks / Steps
+      placeholder: |
+        - [ ] Step 1
+        - [ ] Step 2
+        - [ ] Step 3
+    validations:
+      required: true
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of Done / Demoable Output
+    validations:
+      required: true

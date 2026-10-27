@@ -1,0 +1,91 @@
+# --------------------------------------------------
+# General / OS
+# --------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# --------------------------------------------------
+# Secrets & Environment variables
+# --------------------------------------------------
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.pfx
+*.keystore
+*.jks
+appsettings*.local.json
+secrets.json
+
+# --------------------------------------------------
+# IDEs & Editors
+# --------------------------------------------------
+.idea/
+*.iml
+*.iws
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.sublime-project
+*.sublime-workspace
+
+# --------------------------------------------------
+# Flutter / Dart
+# --------------------------------------------------
+.dart_tool/
+.packages
+pubspec.lock
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Android build artifacts
+android/**/gradle-wrapper.jar
+android/.gradle
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/**/GeneratedPluginRegistrant.java
+
+# iOS / macOS build artifacts
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/ServiceDefinitions.json
+ios/Pods/
+ios/.symlinks/
+ios/Podfile.lock
+
+# --------------------------------------------------
+# .NET / C# (ASP.NET Core Backend)
+# --------------------------------------------------
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.userprefs
+TestResults/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+.vs/
+_ReSharper*/
+*.DotSettings.user
