@@ -1,0 +1,44 @@
+name: Feature Request
+description: Suggest an idea or feature for NeuroScript AI
+title: "[FEAT]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an enhancement to NeuroScript AI.
+  - type: dropdown
+    id: milestone
+    attributes:
+      label: Target Milestone
+      description: Which milestone does this feature belong to?
+      options:
+        - "M1: Planning & Design"
+        - "M2: Frontend & Database"
+        - "M3: Core Logic & CV"
+        - "M4: AI & Validation"
+        - "M5: Accessibility & QA"
+        - "M6: Finalisation"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description
+      description: Clear and concise description of what the feature should accomplish.
+    validations:
+      required: true
+  - type: textarea
+    id: user_benefit
+    attributes:
+      label: Benefit for Neurodivergent Learners
+      description: How does this feature benefit ADHD, Dyslexia, or Autism user personas?
+    validations:
+      required: false
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria / Demo Requirement
+      description: How will we demonstrate this in the milestone demo?
+    validations:
+      required: true
