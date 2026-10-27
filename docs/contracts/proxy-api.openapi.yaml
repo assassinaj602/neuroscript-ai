@@ -1,0 +1,184 @@
+openapi: 3.0.3
+info:
+  title: NeuroScript AI Proxy & Validation Service
+  description: >
+    ASP.NET Core proxy routing handwritten OCR notes to Google Gemini 2.5 Flash,
+    validating line-level grounding, and shielding client apps with rate limiting.
+  version: 1.0.0-m1
+servers:
+  - url: https://api.neuroscript.uet.edu.pk
+    description: Production Cloud Proxy
+  - url: http://localhost:5000
+    description: Local Development Proxy
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns service availability status and current LLM provider health.
+      responses:
+        '200':
+          description: Service is healthy.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Healthy
+                  timestamp:
+                    type: string
+                    format: date-time
+                  provider:
+                    type: string
+                    example: Gemini 2.5 Flash
+
+  /api/v1/lessons/generate:
+    post:
+      summary: Generate structured study lesson from OCR notes
+      description: Compiles numbered OCR lines into a verified lesson contract with flashcards and concept maps.
+      parameters:
+        - in: header
+          name: X-Api-Key
+          required: true
+          schema:
+            type: string
+          description: Client application build authentication key.
+        - in: header
+          name: X-Install-Id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Unique install hash for client-level rate limiting.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - noteHash
+                - lines
+                - profile
+                - mode
+                - clientVersion
+              properties:
+                noteHash:
+                  type: string
+                  description: SHA-256 of the normalized note text.
+                  example: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+                lines:
+                  type: array
+                  items:
+                    type: string
+                  description: 1-based ordered OCR lines extracted from the scanned note.
+                  example:
+                    - "Photosynthesis converts light energy into chemical energy."
+                    - "Chlorophyll absorbs red and blue light inside chloroplasts."
+                profile:
+                  type: string
+                  enum: [ADHD, Dyslexia, Autism]
+                  example: Dyslexia
+                mode:
+                  type: string
+                  enum: [standard, strict]
+                  default: standard
+                clientVersion:
+                  type: string
+                  example: 0.2.0-m2
+      responses:
+        '200':
+          description: Successfully generated and grounded lesson.
+          headers:
+            X-RateLimit-Limit:
+              schema:
+                type: integer
+              description: Maximum requests permitted per minute.
+            X-RateLimit-Remaining:
+              schema:
+                type: integer
+              description: Remaining requests in current quota window.
+          content:
+            application/json:
+              schema:
+                $ref: './lesson.schema.json'
+        '400':
+          description: Invalid input or failed schema constraints.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '429':
+          description: Rate limit exceeded.
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '502':
+          description: Upstream Gemini API failure or timeout.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /api/v1/text/simplify:
+    post:
+      summary: Simplify complex wording for Autism profile
+      description: Rewrites provided sentence in literal, unembellished terms without altering facts.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - text
+                - originalLines
+              properties:
+                text:
+                  type: string
+                originalLines:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Simplified wording text with preserved line citations.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  simplifiedText:
+                    type: string
+                  verified:
+                    type: boolean
+
+components:
+  schemas:
+    ProblemDetails:
+      type: object
+      required:
+        - type
+        - title
+        - status
+        - detail
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        errorCode:
+          type: string
+          enum: [RATE_LIMITED, INVALID_INPUT, UPSTREAM_ERROR, TIMEOUT, CONTENT_BLOCKED]

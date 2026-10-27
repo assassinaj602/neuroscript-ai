@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_palettes.dart';
 import '../../core/utils/document_hash.dart';
 import '../../core/widgets/app_button.dart';
+import '../../core/widgets/card_tile.dart';
 import '../../core/widgets/section_header.dart';
 import '../../data/models/lesson_model.dart';
 import '../providers.dart';
@@ -173,6 +174,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   );
                 }).toList(),
               ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Architecture & Specifications
+            const SectionHeader(title: 'Engineering & Specifications'),
+            CardTile(
+              title: 'System Architecture & Contracts',
+              subtitle: 'Pipeline flow, ER schemas, OpenAPI contract, and the 8 Demoability rules.',
+              badgeText: 'Milestone 1 Specification',
+              leading: const Icon(Icons.account_tree_outlined),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () => context.push('/architecture'),
             ),
 
             const SizedBox(height: 16),

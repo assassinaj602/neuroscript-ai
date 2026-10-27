@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../features/architecture/architecture_screen.dart';
 import '../../features/concept_map/concept_map_screen.dart';
 import '../../features/lesson/lesson_overview_screen.dart';
 import '../../features/library/library_screen.dart';
@@ -143,6 +144,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/progress',
         builder: (context, state) => const ProgressScreen(),
+      ),
+      GoRoute(
+        path: '/architecture',
+        builder: (context, state) => const ArchitectureScreen(),
       ),
       GoRoute(
         path: '/settings',

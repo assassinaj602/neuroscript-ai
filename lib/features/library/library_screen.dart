@@ -47,6 +47,11 @@ class LibraryScreen extends ConsumerWidget {
             error: (_, __) => const SizedBox.shrink(),
           ),
           IconButton(
+            icon: const Icon(Icons.account_tree_outlined),
+            tooltip: 'Architecture & Specifications',
+            onPressed: () => context.push('/architecture'),
+          ),
+          IconButton(
             icon: const Icon(Icons.bar_chart_outlined),
             tooltip: 'Progress & Stats',
             onPressed: () => context.push('/progress'),
