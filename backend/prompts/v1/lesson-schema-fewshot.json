@@ -1,0 +1,36 @@
+{
+  "lessonId": "lesson_seed_01",
+  "title": "Cellular Respiration and ATP Synthesis",
+  "promptVersion": "v1.0",
+  "source": "Google Gemini 2.5 Flash",
+  "createdAt": "2026-10-30T00:00:00Z",
+  "rawNotes": "1: Mitochondria generate adenosine triphosphate.\n2: Glycolysis breaks down glucose in the cytoplasm.",
+  "flashcards": [
+    {
+      "id": "c1",
+      "question": "What primary molecule is synthesized by mitochondria?",
+      "answer": "Adenosine triphosphate (ATP).",
+      "sourceLines": [1],
+      "chunks": ["Mitochondria generate", "adenosine triphosphate"]
+    },
+    {
+      "id": "c2",
+      "question": "Where does glycolysis occur within the cell?",
+      "answer": "In the cytoplasm.",
+      "sourceLines": [2],
+      "chunks": ["Glycolysis breaks down glucose", "in the cytoplasm"]
+    }
+  ],
+  "conceptMap": {
+    "nodes": [
+      { "id": "n1", "label": "Mitochondria", "sourceLines": [1] },
+      { "id": "n2", "label": "ATP", "sourceLines": [1] },
+      { "id": "n3", "label": "Glycolysis", "sourceLines": [2] },
+      { "id": "n4", "label": "Cytoplasm", "sourceLines": [2] }
+    ],
+    "edges": [
+      { "from": "n1", "to": "n2", "label": "produces" },
+      { "from": "n3", "to": "n4", "label": "occurs in" }
+    ]
+  }
+}

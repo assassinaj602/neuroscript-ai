@@ -199,32 +199,45 @@ Development strictly adheres to the eight engineering rules defined in the miles
 
 ## Repository Structure
 
+The project is arranged as an enterprise monorepo comprising the Flutter mobile client, ASP.NET Core proxy gateway, design guidelines, and formal contracts:
+
 ```
 neuroscript-ai/
 ├── .github/
 │   ├── workflows/            # GitHub Actions CI/CD workflows (ci-app.yml)
 │   ├── ISSUE_TEMPLATE/       # Standardized issue templates
 │   └── PULL_REQUEST_TEMPLATE.md
-├── assets/
-│   └── seed/                 # Bundled curriculum seed lessons (JSON contract)
+├── app/                      # Flutter client application
+│   ├── android/              # Native Android host configuration
+│   ├── assets/seed/          # Bundled offline curriculum lessons
+│   ├── ios/                  # Native iOS host configuration
+│   ├── lib/                  # Dart application source
+│   │   ├── core/             # AppConfig, theme engine, GoRouter navigation
+│   │   ├── data/             # Drift ORM, SQLCipher, repositories, JSON models
+│   │   ├── features/         # Feature vertical slices (splash, library, review, etc.)
+│   │   ├── services/         # Leitner scheduler and seed loader
+│   │   └── main.dart         # Fast application entrypoint with splash initialization
+│   ├── test/                 # 34 automated unit and widget tests
+│   ├── analysis_options.yaml # Flutter strict lint configurations
+│   └── pubspec.yaml          # Flutter dependency manifest
+├── backend/                  # ASP.NET Core proxy & validation gateway
+│   ├── NeuroScript.Backend.sln
+│   ├── prompts/v1/           # System prompt templates & few-shot schema
+│   ├── src/
+│   │   ├── Api/              # Minimal API endpoints & health checks
+│   │   ├── Core/             # Contracts, DTOs, and learner profiles
+│   │   └── Infrastructure/   # Grounding validator & mock generator seam
+│   └── tests/Api.Tests/      # xUnit backend validation tests
 ├── design/                   # UI/UX design specifications and accessibility guidelines
 ├── docs/
 │   ├── contracts/            # Frozen schemas (lesson.schema.json, proxy-api.openapi.yaml)
 │   ├── requirements.md       # Formal System Requirements Specification (FR/NFR)
 │   └── personas.md           # Learner personas (ADHD, Dyslexia, Autism)
-├── lib/
-│   ├── core/                 # Config (AppConfig), theme system, routing, errors, utils
-│   ├── data/                 # Database tables, DAOs, repositories, JSON models
-│   ├── features/             # Feature slices (onboarding, library, review, concept map, etc.)
-│   ├── services/             # Pure Dart engines (Leitner scheduler, seed importer)
-│   └── main.dart             # Application root with ProviderScope and theme initialization
-├── test/                     # Unit and widget test suites (33 automated tests)
 ├── .editorconfig             # Cross-IDE formatting conventions
 ├── .gitignore                # Comprehensive ignore rules (secrets, build artifacts)
 ├── CONTRIBUTING.md           # Engineering guidelines and pull request protocol
 ├── LICENSE                   # Open-source license (MIT)
-├── NeuroScript_AI_Milestone_Execution_Plan.pdf  # Master project blueprint
-└── pubspec.yaml              # Flutter dependency manifest
+└── NeuroScript_AI_Milestone_Execution_Plan.pdf  # Master project blueprint
 ```
 
 ---
@@ -234,30 +247,41 @@ neuroscript-ai/
 ### Prerequisites
 * Flutter SDK (version 3.47.x or higher)
 * Dart SDK (version 3.13.x or higher)
+* .NET SDK (version 9.0.x or higher)
 * Android SDK (API Level 34 or higher, Build Tools 36.0.0)
 * Java Development Kit (JDK 17 or higher)
 
-### Installation & Static Analysis
+### Mobile App (Flutter)
 ```bash
-# Clone the repository
-git clone https://github.com/zaintahir2025/neuroscript-ai.git
-cd neuroscript-ai
+# Navigate to the app directory
+cd app
 
-# Fetch Flutter dependencies
+# Fetch dependencies
 flutter pub get
 
 # Run static analysis
 flutter analyze --no-fatal-infos
 
-# Execute test suite
+# Execute test suite (34 tests)
 flutter test
+
+# Compile optimized release APKs with architecture splits
+flutter build apk --release --split-per-abi
 ```
 
-### Compiling Optimized Release APKs
-The project uses ABI splitting to produce lightweight binaries:
+### Backend Proxy (.NET 9)
 ```bash
-# Compile release APKs with architecture splits
-flutter build apk --release --split-per-abi
+# Navigate to backend directory
+cd backend
+
+# Build solution
+dotnet build NeuroScript.Backend.sln
+
+# Run backend test suite
+dotnet test NeuroScript.Backend.sln
+
+# Start backend locally
+dotnet run --project src/Api/NeuroScript.Api.csproj
 ```
 Generated binaries:
 * `build/app/outputs/flutter-apk/app-arm64-v8a-release.apk` (~19.5 MB, modern 64-bit devices)

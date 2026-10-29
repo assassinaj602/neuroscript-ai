@@ -37,8 +37,12 @@ To maintain demonstration readiness, prevent architectural drift, and ensure con
    * Protect unfinished or experimental code behind feature flags via `AppConfig`.
 
 4. **Verify Locally Before Committing:**
-   * Static analysis: Ensure `flutter analyze --no-fatal-infos` reports zero errors and zero warnings.
-   * Automated tests: Ensure `flutter test` executes all test suites with a 100% pass rate.
+   * Mobile client (`app/`):
+     * Static analysis: Ensure `flutter analyze --no-fatal-infos` reports zero errors and zero warnings.
+     * Automated tests: Ensure `flutter test` executes all test suites with a 100% pass rate.
+   * Backend proxy (`backend/`):
+     * Solution build: Ensure `dotnet build NeuroScript.Backend.sln` compiles with zero errors.
+     * Automated tests: Ensure `dotnet test NeuroScript.Backend.sln` passes with 100% pass rate.
    * Code formatting: Adhere to standard indentation rules defined in `.editorconfig`.
 
 5. **Commit Message Conventions:**
