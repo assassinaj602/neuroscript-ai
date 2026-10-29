@@ -19,11 +19,8 @@ class SourceNotes extends Table {
 
 class Lessons extends Table {
   TextColumn get lessonId => text()();
-  TextColumn get noteId => text().references(
-        SourceNotes,
-        #noteId,
-        onDelete: KeyAction.cascade,
-      )();
+  TextColumn get noteId =>
+      text().references(SourceNotes, #noteId, onDelete: KeyAction.cascade)();
   TextColumn get title => text()();
   TextColumn get conceptMapJson => text()();
   TextColumn get promptVersion => text().withDefault(const Constant('v1'))();
@@ -36,14 +33,12 @@ class Lessons extends Table {
 
 class Flashcards extends Table {
   TextColumn get cardId => text()();
-  TextColumn get lessonId => text().references(
-        Lessons,
-        #lessonId,
-        onDelete: KeyAction.cascade,
-      )();
+  TextColumn get lessonId =>
+      text().references(Lessons, #lessonId, onDelete: KeyAction.cascade)();
   TextColumn get question => text()();
   TextColumn get answer => text()();
-  TextColumn get sourceLineReference => text()(); // JSON array of ints e.g. [1, 2]
+  TextColumn get sourceLineReference =>
+      text()(); // JSON array of ints e.g. [1, 2]
   RealColumn get groundingScore => real().nullable()();
   BoolColumn get verified => boolean().withDefault(const Constant(true))();
 
@@ -53,15 +48,14 @@ class Flashcards extends Table {
 
 class ReviewProgress extends Table {
   IntColumn get progressId => integer().autoIncrement()();
-  TextColumn get cardId => text().references(
-        Flashcards,
-        #cardId,
-        onDelete: KeyAction.cascade,
-      )();
-  IntColumn get box => integer().withDefault(const Constant(1))(); // Leitner box 1..5
+  TextColumn get cardId =>
+      text().references(Flashcards, #cardId, onDelete: KeyAction.cascade)();
+  IntColumn get box =>
+      integer().withDefault(const Constant(1))(); // Leitner box 1..5
   IntColumn get spacedRepetitionInterval =>
       integer().withDefault(const Constant(1))(); // 1, 3, 7, 14, 30
   DateTimeColumn get nextReviewDate => dateTime()();
   DateTimeColumn get lastReviewedAt => dateTime().nullable()();
-  IntColumn get consecutiveCorrect => integer().withDefault(const Constant(0))();
+  IntColumn get consecutiveCorrect =>
+      integer().withDefault(const Constant(0))();
 }

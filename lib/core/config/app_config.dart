@@ -43,14 +43,29 @@ class AppConfig {
 
   /// Factory pulling configuration from compile-time environment definitions
   factory AppConfig.fromEnvironment() {
-    const genModeStr = String.fromEnvironment('GENERATOR_MODE', defaultValue: 'seed');
+    const genModeStr = String.fromEnvironment(
+      'GENERATOR_MODE',
+      defaultValue: 'seed',
+    );
     const capture = bool.fromEnvironment('ENABLE_CAPTURE', defaultValue: false);
-    const groundingStr = String.fromEnvironment('GROUNDING_MODE', defaultValue: 'off');
-    const fallback = bool.fromEnvironment('ENABLE_LOCAL_FALLBACK', defaultValue: false);
-    const simplify = bool.fromEnvironment('ENABLE_SIMPLIFY', defaultValue: false);
+    const groundingStr = String.fromEnvironment(
+      'GROUNDING_MODE',
+      defaultValue: 'off',
+    );
+    const fallback = bool.fromEnvironment(
+      'ENABLE_LOCAL_FALLBACK',
+      defaultValue: false,
+    );
+    const simplify = bool.fromEnvironment(
+      'ENABLE_SIMPLIFY',
+      defaultValue: false,
+    );
     const tts = bool.fromEnvironment('ENABLE_TTS', defaultValue: false);
     const demo = bool.fromEnvironment('DEMO_MODE', defaultValue: true);
-    const proxyUrl = String.fromEnvironment('PROXY_URL', defaultValue: 'https://localhost:5001');
+    const proxyUrl = String.fromEnvironment(
+      'PROXY_URL',
+      defaultValue: 'https://localhost:5001',
+    );
     const key = String.fromEnvironment('API_KEY', defaultValue: '');
 
     return AppConfig(
@@ -96,7 +111,9 @@ enum GeneratorMode {
   remote;
 
   static GeneratorMode fromString(String val) {
-    return val.toLowerCase() == 'remote' ? GeneratorMode.remote : GeneratorMode.seed;
+    return val.toLowerCase() == 'remote'
+        ? GeneratorMode.remote
+        : GeneratorMode.seed;
   }
 }
 

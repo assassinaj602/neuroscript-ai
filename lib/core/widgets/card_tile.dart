@@ -38,10 +38,7 @@ class CardTile extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (leading != null) ...[
-                  leading!,
-                  const SizedBox(width: 14),
-                ],
+                if (leading != null) ...[leading!, const SizedBox(width: 14)],
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,10 +46,14 @@ class CardTile extends StatelessWidget {
                     children: [
                       if (badgeText != null) ...[
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           margin: const EdgeInsets.only(bottom: 6),
                           decoration: BoxDecoration(
-                            color: (badgeColor ?? colorScheme.secondary).withOpacity(0.18),
+                            color: (badgeColor ?? colorScheme.secondary)
+                                .withValues(alpha: 0.18),
                             borderRadius: BorderRadius.circular(6),
                             border: Border.all(
                               color: badgeColor ?? colorScheme.secondary,
@@ -69,26 +70,22 @@ class CardTile extends StatelessWidget {
                           ),
                         ),
                       ],
-                      Text(
-                        title,
-                        style: theme.textTheme.titleMedium,
-                      ),
+                      Text(title, style: theme.textTheme.titleMedium),
                       if (subtitle != null) ...[
                         const SizedBox(height: 4),
                         Text(
                           subtitle!,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.75),
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.75,
+                            ),
                           ),
                         ),
                       ],
                     ],
                   ),
                 ),
-                if (trailing != null) ...[
-                  const SizedBox(width: 10),
-                  trailing!,
-                ],
+                if (trailing != null) ...[const SizedBox(width: 10), trailing!],
               ],
             ),
           ),

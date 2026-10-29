@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../core/config/app_config.dart';
 import '../core/theme/app_palettes.dart';
 import '../data/database/database.dart';

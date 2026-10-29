@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:crypto/crypto.dart';
 
 /// Computes SHA-256 of normalized note text for duplicate detection and caching.

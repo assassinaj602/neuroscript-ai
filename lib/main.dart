@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'core/routing/app_router.dart';
 import 'core/theme/app_palettes.dart';
 import 'core/theme/app_theme.dart';
@@ -17,9 +18,7 @@ void main() async {
 
   runApp(
     ProviderScope(
-      overrides: [
-        appDatabaseProvider.overrideWithValue(db),
-      ],
+      overrides: [appDatabaseProvider.overrideWithValue(db)],
       child: const NeuroScriptApp(),
     ),
   );

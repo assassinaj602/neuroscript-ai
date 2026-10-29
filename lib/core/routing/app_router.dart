@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../features/architecture/architecture_screen.dart';
 import '../../features/concept_map/concept_map_screen.dart';
 import '../../features/lesson/lesson_overview_screen.dart';
@@ -23,7 +24,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       if (isLoading) return null; // Wait for initial profile read
 
-      final isGoingToOnboarding = state.matchedLocation == '/onboarding' ||
+      final isGoingToOnboarding =
+          state.matchedLocation == '/onboarding' ||
           state.matchedLocation == '/profile_select';
 
       // Guard: No profile selected yet -> redirect to onboarding
@@ -102,10 +104,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 lessonTitle: lesson.title as String,
                 reviewItems: items,
                 onRecordResult: (cardId, wasCorrect) async {
-                  await ref.read(reviewRepositoryProvider).recordCardResult(
-                        cardId: cardId,
-                        wasCorrect: wasCorrect,
-                      );
+                  await ref
+                      .read(reviewRepositoryProvider)
+                      .recordCardResult(cardId: cardId, wasCorrect: wasCorrect);
                   ref.invalidate(allLessonsProvider);
                   ref.invalidate(schedulerMetricsProvider);
                 },

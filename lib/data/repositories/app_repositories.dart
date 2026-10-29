@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'package:drift/drift.dart';
+
 import '../../core/theme/app_palettes.dart';
 import '../../services/scheduler/leitner_scheduler.dart';
 import '../database/database.dart';
@@ -12,10 +14,11 @@ class AppProfileRepository implements ProfileRepository {
 
   @override
   Future<ProfileType?> getActiveProfile() async {
-    final record = await (db.select(db.userProfiles)
-          ..orderBy([(t) => OrderingTerm.desc(t.id)])
-          ..limit(1))
-        .getSingleOrNull();
+    final record =
+        await (db.select(db.userProfiles)
+              ..orderBy([(t) => OrderingTerm.desc(t.id)])
+              ..limit(1))
+            .getSingleOrNull();
 
     if (record == null) return null;
     return ProfileType.fromString(record.profileType);
@@ -23,7 +26,9 @@ class AppProfileRepository implements ProfileRepository {
 
   @override
   Future<void> saveProfile(ProfileType profile) async {
-    await db.into(db.userProfiles).insert(
+    await db
+        .into(db.userProfiles)
+        .insert(
           UserProfilesCompanion.insert(
             profileType: profile.name,
             themeSettings: const Value('{}'),
@@ -47,7 +52,9 @@ class AppNoteRepository implements NoteRepository {
     required String documentHash,
   }) async {
     final noteId = 'note_${DateTime.now().millisecondsSinceEpoch}';
-    await db.into(db.sourceNotes).insert(
+    await db
+        .into(db.sourceNotes)
+        .insert(
           SourceNotesCompanion.insert(
             noteId: noteId,
             rawOcrText: rawOcrText,
@@ -59,17 +66,17 @@ class AppNoteRepository implements NoteRepository {
 
   @override
   Future<String?> getNoteIdByHash(String documentHash) async {
-    final note = await (db.select(db.sourceNotes)
-          ..where((t) => t.documentHash.equals(documentHash)))
-        .getSingleOrNull();
+    final note = await (db.select(
+      db.sourceNotes,
+    )..where((t) => t.documentHash.equals(documentHash))).getSingleOrNull();
     return note?.noteId;
   }
 
   @override
   Future<String?> getRawNoteText(String noteId) async {
-    final note = await (db.select(db.sourceNotes)
-          ..where((t) => t.noteId.equals(noteId)))
-        .getSingleOrNull();
+    final note = await (db.select(
+      db.sourceNotes,
+    )..where((t) => t.noteId.equals(noteId))).getSingleOrNull();
     return note?.rawOcrText;
   }
 }
@@ -85,15 +92,15 @@ class AppLessonRepository implements LessonRepository {
     final now = DateTime.now();
 
     for (final lesson in allLessons) {
-      final cards = await (db.select(db.flashcards)
-            ..where((f) => f.lessonId.equals(lesson.lessonId)))
-          .get();
+      final cards = await (db.select(
+        db.flashcards,
+      )..where((f) => f.lessonId.equals(lesson.lessonId))).get();
 
       int dueCount = 0;
       for (final c in cards) {
-        final progress = await (db.select(db.reviewProgress)
-              ..where((p) => p.cardId.equals(c.cardId)))
-            .getSingleOrNull();
+        final progress = await (db.select(
+          db.reviewProgress,
+        )..where((p) => p.cardId.equals(c.cardId))).getSingleOrNull();
         if (progress == null || !progress.nextReviewDate.isAfter(now)) {
           dueCount++;
         }
@@ -118,18 +125,18 @@ class AppLessonRepository implements LessonRepository {
 
   @override
   Future<LessonModel?> getLessonById(String lessonId) async {
-    final lesson = await (db.select(db.lessons)
-          ..where((l) => l.lessonId.equals(lessonId)))
-        .getSingleOrNull();
+    final lesson = await (db.select(
+      db.lessons,
+    )..where((l) => l.lessonId.equals(lessonId))).getSingleOrNull();
     if (lesson == null) return null;
 
-    final note = await (db.select(db.sourceNotes)
-          ..where((n) => n.noteId.equals(lesson.noteId)))
-        .getSingleOrNull();
+    final note = await (db.select(
+      db.sourceNotes,
+    )..where((n) => n.noteId.equals(lesson.noteId))).getSingleOrNull();
 
-    final cards = await (db.select(db.flashcards)
-          ..where((f) => f.lessonId.equals(lessonId)))
-        .get();
+    final cards = await (db.select(
+      db.flashcards,
+    )..where((f) => f.lessonId.equals(lessonId))).get();
 
     // Parse concept map JSON
     ConceptMapModel conceptMap;
@@ -178,7 +185,9 @@ class AppLessonRepository implements LessonRepository {
   }) async {
     final lessonId = 'lesson_${DateTime.now().millisecondsSinceEpoch}';
     await db.transaction(() async {
-      await db.into(db.lessons).insert(
+      await db
+          .into(db.lessons)
+          .insert(
             LessonsCompanion.insert(
               lessonId: lessonId,
               noteId: noteId,
@@ -192,7 +201,9 @@ class AppLessonRepository implements LessonRepository {
       final now = DateTime.now();
       for (final card in lesson.flashcards) {
         final cardId = '${lessonId}_${card.id}';
-        await db.into(db.flashcards).insert(
+        await db
+            .into(db.flashcards)
+            .insert(
               FlashcardsCompanion.insert(
                 cardId: cardId,
                 lessonId: lessonId,
@@ -204,7 +215,9 @@ class AppLessonRepository implements LessonRepository {
               ),
             );
 
-        await db.into(db.reviewProgress).insert(
+        await db
+            .into(db.reviewProgress)
+            .insert(
               ReviewProgressCompanion.insert(
                 cardId: cardId,
                 box: const Value(1),
@@ -218,37 +231,44 @@ class AppLessonRepository implements LessonRepository {
 
   @override
   Future<void> deleteLesson(String lessonId) async {
-    await (db.delete(db.lessons)..where((l) => l.lessonId.equals(lessonId))).go();
+    await (db.delete(
+      db.lessons,
+    )..where((l) => l.lessonId.equals(lessonId))).go();
   }
 }
 
 class AppReviewRepository implements ReviewRepository {
-  const AppReviewRepository(this.db, {this.scheduler = const LeitnerScheduler()});
+  const AppReviewRepository(
+    this.db, {
+    this.scheduler = const LeitnerScheduler(),
+  });
 
   final AppDatabase db;
   final LeitnerScheduler scheduler;
 
   @override
-  Future<List<FlashcardReviewItem>> getReviewItemsForLesson(String lessonId) async {
-    final lesson = await (db.select(db.lessons)
-          ..where((l) => l.lessonId.equals(lessonId)))
-        .getSingleOrNull();
+  Future<List<FlashcardReviewItem>> getReviewItemsForLesson(
+    String lessonId,
+  ) async {
+    final lesson = await (db.select(
+      db.lessons,
+    )..where((l) => l.lessonId.equals(lessonId))).getSingleOrNull();
     if (lesson == null) return [];
 
-    final note = await (db.select(db.sourceNotes)
-          ..where((n) => n.noteId.equals(lesson.noteId)))
-        .getSingleOrNull();
+    final note = await (db.select(
+      db.sourceNotes,
+    )..where((n) => n.noteId.equals(lesson.noteId))).getSingleOrNull();
     final rawLines = note?.rawOcrText.split('\n') ?? [];
 
-    final cards = await (db.select(db.flashcards)
-          ..where((f) => f.lessonId.equals(lessonId)))
-        .get();
+    final cards = await (db.select(
+      db.flashcards,
+    )..where((f) => f.lessonId.equals(lessonId))).get();
 
     final result = <FlashcardReviewItem>[];
     for (final c in cards) {
-      final p = await (db.select(db.reviewProgress)
-            ..where((rp) => rp.cardId.equals(c.cardId)))
-          .getSingleOrNull();
+      final p = await (db.select(
+        db.reviewProgress,
+      )..where((rp) => rp.cardId.equals(c.cardId))).getSingleOrNull();
 
       List<int> lines = [];
       try {
@@ -303,9 +323,9 @@ class AppReviewRepository implements ReviewRepository {
     required String cardId,
     required bool wasCorrect,
   }) async {
-    final existing = await (db.select(db.reviewProgress)
-          ..where((p) => p.cardId.equals(cardId)))
-        .getSingleOrNull();
+    final existing = await (db.select(
+      db.reviewProgress,
+    )..where((p) => p.cardId.equals(cardId))).getSingleOrNull();
 
     final currentReviewItem = ReviewItem(
       cardId: cardId,
@@ -322,7 +342,9 @@ class AppReviewRepository implements ReviewRepository {
         : scheduler.recordIncorrect(currentReviewItem);
 
     if (existing == null) {
-      await db.into(db.reviewProgress).insert(
+      await db
+          .into(db.reviewProgress)
+          .insert(
             ReviewProgressCompanion.insert(
               cardId: cardId,
               box: Value(updated.box),
@@ -333,8 +355,9 @@ class AppReviewRepository implements ReviewRepository {
             ),
           );
     } else {
-      await (db.update(db.reviewProgress)..where((p) => p.cardId.equals(cardId)))
-          .write(
+      await (db.update(
+        db.reviewProgress,
+      )..where((p) => p.cardId.equals(cardId))).write(
         ReviewProgressCompanion(
           box: Value(updated.box),
           spacedRepetitionInterval: Value(updated.intervalDays),

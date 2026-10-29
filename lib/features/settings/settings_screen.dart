@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../core/theme/app_palettes.dart';
 import '../../core/utils/document_hash.dart';
 import '../../core/widgets/app_button.dart';
@@ -36,7 +37,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       final lessonRepo = ref.read(lessonRepositoryProvider);
 
       final hash = DocumentHash.compute(text);
-      final noteId = await noteRepo.saveNote(rawOcrText: text, documentHash: hash);
+      final noteId = await noteRepo.saveNote(
+        rawOcrText: text,
+        documentHash: hash,
+      );
 
       // Create simple extractive cards from pasted note lines
       final lines = text.split('\n').where((l) => l.trim().isNotEmpty).toList();
@@ -47,7 +51,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         final line = lines[i];
         final parts = line.split(RegExp(r'[:–\-]'));
         final q = parts.isNotEmpty ? parts[0].trim() : 'Note point ${i + 1}';
-        final a = parts.length > 1 ? parts.sublist(1).join(' ').trim() : line.trim();
+        final a = parts.length > 1
+            ? parts.sublist(1).join(' ').trim()
+            : line.trim();
 
         cards.add(
           FlashcardModel(
@@ -99,7 +105,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Custom note converted into study lesson!')),
+          const SnackBar(
+            content: Text('Custom note converted into study lesson!'),
+          ),
         );
       }
     } finally {
@@ -123,7 +131,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Delete All', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'Delete All',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -146,7 +157,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final currentProfile = ref.watch(activeProfileProvider).value ?? ProfileType.dyslexia;
+    final currentProfile =
+        ref.watch(activeProfileProvider).value ?? ProfileType.dyslexia;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
@@ -157,22 +169,32 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             // Active Profile Selection
             const SectionHeader(title: 'Learner Accessibility Profile'),
             Card(
-              child: Column(
-                children: ProfileType.values.map((p) {
-                  return RadioListTile<ProfileType>(
-                    value: p,
-                    groupValue: currentProfile,
-                    title: Text(p.displayName, style: const TextStyle(fontWeight: FontWeight.w600)),
-                    subtitle: Text(p.description, style: theme.textTheme.bodySmall),
-                    activeColor: colorScheme.primary,
-                    onChanged: (newProfile) async {
-                      if (newProfile != null) {
-                        await ref.read(profileRepositoryProvider).saveProfile(newProfile);
-                        ref.invalidate(activeProfileProvider);
-                      }
-                    },
-                  );
-                }).toList(),
+              child: RadioGroup<ProfileType>(
+                groupValue: currentProfile,
+                onChanged: (newProfile) async {
+                  if (newProfile != null) {
+                    await ref
+                        .read(profileRepositoryProvider)
+                        .saveProfile(newProfile);
+                    ref.invalidate(activeProfileProvider);
+                  }
+                },
+                child: Column(
+                  children: ProfileType.values.map((p) {
+                    return RadioListTile<ProfileType>(
+                      value: p,
+                      title: Text(
+                        p.displayName,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Text(
+                        p.description,
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      activeColor: colorScheme.primary,
+                    );
+                  }).toList(),
+                ),
               ),
             ),
 
@@ -201,10 +223,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.12),
+                        color: Colors.green.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.lock_outline, color: Colors.green),
+                      child: const Icon(
+                        Icons.lock_outline,
+                        color: Colors.green,
+                      ),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
@@ -248,7 +273,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       maxLines: 4,
                       decoration: InputDecoration(
                         hintText: 'Line 1: Term - Definition\nLine 2: Concept - Explanation',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         contentPadding: const EdgeInsets.all(12),
                       ),
                     ),

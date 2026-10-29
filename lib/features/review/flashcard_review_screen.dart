@@ -1,5 +1,7 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+
 import '../../core/widgets/app_button.dart';
 import '../../data/repositories/repository_interfaces.dart';
 import '../common/where_is_this_from_sheet.dart';
@@ -137,9 +139,12 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
-                      color: colorScheme.secondary.withOpacity(0.18),
+                      color: colorScheme.secondary.withValues(alpha: 0.18),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -159,7 +164,7 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
                 child: LinearProgressIndicator(
                   value: progress,
                   minHeight: 8,
-                  backgroundColor: colorScheme.outline.withOpacity(0.2),
+                  backgroundColor: colorScheme.outline.withValues(alpha: 0.2),
                   color: colorScheme.primary,
                 ),
               ),
@@ -257,7 +262,9 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: isFront ? colorScheme.outline.withOpacity(0.5) : colorScheme.primary,
+          color: isFront
+              ? colorScheme.outline.withValues(alpha: 0.5)
+              : colorScheme.primary,
           width: 2.0,
         ),
       ),
@@ -270,10 +277,14 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: (isFront ? colorScheme.primary : colorScheme.secondary)
-                        .withOpacity(0.12),
+                    color:
+                        (isFront ? colorScheme.primary : colorScheme.secondary)
+                            .withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -281,7 +292,9 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: isFront ? colorScheme.primary : colorScheme.secondary,
+                      color: isFront
+                          ? colorScheme.primary
+                          : colorScheme.secondary,
                     ),
                   ),
                 ),
@@ -322,7 +335,9 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
                 children: chunks.map((c) {
                   return Chip(
                     label: Text(c, style: const TextStyle(fontSize: 12)),
-                    backgroundColor: colorScheme.secondary.withOpacity(0.1),
+                    backgroundColor: colorScheme.secondary.withValues(
+                      alpha: 0.1,
+                    ),
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                   );
                 }).toList(),
@@ -333,13 +348,17 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.touch_app, size: 16, color: colorScheme.onSurface.withOpacity(0.5)),
+                  Icon(
+                    Icons.touch_app,
+                    size: 16,
+                    color: colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     'Tap card to flip',
                     style: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.onSurface.withOpacity(0.5),
+                      color: colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -367,23 +386,29 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary.withOpacity(0.1),
+                  color: colorScheme.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.emoji_events, size: 64, color: colorScheme.primary),
+                child: Icon(
+                  Icons.emoji_events,
+                  size: 64,
+                  color: colorScheme.primary,
+                ),
               ),
               const SizedBox(height: 24),
               Text(
                 'Great Job!',
                 textAlign: TextAlign.center,
-                style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 'You finished this study slice.',
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurface.withOpacity(0.7),
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 32),
@@ -395,25 +420,37 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
                     children: [
                       Column(
                         children: [
-                          Text('$_correctCount',
-                              style: theme.textTheme.headlineSmall
-                                  ?.copyWith(color: Colors.green, fontWeight: FontWeight.w700)),
+                          Text(
+                            '$_correctCount',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              color: Colors.green,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                           const Text('Got It'),
                         ],
                       ),
                       Column(
                         children: [
-                          Text('$_incorrectCount',
-                              style: theme.textTheme.headlineSmall
-                                  ?.copyWith(color: Colors.orange, fontWeight: FontWeight.w700)),
+                          Text(
+                            '$_incorrectCount',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              color: Colors.orange,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                           const Text('Review Again'),
                         ],
                       ),
                       Column(
                         children: [
-                          Text('$accuracy%',
-                              style: theme.textTheme.headlineSmall
-                                  ?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.w700)),
+                          Text(
+                            '$accuracy%',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                           const Text('Accuracy'),
                         ],
                       ),

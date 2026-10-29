@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../core/widgets/card_tile.dart';
 import '../../core/widgets/section_header.dart';
 import '../providers.dart';
@@ -115,7 +116,8 @@ class ArchitectureScreen extends StatelessWidget {
         ),
         CardTile(
           title: 'SourceNotes',
-          subtitle: 'NoteID (PK), RawOCRText, DocumentHash (SHA-256), CreatedAt',
+          subtitle:
+              'NoteID (PK), RawOCRText, DocumentHash (SHA-256), CreatedAt',
           badgeText: 'Cascade Root',
           leading: const Icon(Icons.notes),
         ),
@@ -220,7 +222,11 @@ class ArchitectureScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRulesTab(BuildContext context, ThemeData theme, ColorScheme colorScheme) {
+  Widget _buildRulesTab(
+    BuildContext context,
+    ThemeData theme,
+    ColorScheme colorScheme,
+  ) {
     return Consumer(
       builder: (context, ref, _) {
         final config = ref.watch(appConfigProvider);
@@ -228,33 +234,87 @@ class ArchitectureScreen extends StatelessWidget {
         return ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            const SectionHeader(title: 'Active Environment Flags (--dart-define)'),
+            const SectionHeader(
+              title: 'Active Environment Flags (--dart-define)',
+            ),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    _flagRow('generatorMode', config.generatorMode.name, colorScheme),
-                    _flagRow('enableCapture', config.enableCapture.toString(), colorScheme),
-                    _flagRow('groundingMode', config.groundingMode.name, colorScheme),
-                    _flagRow('enableLocalFallback', config.enableLocalFallback.toString(), colorScheme),
-                    _flagRow('enableSimplify', config.enableSimplify.toString(), colorScheme),
-                    _flagRow('enableTts', config.enableTts.toString(), colorScheme),
-                    _flagRow('demoMode', config.demoMode.toString(), colorScheme),
+                    _flagRow(
+                      'generatorMode',
+                      config.generatorMode.name,
+                      colorScheme,
+                    ),
+                    _flagRow(
+                      'enableCapture',
+                      config.enableCapture.toString(),
+                      colorScheme,
+                    ),
+                    _flagRow(
+                      'groundingMode',
+                      config.groundingMode.name,
+                      colorScheme,
+                    ),
+                    _flagRow(
+                      'enableLocalFallback',
+                      config.enableLocalFallback.toString(),
+                      colorScheme,
+                    ),
+                    _flagRow(
+                      'enableSimplify',
+                      config.enableSimplify.toString(),
+                      colorScheme,
+                    ),
+                    _flagRow(
+                      'enableTts',
+                      config.enableTts.toString(),
+                      colorScheme,
+                    ),
+                    _flagRow(
+                      'demoMode',
+                      config.demoMode.toString(),
+                      colorScheme,
+                    ),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 16),
             const SectionHeader(title: 'The 8 Demoability Rules'),
-            _ruleCard('1. Vertical slices, not layers', 'Every milestone adds a thin slice from UI to storage.'),
-            _ruleCard('2. Build seams first, fill them later', 'Interfaces and stubs allow modules to be swapped safely.'),
-            _ruleCard('3. One data contract from day one', 'Lesson schema never changes when AI changes.'),
-            _ruleCard('4. main is always demoable', 'CI must pass on PRs; main is always installable.'),
-            _ruleCard('5. Feature flags manage demos', 'Incomplete work is hidden, never shown broken.'),
-            _ruleCard('6. Honest labels', 'Stand-ins and mocks are clearly badged in the UI.'),
-            _ruleCard('7. Every milestone has a safety net', 'Signed APKs, recorded backup demos, seeded data.'),
-            _ruleCard('8. Small, early usability checks', 'Peer tests at M2 and M4 catch usability flaws early.'),
+            _ruleCard(
+              '1. Vertical slices, not layers',
+              'Every milestone adds a thin slice from UI to storage.',
+            ),
+            _ruleCard(
+              '2. Build seams first, fill them later',
+              'Interfaces and stubs allow modules to be swapped safely.',
+            ),
+            _ruleCard(
+              '3. One data contract from day one',
+              'Lesson schema never changes when AI changes.',
+            ),
+            _ruleCard(
+              '4. main is always demoable',
+              'CI must pass on PRs; main is always installable.',
+            ),
+            _ruleCard(
+              '5. Feature flags manage demos',
+              'Incomplete work is hidden, never shown broken.',
+            ),
+            _ruleCard(
+              '6. Honest labels',
+              'Stand-ins and mocks are clearly badged in the UI.',
+            ),
+            _ruleCard(
+              '7. Every milestone has a safety net',
+              'Signed APKs, recorded backup demos, seeded data.',
+            ),
+            _ruleCard(
+              '8. Small, early usability checks',
+              'Peer tests at M2 and M4 catch usability flaws early.',
+            ),
           ],
         );
       },
@@ -267,7 +327,10 @@ class ArchitectureScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(name, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+          Text(
+            name,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
@@ -293,7 +356,10 @@ class ArchitectureScreen extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+        ),
         subtitle: Text(desc, style: const TextStyle(fontSize: 12)),
       ),
     );

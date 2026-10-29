@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../core/widgets/app_button.dart';
 import '../../core/widgets/section_header.dart';
 import '../../data/models/lesson_model.dart';
@@ -29,7 +30,7 @@ class LessonOverviewScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             margin: const EdgeInsets.only(right: 16),
             decoration: BoxDecoration(
-              color: colorScheme.secondary.withOpacity(0.18),
+              color: colorScheme.secondary.withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
@@ -71,9 +72,17 @@ class LessonOverviewScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        _infoBadge(Icons.style_outlined, '${lesson.flashcards.length} Flashcards', colorScheme),
+                        _infoBadge(
+                          Icons.style_outlined,
+                          '${lesson.flashcards.length} Flashcards',
+                          colorScheme,
+                        ),
                         const SizedBox(width: 12),
-                        _infoBadge(Icons.account_tree_outlined, '${lesson.conceptMap.nodes.length} Concept Nodes', colorScheme),
+                        _infoBadge(
+                          Icons.account_tree_outlined,
+                          '${lesson.conceptMap.nodes.length} Concept Nodes',
+                          colorScheme,
+                        ),
                       ],
                     ),
                   ],
@@ -137,7 +146,9 @@ class LessonOverviewScreen extends StatelessWidget {
                           TextButton.icon(
                             style: TextButton.styleFrom(
                               minimumSize: const Size(48, 48),
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                              ),
                             ),
                             onPressed: () {
                               WhereIsThisFromSheet.show(
@@ -148,20 +159,25 @@ class LessonOverviewScreen extends StatelessWidget {
                               );
                             },
                             icon: const Icon(Icons.help_outline, size: 16),
-                            label: const Text('Source Lines', style: TextStyle(fontSize: 12)),
+                            label: const Text(
+                              'Source Lines',
+                              style: TextStyle(fontSize: 12),
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 4),
                       Text(
                         card.question,
-                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         card.answer,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.8),
+                          color: colorScheme.onSurface.withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -179,7 +195,7 @@ class LessonOverviewScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: colorScheme.outline.withOpacity(0.12),
+        color: colorScheme.outline.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(

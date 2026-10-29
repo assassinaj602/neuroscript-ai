@@ -59,7 +59,7 @@ class WhereIsThisFromSheet extends StatelessWidget {
               width: 44,
               height: 5,
               decoration: BoxDecoration(
-                color: colorScheme.outline.withOpacity(0.5),
+                color: colorScheme.outline.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
@@ -74,10 +74,14 @@ class WhereIsThisFromSheet extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: colorScheme.primary.withOpacity(0.12),
+                    color: colorScheme.primary.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.verified_outlined, color: colorScheme.primary, size: 24),
+                  child: Icon(
+                    Icons.verified_outlined,
+                    color: colorScheme.primary,
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -94,7 +98,7 @@ class WhereIsThisFromSheet extends StatelessWidget {
                       Text(
                         'Line-level grounding evidence from your original notes.',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.7),
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -114,13 +118,19 @@ class WhereIsThisFromSheet extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: colorScheme.secondary.withOpacity(0.15),
+              color: colorScheme.secondary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: colorScheme.secondary.withOpacity(0.4)),
+              border: Border.all(
+                color: colorScheme.secondary.withValues(alpha: 0.4),
+              ),
             ),
             child: Row(
               children: [
-                Icon(Icons.format_quote, size: 20, color: colorScheme.secondary),
+                Icon(
+                  Icons.format_quote,
+                  size: 20,
+                  color: colorScheme.secondary,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -150,7 +160,10 @@ class WhereIsThisFromSheet extends StatelessWidget {
                     ),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 8,
+                    ),
                     itemCount: rawNoteLines.length,
                     itemBuilder: (context, index) {
                       final lineNumber = index + 1;
@@ -162,13 +175,13 @@ class WhereIsThisFromSheet extends StatelessWidget {
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: isCited
-                              ? colorScheme.primary.withOpacity(0.12)
+                              ? colorScheme.primary.withValues(alpha: 0.12)
                               : theme.cardTheme.color ?? Colors.white,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                             color: isCited
                                 ? colorScheme.primary
-                                : colorScheme.outline.withOpacity(0.3),
+                                : colorScheme.outline.withValues(alpha: 0.3),
                             width: isCited ? 1.8 : 1.0,
                           ),
                         ),
@@ -181,10 +194,14 @@ class WhereIsThisFromSheet extends StatelessWidget {
                               child: Text(
                                 '$lineNumber',
                                 style: TextStyle(
-                                  fontWeight: isCited ? FontWeight.w800 : FontWeight.w500,
+                                  fontWeight: isCited
+                                      ? FontWeight.w800
+                                      : FontWeight.w500,
                                   color: isCited
                                       ? colorScheme.primary
-                                      : colorScheme.onSurface.withOpacity(0.5),
+                                      : colorScheme.onSurface.withValues(
+                                          alpha: 0.5,
+                                        ),
                                   fontSize: 13,
                                 ),
                               ),
@@ -194,10 +211,14 @@ class WhereIsThisFromSheet extends StatelessWidget {
                               child: Text(
                                 lineText,
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: isCited ? FontWeight.w600 : FontWeight.normal,
+                                  fontWeight: isCited
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
                                   color: isCited
                                       ? colorScheme.onSurface
-                                      : colorScheme.onSurface.withOpacity(0.85),
+                                      : colorScheme.onSurface.withValues(
+                                          alpha: 0.85,
+                                        ),
                                 ),
                               ),
                             ),

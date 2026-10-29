@@ -16,9 +16,13 @@ class SeedImportFailure extends Failure {
 }
 
 class ValidationFailure extends Failure {
-  const ValidationFailure([super.message = 'The content failed grounding score verification.']);
+  const ValidationFailure([
+    super.message = 'The content failed grounding score verification.',
+  ]);
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure([super.message = 'Network connection failed. Please check your internet.']);
+  const NetworkFailure([
+    super.message = 'Network connection failed. Please check your internet.',
+  ]);
 }

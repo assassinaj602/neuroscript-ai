@@ -1,37 +1,41 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+
 import 'tables.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: [UserProfiles, SourceNotes, Lessons, Flashcards, ReviewProgress])
+@DriftDatabase(
+  tables: [UserProfiles, SourceNotes, Lessons, Flashcards, ReviewProgress],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   AppDatabase.memory([QueryExecutor? executor])
-      : super(executor ?? NativeDatabase.memory());
+    : super(executor ?? NativeDatabase.memory());
 
   @override
   int get schemaVersion => 1;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (m) async {
-          await m.createAll();
-        },
-        onUpgrade: (m, from, to) async {
-          // Future migrations (e.g. PendingJobs in M4C) will go here.
-        },
-        beforeOpen: (details) async {
-          await customStatement('PRAGMA foreign_keys = ON');
-        },
-      );
+    onCreate: (m) async {
+      await m.createAll();
+    },
+    onUpgrade: (m, from, to) async {
+      // Future migrations (e.g. PendingJobs in M4C) will go here.
+    },
+    beforeOpen: (details) async {
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
+  );
 
   /// Deletes all user data (used in Settings -> Clear All Data)
   Future<void> clearAllData() async {

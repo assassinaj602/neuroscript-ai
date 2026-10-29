@@ -57,7 +57,9 @@ class AppPalettes {
   static const dyslexiaSecondary = Color(0xFF0D9488); // Teal Accent
   static const dyslexiaBackground = Color(0xFFFBF8EE); // Warm Cream
   static const dyslexiaSurface = Color(0xFFFFFDF8);
-  static const dyslexiaText = Color(0xFF2B2D42); // Softened Charcoal (no pure black glare)
+  static const dyslexiaText = Color(
+    0xFF2B2D42,
+  ); // Softened Charcoal (no pure black glare)
 
   // --- Autism: Low Sensory Noise & Predictability ---
   static const autismPrimary = Color(0xFF3D6B7A); // Muted Sage/Teal

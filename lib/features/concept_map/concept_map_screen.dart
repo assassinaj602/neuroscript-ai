@@ -1,5 +1,7 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+
 import '../../data/models/lesson_model.dart';
 import '../common/where_is_this_from_sheet.dart';
 
@@ -20,7 +22,8 @@ class ConceptMapScreen extends StatefulWidget {
 }
 
 class _ConceptMapScreenState extends State<ConceptMapScreen> {
-  final TransformationController _transformController = TransformationController();
+  final TransformationController _transformController =
+      TransformationController();
   ConceptNodeModel? _selectedNode;
 
   // Calculated node positions
@@ -143,9 +146,12 @@ class _ConceptMapScreenState extends State<ConceptMapScreen> {
                   left: 20,
                   right: 20,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
-                      color: colorScheme.surface.withOpacity(0.95),
+                      color: colorScheme.surface.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: const [
                         BoxShadow(
@@ -154,11 +160,17 @@ class _ConceptMapScreenState extends State<ConceptMapScreen> {
                           offset: Offset(0, 3),
                         ),
                       ],
-                      border: Border.all(color: colorScheme.outline.withOpacity(0.3)),
+                      border: Border.all(
+                        color: colorScheme.outline.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.touch_app, size: 20, color: colorScheme.primary),
+                        Icon(
+                          Icons.touch_app,
+                          size: 20,
+                          color: colorScheme.primary,
+                        ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
@@ -202,7 +214,7 @@ class _ConceptMapPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // 1. Draw Edges
     final edgePaint = Paint()
-      ..color = colorScheme.outline.withOpacity(0.8)
+      ..color = colorScheme.outline.withValues(alpha: 0.8)
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke;
 
@@ -215,7 +227,10 @@ class _ConceptMapPainter extends CustomPainter {
       final toPos = positions[edge.to];
       if (fromPos == null || toPos == null) continue;
 
-      final start = Offset(fromPos.dx + nodeWidth / 2, fromPos.dy + nodeHeight / 2);
+      final start = Offset(
+        fromPos.dx + nodeWidth / 2,
+        fromPos.dy + nodeHeight / 2,
+      );
       final end = Offset(toPos.dx + nodeWidth / 2, toPos.dy + nodeHeight / 2);
 
       // Draw curved bezier path
@@ -249,17 +264,18 @@ class _ConceptMapPainter extends CustomPainter {
         final textSpan = TextSpan(
           text: edge.label,
           style: TextStyle(
-            color: colorScheme.onSurface.withOpacity(0.7),
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            backgroundColor: colorScheme.surface.withOpacity(0.85),
+            backgroundColor: colorScheme.surface.withValues(alpha: 0.85),
           ),
         );
-        final tp = TextPainter(
-          text: textSpan,
-          textDirection: TextDirection.ltr,
-        )..layout();
-        tp.paint(canvas, Offset(controlPoint.dx - tp.width / 2, controlPoint.dy - 10));
+        final tp = TextPainter(text: textSpan, textDirection: TextDirection.ltr)
+          ..layout();
+        tp.paint(
+          canvas,
+          Offset(controlPoint.dx - tp.width / 2, controlPoint.dy - 10),
+        );
       }
     }
 
@@ -276,19 +292,23 @@ class _ConceptMapPainter extends CustomPainter {
 
       // Node shadow
       final shadowPaint = Paint()
-        ..color = Colors.black.withOpacity(isSelected ? 0.2 : 0.08)
+        ..color = Colors.black.withValues(alpha: isSelected ? 0.2 : 0.08)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
       canvas.drawRRect(rect.shift(const Offset(0, 3)), shadowPaint);
 
       // Node background
       final bgPaint = Paint()
-        ..color = isSelected ? colorScheme.primary.withOpacity(0.15) : colorScheme.surface
+        ..color = isSelected
+            ? colorScheme.primary.withValues(alpha: 0.15)
+            : colorScheme.surface
         ..style = PaintingStyle.fill;
       canvas.drawRRect(rect, bgPaint);
 
       // Node border
       final borderPaint = Paint()
-        ..color = isSelected ? colorScheme.primary : colorScheme.outline.withOpacity(0.7)
+        ..color = isSelected
+            ? colorScheme.primary
+            : colorScheme.outline.withValues(alpha: 0.7)
         ..strokeWidth = isSelected ? 2.5 : 1.2
         ..style = PaintingStyle.stroke;
       canvas.drawRRect(rect, borderPaint);
@@ -325,7 +345,10 @@ class _ConceptMapPainter extends CustomPainter {
           text: citeSpan,
           textDirection: TextDirection.ltr,
         )..layout();
-        citePainter.paint(canvas, Offset(pos.dx + 12, pos.dy + nodeHeight - 18));
+        citePainter.paint(
+          canvas,
+          Offset(pos.dx + 12, pos.dy + nodeHeight - 18),
+        );
       }
     }
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../core/widgets/app_button.dart';
 
 class OnboardingScreen extends StatelessWidget {
@@ -17,7 +18,9 @@ class OnboardingScreen extends StatelessWidget {
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
               child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight - 48),
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight - 48,
+                ),
                 child: IntrinsicHeight(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -31,7 +34,11 @@ class OnboardingScreen extends StatelessWidget {
                             color: colorScheme.primary.withValues(alpha: 0.12),
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(Icons.psychology, size: 48, color: colorScheme.primary),
+                          child: Icon(
+                            Icons.psychology,
+                            size: 48,
+                            color: colorScheme.primary,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -116,7 +123,12 @@ class OnboardingScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+              Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               const SizedBox(height: 2),
               Text(desc, style: theme.textTheme.bodySmall),
             ],

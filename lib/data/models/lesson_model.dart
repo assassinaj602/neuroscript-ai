@@ -40,15 +40,15 @@ class LessonModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'schemaVersion': schemaVersion,
-        'title': title,
-        'meta': meta.toJson(),
-        'conceptMap': conceptMap.toJson(),
-        'flashcards': flashcards.map((f) => f.toJson()).toList(),
-        if (rawNotes != null) 'rawNotes': rawNotes,
-        if (verificationQuestion != null)
-          'verificationQuestion': verificationQuestion!.toJson(),
-      };
+    'schemaVersion': schemaVersion,
+    'title': title,
+    'meta': meta.toJson(),
+    'conceptMap': conceptMap.toJson(),
+    'flashcards': flashcards.map((f) => f.toJson()).toList(),
+    if (rawNotes != null) 'rawNotes': rawNotes,
+    if (verificationQuestion != null)
+      'verificationQuestion': verificationQuestion!.toJson(),
+  };
 
   String toRawJson() => jsonEncode(toJson());
 
@@ -76,17 +76,14 @@ class LessonMeta {
   }
 
   Map<String, dynamic> toJson() => {
-        'profile': profile,
-        'source': source,
-        'promptVersion': promptVersion,
-      };
+    'profile': profile,
+    'source': source,
+    'promptVersion': promptVersion,
+  };
 }
 
 class ConceptMapModel {
-  const ConceptMapModel({
-    required this.nodes,
-    required this.edges,
-  });
+  const ConceptMapModel({required this.nodes, required this.edges});
 
   final List<ConceptNodeModel> nodes;
   final List<ConceptEdgeModel> edges;
@@ -103,9 +100,9 @@ class ConceptMapModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'nodes': nodes.map((n) => n.toJson()).toList(),
-        'edges': edges.map((e) => e.toJson()).toList(),
-      };
+    'nodes': nodes.map((n) => n.toJson()).toList(),
+    'edges': edges.map((e) => e.toJson()).toList(),
+  };
 }
 
 class ConceptNodeModel {
@@ -130,10 +127,10 @@ class ConceptNodeModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'label': label,
-        'sourceLines': sourceLines,
-      };
+    'id': id,
+    'label': label,
+    'sourceLines': sourceLines,
+  };
 }
 
 class ConceptEdgeModel {
@@ -155,11 +152,7 @@ class ConceptEdgeModel {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'from': from,
-        'to': to,
-        'label': label,
-      };
+  Map<String, dynamic> toJson() => {'from': from, 'to': to, 'label': label};
 }
 
 class FlashcardModel {
@@ -198,14 +191,14 @@ class FlashcardModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'question': question,
-        'answer': answer,
-        'sourceLines': sourceLines,
-        if (chunks.isNotEmpty) 'chunks': chunks,
-        if (groundingScore != null) 'groundingScore': groundingScore,
-        'verified': verified,
-      };
+    'id': id,
+    'question': question,
+    'answer': answer,
+    'sourceLines': sourceLines,
+    if (chunks.isNotEmpty) 'chunks': chunks,
+    if (groundingScore != null) 'groundingScore': groundingScore,
+    'verified': verified,
+  };
 }
 
 class VerificationQuestionModel {
@@ -227,7 +220,7 @@ class VerificationQuestionModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'question': question,
-        'sourceLines': sourceLines,
-      };
+    'question': question,
+    'sourceLines': sourceLines,
+  };
 }

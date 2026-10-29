@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/services.dart';
+
 import '../../core/utils/document_hash.dart';
 import '../../data/models/lesson_model.dart';
 import '../../data/database/database.dart';
@@ -30,19 +31,23 @@ class SeedImporter {
           final hash = DocumentHash.compute(rawText);
 
           // Idempotency check: see if note with identical documentHash already exists
-          final existing = await (db.select(db.sourceNotes)
-                ..where((tbl) => tbl.documentHash.equals(hash)))
-              .getSingleOrNull();
+          final existing = await (db.select(
+            db.sourceNotes,
+          )..where((tbl) => tbl.documentHash.equals(hash))).getSingleOrNull();
 
           if (existing != null) {
             continue; // Already seeded
           }
 
-          final noteId = 'seed_note_${lessonModel.title.toLowerCase().replaceAll(RegExp(r'\s+'), '_')}';
-          final lessonId = 'seed_lesson_${lessonModel.title.toLowerCase().replaceAll(RegExp(r'\s+'), '_')}';
+          final noteId =
+              'seed_note_${lessonModel.title.toLowerCase().replaceAll(RegExp(r'\s+'), '_')}';
+          final lessonId =
+              'seed_lesson_${lessonModel.title.toLowerCase().replaceAll(RegExp(r'\s+'), '_')}';
 
           // 1. Insert SourceNote
-          await db.into(db.sourceNotes).insert(
+          await db
+              .into(db.sourceNotes)
+              .insert(
                 SourceNotesCompanion.insert(
                   noteId: noteId,
                   rawOcrText: rawText,
@@ -51,7 +56,9 @@ class SeedImporter {
               );
 
           // 2. Insert Lesson
-          await db.into(db.lessons).insert(
+          await db
+              .into(db.lessons)
+              .insert(
                 LessonsCompanion.insert(
                   lessonId: lessonId,
                   noteId: noteId,
@@ -66,7 +73,9 @@ class SeedImporter {
           final now = DateTime.now();
           for (final card in lessonModel.flashcards) {
             final cardPk = '${lessonId}_${card.id}';
-            await db.into(db.flashcards).insert(
+            await db
+                .into(db.flashcards)
+                .insert(
                   FlashcardsCompanion.insert(
                     cardId: cardPk,
                     lessonId: lessonId,
@@ -78,7 +87,9 @@ class SeedImporter {
                   ),
                 );
 
-            await db.into(db.reviewProgress).insert(
+            await db
+                .into(db.reviewProgress)
+                .insert(
                   ReviewProgressCompanion.insert(
                     cardId: cardPk,
                     box: const Value(1),

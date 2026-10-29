@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../core/widgets/card_tile.dart';
 import '../../core/widgets/section_header.dart';
 import '../providers.dart';
@@ -25,12 +26,17 @@ class LibraryScreen extends ConsumerWidget {
             data: (p) => p == null
                 ? const SizedBox.shrink()
                 : Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     margin: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withOpacity(0.12),
+                      color: colorScheme.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: colorScheme.primary.withOpacity(0.4)),
+                      border: Border.all(
+                        color: colorScheme.primary.withValues(alpha: 0.4),
+                      ),
                     ),
                     child: Center(
                       child: Text(
@@ -44,7 +50,7 @@ class LibraryScreen extends ConsumerWidget {
                     ),
                   ),
             loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
           ),
           IconButton(
             icon: const Icon(Icons.account_tree_outlined),
@@ -97,7 +103,7 @@ class LibraryScreen extends ConsumerWidget {
                               Text(
                                 '${metrics.masteredCards} of ${metrics.totalCards} cards mastered with spaced repetition',
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity(0.85),
+                                  color: Colors.white.withValues(alpha: 0.85),
                                   fontSize: 13,
                                 ),
                               ),
@@ -108,17 +114,21 @@ class LibraryScreen extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.alarm_on, color: Colors.white, size: 28),
+                          child: const Icon(
+                            Icons.alarm_on,
+                            color: Colors.white,
+                            size: 28,
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
                 loading: () => const SizedBox(height: 90),
-                error: (_, __) => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
               ),
 
               const SizedBox(height: 12),
@@ -134,8 +144,11 @@ class LibraryScreen extends ConsumerWidget {
                       child: Center(
                         child: Column(
                           children: [
-                            Icon(Icons.auto_stories_outlined,
-                                size: 64, color: colorScheme.outline),
+                            Icon(
+                              Icons.auto_stories_outlined,
+                              size: 64,
+                              color: colorScheme.outline,
+                            ),
                             const SizedBox(height: 16),
                             Text(
                               'No lessons found in library.',
@@ -156,18 +169,26 @@ class LibraryScreen extends ConsumerWidget {
                     children: lessons.map((l) {
                       return CardTile(
                         title: l.title,
-                        subtitle: '${l.cardCount} flashcards • ${l.dueCount} due for review',
+                        subtitle:
+                            '${l.cardCount} flashcards • ${l.dueCount} due for review',
                         badgeText: l.source.toUpperCase(),
                         leading: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: colorScheme.primary.withOpacity(0.1),
+                            color: colorScheme.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Icon(Icons.menu_book, color: colorScheme.primary, size: 22),
+                          child: Icon(
+                            Icons.menu_book,
+                            color: colorScheme.primary,
+                            size: 22,
+                          ),
                         ),
-                        trailing: Icon(Icons.arrow_forward_ios,
-                            size: 16, color: colorScheme.onSurface.withOpacity(0.4)),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: colorScheme.onSurface.withValues(alpha: 0.4),
+                        ),
                         onTap: () {
                           context.push('/lesson/${l.lessonId}');
                         },
@@ -181,9 +202,8 @@ class LibraryScreen extends ConsumerWidget {
                     child: CircularProgressIndicator(),
                   ),
                 ),
-                error: (err, _) => Center(
-                  child: Text('Error loading lessons: $err'),
-                ),
+                error: (err, _) =>
+                    Center(child: Text('Error loading lessons: $err')),
               ),
             ],
           ),
