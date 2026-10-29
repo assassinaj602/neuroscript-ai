@@ -10,9 +10,6 @@ jobs:
   analyze_and_test:
     name: Flutter Analyze & Test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app
 
     steps:
       - name: Checkout Repository

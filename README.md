@@ -38,23 +38,23 @@ The application adopts a hybrid cloud/edge topology. The client interface is imp
 |                              Client Layer                               |
 |                                                                         |
 |  [ Camera Capture ] ---> [ OpenCV Preprocessing ] ---> [ ML Kit OCR ]   |
-|                                                               │         |
+|                                                            │   │         |
 |                                                               ▼         |
 |  [ Flutter UI: Riverpod + GoRouter ] <---> [ Line-Number Review Screen] |
-|        │                                                                |
-|        ├── (Online Flow)  ────────────────┐                             |
-|        │                                  ▼                             |
-|        │                       [ ASP.NET Core Proxy ]                   |
-|        │                                  │                             |
-|        │                                  ▼                             |
-|        │                       [ Google Gemini 2.5 ]                    |
-|        │                                  │                             |
-|        │                                  ▼                             |
-|        ├── (Validation) <─── [ Grounding Validator ]                    |
-|        │                     (Lexical + Semantic)                       |
-|        │                                                                |
-|        └── (Offline Flow) ─> [ On-Device SLM ] ──> [ PendingJobs Queue ]|
-|                                       │                                 |
+|     │   │                                                                |
+|  │   │   ├── (Online Flow)  ────────────────┐                             |
+|     │   │                                  ▼                             |
+|     │   │                       [ ASP.NET Core Proxy ]                   |
+|     │   │                               │   │                             |
+|     │   │                                  ▼                             |
+|     │   │                       [ Google Gemini 2.5 ]                    |
+|     │   │                               │   │                             |
+|     │   │                                  ▼                             |
+|  │   │   ├── (Validation) <─── [ Grounding Validator ]                    |
+|     │   │                     (Lexical + Semantic)                       |
+|     │   │                                                                |
+|     │   └── (Offline Flow) ─> [ On-Device SLM ] ──> [ PendingJobs Queue ]|
+|                                    │   │                                 |
 |                                       ▼                                 |
 |                     [ Drift + SQLCipher (AES-256) ]                     |
 +-------------------------------------------------------------------------+
@@ -117,25 +117,25 @@ Review scheduling is governed by an implementation of the Leitner Spaced Repetit
 
 ```
 [ New Cards ] ──> [ Box 1: 1 Day ]
-                        │
+                     │   │
        ┌────────────────┴───────────────┐
   Correct (Got it)               Incorrect (Not yet)
-       │                                │
-       ▼                                │
-[ Box 2: 3 Days ]                       │
-       │                                │
-  Correct (Got it)                      │
-       │                                │
-       ▼                                │
-[ Box 3: 7 Days ]                       │
-       │                                │
-  Correct (Got it)                      │
-       │                                │
-       ▼                                │
-[ Box 4: 14 Days ]                      │
-       │                                │
-  Correct (Got it)                      │
-       │                                │
+    │   │                             │   │
+       ▼                             │   │
+[ Box 2: 3 Days ]                    │   │
+    │   │                             │   │
+  Correct (Got it)                   │   │
+    │   │                             │   │
+       ▼                             │   │
+[ Box 3: 7 Days ]                    │   │
+    │   │                             │   │
+  Correct (Got it)                   │   │
+    │   │                             │   │
+       ▼                             │   │
+[ Box 4: 14 Days ]                   │   │
+    │   │                             │   │
+  Correct (Got it)                   │   │
+    │   │                             │   │
        ▼                                ▼
 [ Box 5: 30 Days (Mastered) ]   [ Reset to Box 1 ]
 ```
@@ -199,47 +199,43 @@ Development strictly adheres to the eight engineering rules defined in the miles
 
 ## Repository Structure
 
-The project is arranged as an enterprise monorepo comprising the Flutter mobile client, ASP.NET Core proxy gateway, design guidelines, and formal contracts:
+The project is arranged according to the standard Flutter application architecture, integrating mobile, web, and desktop clients, an ASP.NET Core proxy gateway, design guidelines, and formal contracts:
 
 ```
 neuroscript-ai/
 ├── .github/
-│   ├── workflows/            # GitHub Actions CI/CD workflows (ci-app.yml)
+│   ├── workflows/            # GitHub Actions CI/CD workflows (ci-app.yml, ci-backend.yml)
 │   ├── ISSUE_TEMPLATE/       # Standardized issue templates
 │   └── PULL_REQUEST_TEMPLATE.md
-├── app/                      # Flutter client application
-│   ├── android/              # Native Android host configuration
-│   ├── assets/seed/          # Bundled offline curriculum lessons
-│   ├── ios/                  # Native iOS host configuration
-│   ├── lib/                  # Dart application source
-│   │   ├── core/             # AppConfig, theme engine, GoRouter navigation
-│   │   ├── data/             # Drift ORM, SQLCipher, repositories, JSON models
-│   │   ├── features/         # Feature vertical slices (splash, library, review, etc.)
-│   │   ├── services/         # Leitner scheduler and seed loader
-│   │   └── main.dart         # Fast application entrypoint with splash initialization
-│   ├── test/                 # 34 automated unit and widget tests
-│   ├── analysis_options.yaml # Flutter strict lint configurations
-│   └── pubspec.yaml          # Flutter dependency manifest
+├── android/                  # Native Android host configuration
+├── ios/                      # Native iOS host configuration
+├── web/                      # Web host configuration and PWA manifest
+├── windows/                  # Native Windows desktop host configuration
+├── macos/                    # Native macOS desktop host configuration
+├── linux/                    # Native Linux desktop host configuration
+├── assets/seed/              # Bundled offline curriculum lessons
+├── lib/                      # Dart application source (feature-first architecture)
+│   ├── core/                 # AppConfig, theme engine, GoRouter navigation, widgets
+│   ├── data/                 # Drift ORM, SQLCipher, repositories, JSON models
+│   ├── features/             # Feature vertical slices (splash, library, review, concept map, etc.)
+│   ├── services/             # Leitner scheduler and seed loader
+│   └── main.dart             # Fast application entrypoint with splash initialization
+├── test/                     # 34 automated unit and widget tests
 ├── backend/                  # ASP.NET Core proxy & validation gateway
 │   ├── NeuroScript.Backend.sln
 │   ├── prompts/v1/           # System prompt templates & few-shot schema
-│   ├── src/
-│   │   ├── Api/              # Minimal API endpoints & health checks
-│   │   ├── Core/             # Contracts, DTOs, and learner profiles
-│   │   └── Infrastructure/   # Grounding validator & mock generator seam
-│   └── tests/Api.Tests/      # xUnit backend validation tests
+│   ├── src/                  # Minimal API, Core contracts, Infrastructure
+│   └── tests/                # Backend xUnit tests
 ├── design/                   # UI/UX design specifications and accessibility guidelines
-├── docs/
-│   ├── contracts/            # Frozen schemas (lesson.schema.json, proxy-api.openapi.yaml)
-│   ├── requirements.md       # Formal System Requirements Specification (FR/NFR)
-│   └── personas.md           # Learner personas (ADHD, Dyslexia, Autism)
+├── docs/                     # Formal contracts, SRS, personas, blueprints
+├── analysis_options.yaml     # Flutter strict lint configurations
+├── pubspec.yaml              # Flutter dependency manifest
 ├── .editorconfig             # Cross-IDE formatting conventions
-├── .gitignore                # Comprehensive ignore rules (secrets, build artifacts)
+├── .gitignore                # Comprehensive ignore rules
 ├── CONTRIBUTING.md           # Engineering guidelines and pull request protocol
 ├── LICENSE                   # Open-source license (MIT)
 └── NeuroScript_AI_Milestone_Execution_Plan.pdf  # Master project blueprint
 ```
-
 ---
 
 ## Build and Execution Guide
@@ -251,11 +247,8 @@ neuroscript-ai/
 * Android SDK (API Level 34 or higher, Build Tools 36.0.0)
 * Java Development Kit (JDK 17 or higher)
 
-### Mobile App (Flutter)
+### Client Application (Flutter)
 ```bash
-# Navigate to the app directory
-cd app
-
 # Fetch dependencies
 flutter pub get
 
@@ -264,6 +257,9 @@ flutter analyze --no-fatal-infos
 
 # Execute test suite (34 tests)
 flutter test
+
+# Run application on connected device (Mobile, Desktop, or Web)
+flutter run
 
 # Compile optimized release APKs with architecture splits
 flutter build apk --release --split-per-abi
