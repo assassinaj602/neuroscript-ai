@@ -12,17 +12,21 @@ import '../../features/progress/progress_screen.dart';
 import '../../features/providers.dart';
 import '../../features/review/flashcard_review_screen.dart';
 import '../../features/settings/settings_screen.dart';
+import '../../features/splash/splash_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final activeProfileAsync = ref.watch(activeProfileProvider);
 
   return GoRouter(
-    initialLocation: '/library',
+    initialLocation: '/splash',
     redirect: (context, state) {
       final isLoading = activeProfileAsync.isLoading;
       final profile = activeProfileAsync.value;
 
       if (isLoading) return null; // Wait for initial profile read
+
+      final isSplash = state.matchedLocation == '/splash';
+      if (isSplash) return null;
 
       final isGoingToOnboarding =
           state.matchedLocation == '/onboarding' ||
@@ -41,6 +45,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),

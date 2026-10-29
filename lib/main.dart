@@ -6,15 +6,12 @@ import 'core/theme/app_palettes.dart';
 import 'core/theme/app_theme.dart';
 import 'data/database/database.dart';
 import 'features/providers.dart';
-import 'services/seed/seed_importer.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Create database instance and seed bundled sample lessons idempotently
+  // Create database instance
   final db = AppDatabase();
-  final seedImporter = SeedImporter(db);
-  await seedImporter.importSeedLessons();
 
   runApp(
     ProviderScope(

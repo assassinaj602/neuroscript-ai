@@ -9,6 +9,7 @@ import 'package:neuro_script/features/library/library_screen.dart';
 import 'package:neuro_script/features/onboarding/onboarding_screen.dart';
 import 'package:neuro_script/features/onboarding/profile_select_screen.dart';
 import 'package:neuro_script/features/review/flashcard_review_screen.dart';
+import 'package:neuro_script/features/splash/splash_screen.dart';
 import 'package:neuro_script/data/database/database.dart';
 import 'package:neuro_script/data/models/lesson_model.dart';
 import 'package:neuro_script/data/repositories/repository_interfaces.dart';
@@ -177,5 +178,33 @@ void main() {
     expect(find.text('ER Schemas'), findsOneWidget);
     expect(find.text('API Contracts'), findsOneWidget);
     expect(find.text('8 Demo Rules'), findsOneWidget);
+  });
+
+  testWidgets('7. Splash screen renders branding and loading indicator', (tester) async {
+    final db = AppDatabase.memory();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          appDatabaseProvider.overrideWithValue(db),
+          activeProfileProvider.overrideWith((ref) => Future.value(null)),
+        ],
+        child: MaterialApp(
+          theme: AppTheme.getTheme(ProfileType.dyslexia),
+          home: SplashScreen(
+            minimumDuration: Duration.zero,
+            onComplete: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('NeuroScript AI'), findsOneWidget);
+    expect(find.textContaining('Privacy-Preserving Study Platform'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.byIcon(Icons.psychology_rounded), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 50));
+    await db.close();
   });
 }

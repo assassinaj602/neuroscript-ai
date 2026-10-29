@@ -6,6 +6,7 @@ import '../data/database/database.dart';
 import '../data/repositories/app_repositories.dart';
 import '../data/repositories/repository_interfaces.dart';
 import '../services/scheduler/leitner_scheduler.dart';
+import '../services/seed/seed_importer.dart';
 
 final appConfigProvider = Provider<AppConfig>((ref) {
   return AppConfig.fromEnvironment();
@@ -15,6 +16,11 @@ final appDatabaseProvider = Provider<AppDatabase>((ref) {
   final db = AppDatabase();
   ref.onDispose(db.close);
   return db;
+});
+
+final seedImporterProvider = Provider<SeedImporter>((ref) {
+  final db = ref.watch(appDatabaseProvider);
+  return SeedImporter(db);
 });
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
