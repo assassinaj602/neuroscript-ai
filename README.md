@@ -1,111 +1,277 @@
-# NeuroScript AI 🧠📝
+# NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
 
-> **Privacy-first study application for neurodivergent learners (ADHD, dyslexia, autism).**  
-> Converts handwritten notes into grounding-validated flashcards and interactive concept maps via an ASP.NET Core proxy to Google Gemini, with an on-device Small Language Model (SLM) fallback.
+A specialized, accessible study application engineered for students with Attention Deficit Hyperactivity Disorder (ADHD), Dyslexia, and Autism Spectrum Conditions. NeuroScript AI transforms raw handwritten lecture notes into line-grounded flashcards and interactive concept maps using a hybrid AI pipeline (Google Gemini 2.5 Flash via a secure ASP.NET Core proxy, with an on-device Small Language Model fallback), verified against strict lexical and semantic grounding metrics and stored within a locally encrypted database.
 
 ---
 
-## 📌 Project Information
-* **Course:** CS-400 Final Year Project (2026–2027)
+## Project Metadata
+
 * **Institution:** Department of Computer Science, University of Engineering & Technology (UET) Taxila
+* **Course:** CS-400 Final Year Project (Academic Year 2026–2027)
 * **Supervisor:** Mr. Awais Mehmood
-* **Team:**
-  * **Zain Tahir** (23-CS-115) – *Backend, Database, AI Logic, Integration*
-  * **Ujala Sahar** (23-CS-135) – *UI/UX, QA, User Testing, Documentation*
+* **Engineering Team:**
+  * **Zain Tahir** (Roll No. 23-CS-115) – Systems Architecture, Database Engineering, AI Logic, Client-Server Integration
+  * **Ujala Sahar** (Roll No. 23-CS-135) – UI/UX Design System, Accessibility Auditing, User Acceptance Testing, Documentation
+* **Current Delivery Status:** Milestone 1 (`v0.1.0-m1`) and Milestone 2 (`v0.2.0-m2`) Complete
 
 ---
 
-## 🚀 Key Features
+## Problem Statement and Motivation
 
-* **Accessible Learning Profiles:** Specialized UX/UI adaptations for ADHD (chunked sessions, gamified dopamine loops), Dyslexia (OpenDyslexic typography, bionic reading, syllable highlights), and Autism (low-sensory palette, predictable layout).
-* **Handwritten Note Processing:** On-device camera capture with OpenCV perspective correction/cleaning and Google ML Kit OCR text extraction.
-* **AI Lesson Generation:** Cloud-based lesson synthesis using Google Gemini 2.5 Flash via a secure ASP.NET Core proxy.
-* **Grounding-Score Validation:** Strict lexical and entity validation to detect and guard against AI hallucinations before content reaches the student.
-* **Offline On-Device SLM Fallback:** Offline lesson generation powered by an on-device SLM (e.g., SmolLM2 / Llama 3.2 1B via llama.cpp/llamadart) with an automated sync queue.
-* **Active Recall & Spaced Repetition:** Interactive Leitner / SM-2 spaced repetition review sessions and hierarchical concept map visualization.
-* **Privacy by Design:** Local-first encrypted database (Drift + SQLCipher) with zero plaintext retention of user notes on external servers.
+Undergraduate students with learning differences encounter severe cognitive barriers when revising from handwritten notes:
+1. **Executive Dysfunction & Task Initiation (ADHD):** Students experience cognitive overwhelm when confronting dense, unorganized notes. Large study decks cause focus fatigue and task abandonment.
+2. **Visual Stress & Phonological Processing (Dyslexia):** High-contrast black text on pure white backgrounds produces visual glare, letter distortion, and fatigue. Crowded text layouts impede reading speed and comprehension.
+3. **Sensory Sensitivity & Ambiguity (Autism):** Unpredictable layouts, gratuitous animations, and metaphorical expressions induce cognitive load. Autistic learners require predictable structures and literal wording.
+4. **AI Hallucinations in Educational Tools:** Mainstream generative assistants routinely invent non-existent facts or extrapolate beyond provided context without source citations, misguiding revision.
+5. **Data Privacy Deficits:** Conventional commercial platforms store student notes and academic records in plaintext on proprietary cloud servers without end-to-end user encryption.
+
+NeuroScript AI resolves these challenges through an accessibility-first client architecture, strict source-grounding verification, and a zero-retention, encrypted offline storage model.
 
 ---
 
-## 🏗️ Architecture Overview
+## System Architecture
+
+The application adopts a hybrid cloud/edge topology. The client interface is implemented in Flutter, connecting to an ASP.NET Core proxy gateway for cloud-assisted synthesis, while retaining autonomous offline functionality through an embedded Small Language Model (SLM) and an encrypted local database.
 
 ```
-[ Camera / Notes ]
-       │
-       ▼
-[ OpenCV Cleanup & ML Kit OCR ]
-       │
-       ▼
-[ Flutter Client (Drift + Riverpod) ]
-       │
-       ├── (Online) ──> [ ASP.NET Core Proxy ] ──> [ Google Gemini API ]
-       │                         │
-       │                         └── [ Grounding Validator ]
-       │
-       └── (Offline) ─> [ On-Device SLM (llamadart) ] ──> [ Local DB Queue ]
++-------------------------------------------------------------------------+
+|                              Client Layer                               |
+|                                                                         |
+|  [ Camera Capture ] ---> [ OpenCV Preprocessing ] ---> [ ML Kit OCR ]   |
+|                                                               │         |
+|                                                               ▼         |
+|  [ Flutter UI: Riverpod + GoRouter ] <---> [ Line-Number Review Screen] |
+|        │                                                                |
+|        ├── (Online Flow)  ────────────────┐                             |
+|        │                                  ▼                             |
+|        │                       [ ASP.NET Core Proxy ]                   |
+|        │                                  │                             |
+|        │                                  ▼                             |
+|        │                       [ Google Gemini 2.5 ]                    |
+|        │                                  │                             |
+|        │                                  ▼                             |
+|        ├── (Validation) <─── [ Grounding Validator ]                    |
+|        │                     (Lexical + Semantic)                       |
+|        │                                                                |
+|        └── (Offline Flow) ─> [ On-Device SLM ] ──> [ PendingJobs Queue ]|
+|                                       │                                 |
+|                                       ▼                                 |
+|                     [ Drift + SQLCipher (AES-256) ]                     |
++-------------------------------------------------------------------------+
 ```
 
----
+### The Six-Stage Processing Pipeline
 
-## 🗺️ Milestone Roadmap
-
-The project follows a vertical-slice roadmap where every milestone concludes with an installable, demonstrable application:
-
-| Milestone | Scope & Demo Headline | Target Tag |
-|---|---|---|
-| **M1: Planning & Design** (Oct–Nov) | Clickable Figma prototype + installed app shell with profile and palette switching | `v0.1.0-m1` |
-| **M2: Frontend & Database** (Nov–Dec) | Complete offline study app: sample lessons, flashcard review with spaced repetition, encrypted DB | `v0.2.0-m2` |
-| **M3: Core Logic & CV** (Dec–Jan) | Scan handwriting → clean → OCR → edit → cloud proxy → lesson → review | `v0.3.0-m3` |
-| **M4: AI & Validation** (Jan–Feb) | 4A: Gemini lessons; 4B: Grounding-score badges; 4C: Offline SLM fallback & queue | `v0.4.1-4a/b/c` |
-| **M5: Accessibility & QA** (Feb–Mar) | 3 profile experiences, TTS read-aloud, simplify mode, QA and evaluation report | `v0.5.0-m5` |
-| **M6: Finalisation** (Mar–Apr) | Release build, UAT with SUS, final report, poster, and presentation | `v1.0.0` |
+1. **Optical Acquisition:** Capture multi-page handwritten notes (1–5 pages) with framing guides and flash control.
+2. **Computer Vision Enhancement:** Execute background-isolate OpenCV preprocessing: long-side resize to 2000px, Contrast Limited Adaptive Histogram Equalization (CLAHE), bilateral denoising, adaptive Gaussian thresholding, and deskewing.
+3. **Optical Character Recognition (OCR):** Transcribe text blocks into ordered, 1-based numbered lines ($1 \dots N$) via Google ML Kit Text Recognition.
+4. **Human-in-the-Loop Verification:** Display an editable line-by-line review screen enabling students to correct, merge, or delete transcription errors prior to AI processing.
+5. **Synthesis & Closed-Book Compilation:** Transmit confirmed lines to Google Gemini 2.5 Flash using structured delimiters and profile-tailored prompts that forbid external knowledge injection.
+6. **Grounding Verification & Storage:** Validate every flashcard and concept map node against cited source lines. Grounded items are committed to the local encrypted SQLite database (Drift + SQLCipher).
 
 ---
 
-## 🏛️ Monorepo Structure
+## Accessibility Profiles
+
+The user interface implements three distinct design systems compliant with WCAG 2.1 AA specifications (contrast ratios $\ge 4.5:1$, touch targets $\ge 48$ dp, scalable typography up to $2.0\times$ without layout clipping).
+
+| Feature / Dimension | ADHD Profile | Dyslexia Profile | Autism Profile |
+|---|---|---|---|
+| **Primary Palette** | Deep Indigo (`#3F51B5`) & Warm Amber (`#FF9800`) | Slate Blue (`#1E3A8A`) & Teal (`#0D9488`) | Muted Sage Teal (`#3D6B7A`) & Ice Mist (`#EEF3F4`) |
+| **Background Tone** | Clean Minimal Grey (`#F8F9FA`) | Warm Anti-Glare Cream (`#FBF8EE`) | Low-Saturation Mist (`#EEF3F4`) |
+| **Typography** | Sans-Serif (Standard letter spacing) | Relaxed spacing (Line height $\ge 1.6$, tracking $+0.6$) | Structured, clear hierarchy (Tracking $+0.2$) |
+| **Study Sizing** | **5-card micro-sessions** with immediate feedback | Standard 10-card sessions with read-aloud option | Predictable step progression ("Card 2 of 5") |
+| **Motion & Audio** | Engaging progress rings and completion badges | Text-to-Speech read-aloud with sentence tracking | Zero autoplay motion (respects `reduce-motion`), silent by default |
+| **Wording Mode** | Punchy, single-concept flashcards | Plain language with highlighted keywords | Literal simplification mode (removes idioms and metaphors) |
+
+---
+
+## Grounding-Score Verification Methodology
+
+To prevent hallucinations, every generated study item $g$ citing an evidence window $E$ (the cited line indices plus one adjacent line on either side) is evaluated against a composite mathematical metric before storage:
+
+### 1. Lexical Containment ($L$)
+Evaluates unigram ($C_1$) and bigram ($C_2$) token overlap between the generated item and the source window:
+$$C_n = \frac{|N_n(g) \cap N_n(E)|}{|N_n(g)|}, \quad L = \frac{C_1 + C_2}{2}$$
+
+### 2. Semantic Embedding Similarity ($Sem$)
+Computes cosine similarity between sentence embeddings generated by an on-device quantized MiniLM model:
+$$Sem = \max_{j \in E} \left( \frac{v_g \cdot v_j}{\|v_g\| \|v_j\|} \right)$$
+
+### 3. Entity Verification Constraint ($X$)
+Extracts all numerical values, proper nouns, dates, and formulas from $g$. If any entity in $g$ does not appear identically within $E$, the item is penalized:
+$$X = \begin{cases} 1 & \text{if all entities in } g \text{ exist in } E \\ 0 & \text{otherwise} \end{cases}$$
+
+### 4. Composite Grounding Metric ($G$) and Decision Gate
+$$G = \begin{cases} 0.6 \cdot Sem + 0.4 \cdot L & \text{if } X = 1 \\ 0 & \text{if } X = 0 \end{cases}$$
+
+* **Acceptance ($G \ge 0.75 \land X = 1$):** Item is marked verified and stored with source line citations.
+* **Regeneration ($0.50 \le G < 0.75$):** Re-prompt generator once with an explicit quote-only constraint.
+* **Rejection ($G < 0.50 \lor X = 0$):** Discard item permanently to protect the learner from incorrect data.
+
+---
+
+## Active Recall and Spaced Repetition
+
+Review scheduling is governed by an implementation of the Leitner Spaced Repetition System:
+
+```
+[ New Cards ] ──> [ Box 1: 1 Day ]
+                        │
+       ┌────────────────┴───────────────┐
+  Correct (Got it)               Incorrect (Not yet)
+       │                                │
+       ▼                                │
+[ Box 2: 3 Days ]                       │
+       │                                │
+  Correct (Got it)                      │
+       │                                │
+       ▼                                │
+[ Box 3: 7 Days ]                       │
+       │                                │
+  Correct (Got it)                      │
+       │                                │
+       ▼                                │
+[ Box 4: 14 Days ]                      │
+       │                                │
+  Correct (Got it)                      │
+       │                                │
+       ▼                                ▼
+[ Box 5: 30 Days (Mastered) ]   [ Reset to Box 1 ]
+```
+
+* **Session Scheduling:** The daily queue prioritizes overdue cards (`nextReviewDate <= now`), followed by unreviewed cards.
+* **Cognitive Caps:** Daily session sizes are capped per profile (ADHD: 5 cards; Dyslexia/Autism: 10 cards).
+* **Line-Level Provenance:** A dedicated sheet links each flashcard and concept map node directly back to the original handwritten note lines.
+
+---
+
+## Privacy by Design and Data Governance
+
+1. **Local Database Encryption:** User data is encrypted at rest using AES-256 via Drift and SQLCipher. The database encryption key is generated using a cryptographically secure pseudo-random number generator (`Random.secure()`) on first execution and held in hardware-backed secure storage (`FlutterSecureStorage`).
+2. **Stateless Backend Proxy:** The ASP.NET Core server stores zero note text and zero generated lesson content. It maintains only metadata in an operational audit log (`RequestLog`: install hash, endpoint, latency, status code, timestamp).
+3. **No Unencrypted Cloud Storage:** Notes are never transmitted to cloud endpoints without explicit user consent. When offline, all processing remains strictly local.
+
+---
+
+## Database Schemata (On-Device & Proxy)
+
+### Client Database (Drift / SQLCipher)
+* `UserProfiles`: `id` (PK), `profileType` (ADHD, Dyslexia, Autism), `themeSettings` (JSON), `createdAt`.
+* `SourceNotes`: `noteId` (PK), `rawOcrText`, `documentHash` (SHA-256), `createdAt`.
+* `Lessons`: `lessonId` (PK), `noteId` (FK, cascade delete), `title`, `conceptMapJson`, `promptVersion`, `source`, `createdAt`.
+* `Flashcards`: `cardId` (PK), `lessonId` (FK, cascade delete), `question`, `answer`, `sourceLineReference`, `groundingScore`, `verified`.
+* `ReviewProgress`: `progressId` (PK), `cardId` (FK, cascade delete), `box` (1..5), `spacedRepetitionInterval` (1, 3, 7, 14, 30), `nextReviewDate`, `lastReviewedAt`, `consecutiveCorrect`.
+* `PendingJobs` *(Milestone 4 extension)*: `jobId` (PK), `noteHash`, `status`, `attempts`, `nextAttemptAt`, `createdAt`.
+
+### Backend Database (Entity Framework Core / SQLite)
+* `RequestLog`: `Id` (PK), `InstallHash`, `Endpoint`, `Status`, `LatencyMs`, `Provider`, `CreatedAt`.
+
+---
+
+## The Eight Demoability Rules
+
+Development strictly adheres to the eight engineering rules defined in the milestone execution plan:
+
+1. **Vertical Slices, Not Layers:** Each milestone delivers an end-to-end slice spanning presentation down to persistence.
+2. **Build Seams First, Fill Later:** External dependencies sit behind Dart/C# interfaces with working stand-ins (seed JSON, mock generators) prior to production integrations.
+3. **One Data Contract from Day One:** The Lesson JSON Schema (`docs/contracts/lesson.schema.json`) is frozen and identical across seed data, mock generators, Gemini, and on-device SLMs.
+4. **Main is Always Demoable:** Work merges to `main` only through passing pull requests with green CI checks.
+5. **Feature Flags Manage Demos:** Experimental or incomplete functionality is isolated behind compile-time `--dart-define` flags (`AppConfig`).
+6. **Honest Labels:** Stand-in modules are explicitly tagged in the UI (e.g., `'Demo generator'`) and never misrepresented.
+7. **Every Milestone Has a Safety Net:** Deliverables include tagged git releases, signed APKs, pre-seeded datasets, and offline fallback flows.
+8. **Early Usability Verification:** Informal peer testing at M2 and M4 surfaces usability defects well in advance of formal acceptance testing.
+
+---
+
+## Milestone Execution Roadmap
+
+| Milestone | Target Period | Core Scope | Status | Git Release Tag |
+|---|---|---|---|---|
+| **M1: Planning & Design** | Oct – Nov 2026 | Requirements, system architecture, API contracts, Figma prototype, and runnable app shell. | **Complete** | `v0.1.0-m1` |
+| **M2: Frontend & Database** | Nov – Dec 2026 | Offline study app, encrypted Drift database, Leitner scheduler, interactive concept map, and source line provenance. | **Complete** | `v0.2.0-m2` |
+| **M3: Core Logic & CV** | Dec – Jan 2027 | Camera capture, OpenCV image cleaning, ML Kit OCR, review screen, and ASP.NET Core proxy with mock generator. | Scheduled | `v0.3.0-m3` |
+| **M4: AI & Validation** | Jan – Feb 2027 | Gemini 2.5 integration (4A), Grounding validator (4B), and on-device SLM fallback with offline queue (4C). | Scheduled | `v0.4.0-m4` |
+| **M5: Accessibility & QA** | Feb – Mar 2027 | Full profile experiences, TTS read-aloud, simplify wording mode, and comprehensive QA testing. | Scheduled | `v0.5.0-m5` |
+| **M6: Finalisation** | Mar – Apr 2027 | User Acceptance Testing (SUS evaluation), production hardening, final thesis report, and public release. | Scheduled | `v1.0.0` |
+
+---
+
+## Repository Structure
 
 ```
 neuroscript-ai/
-├── app/                  # Flutter mobile client (feature-first architecture)
-│   ├── lib/
-│   │   ├── core/         # AppConfig, theme, routing, errors, utils
-│   │   ├── data/         # Drift database, DAOs, repositories
-│   │   ├── features/     # Feature modules (onboarding, capture, lesson, etc.)
-│   │   └── services/     # Interfaces & implementations (seed, remote, local)
-│   └── test/             # Unit and widget tests
-├── backend/              # ASP.NET Core proxy and validation service
-│   ├── src/Api/          # Controllers and endpoints
-│   ├── src/Core/         # Business logic and interfaces
-│   ├── src/Infrastructure/ # External clients (Gemini, caching)
-│   └── tests/            # Backend unit and integration tests
-├── design/               # UI/UX design specifications and Figma exports
-├── docs/                 # Project documentation, contracts, diagrams, execution plan
-├── .github/              # Issue/PR templates and CI/CD workflows
-└── NeuroScript_AI_Milestone_Execution_Plan.pdf
+├── .github/
+│   ├── workflows/            # GitHub Actions CI/CD workflows (ci-app.yml)
+│   ├── ISSUE_TEMPLATE/       # Standardized issue templates
+│   └── PULL_REQUEST_TEMPLATE.md
+├── assets/
+│   └── seed/                 # Bundled curriculum seed lessons (JSON contract)
+├── design/                   # UI/UX design specifications and accessibility guidelines
+├── docs/
+│   ├── contracts/            # Frozen schemas (lesson.schema.json, proxy-api.openapi.yaml)
+│   ├── requirements.md       # Formal System Requirements Specification (FR/NFR)
+│   └── personas.md           # Learner personas (ADHD, Dyslexia, Autism)
+├── lib/
+│   ├── core/                 # Config (AppConfig), theme system, routing, errors, utils
+│   ├── data/                 # Database tables, DAOs, repositories, JSON models
+│   ├── features/             # Feature slices (onboarding, library, review, concept map, etc.)
+│   ├── services/             # Pure Dart engines (Leitner scheduler, seed importer)
+│   └── main.dart             # Application root with ProviderScope and theme initialization
+├── test/                     # Unit and widget test suites (33 automated tests)
+├── .editorconfig             # Cross-IDE formatting conventions
+├── .gitignore                # Comprehensive ignore rules (secrets, build artifacts)
+├── CONTRIBUTING.md           # Engineering guidelines and pull request protocol
+├── LICENSE                   # Open-source license (MIT)
+├── NeuroScript_AI_Milestone_Execution_Plan.pdf  # Master project blueprint
+└── pubspec.yaml              # Flutter dependency manifest
 ```
 
 ---
 
-## 📐 The Eight Demoability Rules
+## Build and Execution Guide
 
-1. **Vertical slices, not layers:** Every milestone produces an installable app holding a working, complete user slice.
-2. **Build seams first, fill them later:** Every external service is backed by Dart/C# interfaces with reliable stand-ins.
-3. **One data contract from day one:** Fixed JSON schema for lessons across seed, mock, Gemini, and on-device SLM.
-4. **`main` is always demoable:** Changes merge only via PRs with passing CI checks.
-5. **Feature flags manage demos:** Compile-time and runtime toggles (`--dart-define`) isolate incomplete features.
-6. **Honest labels:** Stand-ins and mocks are clearly identified on-screen during demos.
-7. **Every milestone has a safety net:** Tagged releases, signed APKs, seeded demo data, and fallback screen recordings.
-8. **Small, early usability checks:** Guerrilla testing sessions with peers at M2 and M4 before final evaluation.
+### Prerequisites
+* Flutter SDK (version 3.47.x or higher)
+* Dart SDK (version 3.13.x or higher)
+* Android SDK (API Level 34 or higher, Build Tools 36.0.0)
+* Java Development Kit (JDK 17 or higher)
+
+### Installation & Static Analysis
+```bash
+# Clone the repository
+git clone https://github.com/zaintahir2025/neuroscript-ai.git
+cd neuroscript-ai
+
+# Fetch Flutter dependencies
+flutter pub get
+
+# Run static analysis
+flutter analyze --no-fatal-infos
+
+# Execute test suite
+flutter test
+```
+
+### Compiling Optimized Release APKs
+The project uses ABI splitting to produce lightweight binaries:
+```bash
+# Compile release APKs with architecture splits
+flutter build apk --release --split-per-abi
+```
+Generated binaries:
+* `build/app/outputs/flutter-apk/app-arm64-v8a-release.apk` (~19.5 MB, modern 64-bit devices)
+* `build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk` (~17.0 MB, older 32-bit devices)
+* `build/app/outputs/flutter-apk/app-x86_64-release.apk` (~20.8 MB, emulators)
 
 ---
 
-## 🤝 Contributing & Git Workflow
+## Contributing and Governance
 
-* Please read [`CONTRIBUTING.md`](./CONTRIBUTING.md) for branch naming, PR conventions, and code review rules.
-* Direct pushes to `main` are strictly forbidden. All changes must be submitted via feature branches (`feature/<wp-id>-name`) and pull requests.
+Contributions are managed through feature-branch pull requests adhering to the conventions defined in [CONTRIBUTING.md](CONTRIBUTING.md). Direct pushes to `main` are restricted. All pull requests must pass automated static analysis and unit testing before review and merge.
 
 ---
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License - see the [`LICENSE`](./LICENSE) file for details.
+This project is released under the terms of the [MIT License](LICENSE).
