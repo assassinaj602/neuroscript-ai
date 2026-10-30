@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/features/architecture/architecture_screen.dart
+// File: lib/features/architecture/architecture_screen.dart
 //
 // Description:
 //   In-app technical blueprint and specification viewer delivering Milestone 1.

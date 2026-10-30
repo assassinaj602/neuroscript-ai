@@ -31,7 +31,7 @@ import 'package:neuro_script/data/database/database.dart';
 import 'package:neuro_script/data/models/lesson_model.dart';
 import 'package:neuro_script/data/repositories/repository_interfaces.dart';
 import 'package:neuro_script/features/providers.dart';
-import 'package:neuro_script/services/scheduler/leitner_scheduler.dart';
+import 'package:neuro_script/services/leitner_scheduler.dart';
 
 void main() {
   testWidgets('1. Onboarding screen renders title and get started button', (tester) async {

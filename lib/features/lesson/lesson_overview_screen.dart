@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/features/lesson/lesson_overview_screen.dart
+// File: lib/features/lesson/lesson_overview_screen.dart
 //
 // Description:
 //   Lesson overview and dual-mode study launcher (WP2.4).

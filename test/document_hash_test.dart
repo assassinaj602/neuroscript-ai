@@ -8,7 +8,7 @@
 // ============================================================================
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:neuro_script/core/utils/document_hash.dart';
+import 'package:neuro_script/core/document_hash.dart';
 
 void main() {
   group('DocumentHash Tests (WP2.1 Verification)', () {

@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/features/concept_map/concept_map_screen.dart
+// File: lib/features/concept_map/concept_map_screen.dart
 //
 // Description:
 //   Interactive visual concept graph screen (WP2.4).

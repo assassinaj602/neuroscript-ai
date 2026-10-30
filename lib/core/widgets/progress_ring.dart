@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/core/widgets/progress_ring.dart
+// File: lib/core/widgets/progress_ring.dart
 //
 // Description:
 //   Custom circular progress indicator delivering immediate visual mastery feedback.

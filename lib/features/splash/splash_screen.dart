@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/features/splash/splash_screen.dart
+// File: lib/features/splash/splash_screen.dart
 //
 // Description:
 //   Application initialization splash screen.

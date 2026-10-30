@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/features/onboarding/profile_select_screen.dart
+// File: lib/features/onboarding/profile_select_screen.dart
 //
 // Description:
 //   Interactive learner profiling interface (WP2.4).

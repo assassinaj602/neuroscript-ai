@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/core/widgets/section_header.dart
+// File: lib/core/widgets/section_header.dart
 //
 // Description:
 //   Section header widget providing predictable semantic milestones and visual

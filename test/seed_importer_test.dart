@@ -11,7 +11,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:neuro_script/data/database/database.dart';
-import 'package:neuro_script/services/seed/seed_importer.dart';
+import 'package:neuro_script/services/seed_importer.dart';
 
 class FakeAssetBundle extends CachingAssetBundle {
   final Map<String, String> assets;

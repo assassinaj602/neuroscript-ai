@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/features/progress/progress_screen.dart
+// File: lib/features/progress/progress_screen.dart
 //
 // Description:
 //   Quantitative mastery telemetry and learning statistics interface (WP2.4).

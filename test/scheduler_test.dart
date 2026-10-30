@@ -21,7 +21,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:neuro_script/core/theme/app_palettes.dart';
-import 'package:neuro_script/services/scheduler/leitner_scheduler.dart';
+import 'package:neuro_script/services/leitner_scheduler.dart';
 
 class MockClock implements Clock {
   MockClock(this.currentTime);

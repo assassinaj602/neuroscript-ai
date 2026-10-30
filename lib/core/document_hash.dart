@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/core/utils/document_hash.dart
+// File: lib/core/document_hash.dart
 //
 // Description:
 //   Cryptographic content addressing utility. Computes a deterministic SHA-256

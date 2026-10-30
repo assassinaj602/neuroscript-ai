@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/main.dart
+// File: lib/main.dart
 //
 // Description:
 //   Primary application entry point for the NeuroScript AI Flutter client.

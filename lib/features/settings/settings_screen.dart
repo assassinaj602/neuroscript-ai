@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/features/settings/settings_screen.dart
+// File: lib/features/settings/settings_screen.dart
 //
 // Description:
 //   Learner accessibility preferences and privacy management interface (WP2.4).
@@ -20,7 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_palettes.dart';
-import '../../core/utils/document_hash.dart';
+import '../../core/document_hash.dart';
 import '../../core/widgets/app_button.dart';
 import '../../core/widgets/card_tile.dart';
 import '../../core/widgets/section_header.dart';

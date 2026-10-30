@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/services/scheduler/leitner_scheduler.dart
+// File: lib/services/leitner_scheduler.dart
 //
 // Description:
 //   Pure-Dart implementation of the 5-box Leitner Spaced Repetition System (SRS).
@@ -28,7 +28,7 @@
 
 import 'dart:math';
 
-import '../../core/theme/app_palettes.dart';
+import '../core/theme/app_palettes.dart';
 
 /// Abstract clock to allow unit tests to simulate advancing days or time-zones.
 abstract class Clock {

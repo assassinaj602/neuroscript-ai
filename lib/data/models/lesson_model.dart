@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/data/models/lesson_model.dart
+// File: lib/data/models/lesson_model.dart
 //
 // Description:
 //   Data serialization models for the canonical Lesson JSON Contract.

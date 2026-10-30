@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/core/config/app_config.dart
+// File: lib/core/app_config.dart
 //
 // Description:
 //   Compile-time configuration and runtime feature flags system.

@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/features/review/flashcard_review_screen.dart
+// File: lib/features/review/flashcard_review_screen.dart
 //
 // Description:
 //   Active recall flashcard study interface (WP2.4).

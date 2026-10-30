@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/core/widgets/app_button.dart
+// File: lib/core/widgets/app_button.dart
 //
 // Description:
 //   Reusable accessible button component fulfilling WP2.5 specifications.

@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/data/repositories/app_repositories.dart
+// File: lib/data/repositories/app_repositories.dart
 //
 // Description:
 //   Concrete implementations of domain repository contracts.
@@ -21,7 +21,7 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 
 import '../../core/theme/app_palettes.dart';
-import '../../services/scheduler/leitner_scheduler.dart';
+import '../../services/leitner_scheduler.dart';
 import '../database/database.dart';
 import '../models/lesson_model.dart';
 import 'repository_interfaces.dart';

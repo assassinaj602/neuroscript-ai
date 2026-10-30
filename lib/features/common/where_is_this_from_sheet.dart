@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/features/common/where_is_this_from_sheet.dart
+// File: lib/features/common/where_is_this_from_sheet.dart
 //
 // Description:
 //   Line-Level Grounding Provenance modal bottom sheet (WP2.4).

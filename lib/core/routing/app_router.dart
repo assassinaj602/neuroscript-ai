@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/core/routing/app_router.dart
+// File: lib/core/routing/app_router.dart
 //
 // Description:
 //   Declarative routing configuration built upon GoRouter and Riverpod.

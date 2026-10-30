@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/features/onboarding/onboarding_screen.dart
+// File: lib/features/onboarding/onboarding_screen.dart
 //
 // Description:
 //   First-run introduction screen welcoming learners and establishing trust.

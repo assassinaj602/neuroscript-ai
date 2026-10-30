@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/core/theme/app_theme.dart
+// File: lib/core/theme/app_theme.dart
 //
 // Description:
 //   Material 3 ThemeData factory engineered to satisfy Section 4 & WP2.5 of the

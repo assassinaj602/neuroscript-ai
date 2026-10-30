@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/services/seed/seed_importer.dart
+// File: lib/services/seed_importer.dart
 //
 // Description:
 //   Idempotent offline curriculum seed loader.
@@ -20,9 +20,9 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/services.dart';
 
-import '../../core/utils/document_hash.dart';
-import '../../data/models/lesson_model.dart';
-import '../../data/database/database.dart';
+import '../core/document_hash.dart';
+import '../data/models/lesson_model.dart';
+import '../data/database/database.dart';
 
 class SeedImporter {
   const SeedImporter(this.db);

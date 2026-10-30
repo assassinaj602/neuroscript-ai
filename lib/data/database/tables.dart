@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/data/database/tables.dart
+// File: lib/data/database/tables.dart
 //
 // Description:
 //   Drift table schema definitions adhering strictly to Appendix A of the

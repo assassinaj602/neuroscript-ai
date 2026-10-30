@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/data/repositories/repository_interfaces.dart
+// File: lib/data/repositories/repository_interfaces.dart
 //
 // Description:
 //   Abstract domain repository interfaces adhering to WP2.1 and the
@@ -16,7 +16,7 @@
 
 import '../models/lesson_model.dart';
 import '../../core/theme/app_palettes.dart';
-import '../../services/scheduler/leitner_scheduler.dart';
+import '../../services/leitner_scheduler.dart';
 
 /// Contract for managing learner profile persistence and preferences.
 abstract class ProfileRepository {

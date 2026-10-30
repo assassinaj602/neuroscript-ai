@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/features/providers.dart
+// File: lib/features/providers.dart
 //
 // Description:
 //   Application-wide Riverpod dependency injection and reactive state providers.
@@ -20,13 +20,13 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../core/config/app_config.dart';
+import '../core/app_config.dart';
 import '../core/theme/app_palettes.dart';
 import '../data/database/database.dart';
 import '../data/repositories/app_repositories.dart';
 import '../data/repositories/repository_interfaces.dart';
-import '../services/scheduler/leitner_scheduler.dart';
-import '../services/seed/seed_importer.dart';
+import '../services/leitner_scheduler.dart';
+import '../services/seed_importer.dart';
 
 /// Provider exposing compile-time configuration and runtime feature flags.
 final appConfigProvider = Provider<AppConfig>((ref) {

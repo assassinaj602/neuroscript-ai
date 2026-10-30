@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
-// File: app/lib/core/widgets/card_tile.dart
+// File: lib/core/widgets/card_tile.dart
 //
 // Description:
 //   Structured information chunking card tile component.
