@@ -159,48 +159,54 @@ class _ConceptMapScreenState extends State<ConceptMapScreen> {
                   ),
                 ),
 
-                // Floating helper banner
+                // Floating helper banner (Responsive Centered Pill)
                 Positioned(
                   bottom: 24,
                   left: 20,
                   right: 20,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surface.withValues(alpha: 0.95),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 10,
-                          offset: Offset(0, 3),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 560),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
                         ),
-                      ],
-                      border: Border.all(
-                        color: colorScheme.outline.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.touch_app,
-                          size: 20,
-                          color: colorScheme.primary,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            'Pinch to zoom. Tap any node to inspect source line grounding.',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme.onSurface,
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface.withValues(alpha: 0.95),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10,
+                              offset: Offset(0, 3),
                             ),
+                          ],
+                          border: Border.all(
+                            color: colorScheme.outline.withValues(alpha: 0.3),
                           ),
                         ),
-                      ],
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.touch_app,
+                              size: 20,
+                              color: colorScheme.primary,
+                            ),
+                            const SizedBox(width: 10),
+                            Flexible(
+                              child: Text(
+                                'Pinch to zoom. Tap any node to inspect source line grounding.',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: colorScheme.onSurface,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -235,10 +241,12 @@ class _ConceptMapPainter extends CustomPainter {
     final edgePaint = Paint()
       ..color = colorScheme.outline.withValues(alpha: 0.8)
       ..strokeWidth = 2.0
+      ..isAntiAlias = true
       ..style = PaintingStyle.stroke;
 
     final arrowPaint = Paint()
       ..color = colorScheme.primary
+      ..isAntiAlias = true
       ..style = PaintingStyle.fill;
 
     for (final edge in edges) {
@@ -320,6 +328,7 @@ class _ConceptMapPainter extends CustomPainter {
         ..color = isSelected
             ? colorScheme.primary.withValues(alpha: 0.15)
             : colorScheme.surface
+        ..isAntiAlias = true
         ..style = PaintingStyle.fill;
       canvas.drawRRect(rect, bgPaint);
 
@@ -329,6 +338,7 @@ class _ConceptMapPainter extends CustomPainter {
             ? colorScheme.primary
             : colorScheme.outline.withValues(alpha: 0.7)
         ..strokeWidth = isSelected ? 2.5 : 1.2
+        ..isAntiAlias = true
         ..style = PaintingStyle.stroke;
       canvas.drawRRect(rect, borderPaint);
 

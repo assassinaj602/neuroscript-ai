@@ -52,6 +52,28 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
     }
   }
 
+  IconData _getProfileIcon(ProfileType type) {
+    switch (type) {
+      case ProfileType.adhd:
+        return Icons.timer_outlined;
+      case ProfileType.dyslexia:
+        return Icons.auto_stories_outlined;
+      case ProfileType.autism:
+        return Icons.spa_outlined;
+    }
+  }
+
+  String _getProfileBadge(ProfileType type) {
+    switch (type) {
+      case ProfileType.adhd:
+        return 'Micro-Sessions & Dopamine';
+      case ProfileType.dyslexia:
+        return 'Anti-Glare Cream Palette';
+      case ProfileType.autism:
+        return 'Low Sensory Stimulation';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -109,7 +131,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                             borderRadius: BorderRadius.circular(16),
                             onTap: () => setState(() => _selected = p),
                             child: Padding(
-                              padding: const EdgeInsets.all(20),
+                              padding: const EdgeInsets.all(18),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -123,12 +145,30 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          p.displayName,
-                                          style: theme.textTheme.titleMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.w700,
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                p.displayName,
+                                                style: theme.textTheme.titleMedium
+                                                    ?.copyWith(
+                                                      fontWeight: FontWeight.w700,
+                                                    ),
                                               ),
+                                            ),
+                                            Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: colorScheme.primary.withValues(alpha: 0.1),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Icon(
+                                                _getProfileIcon(p),
+                                                size: 18,
+                                                color: colorScheme.primary,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
@@ -138,6 +178,25 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                                                 color: colorScheme.onSurface
                                                     .withValues(alpha: 0.85),
                                               ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 3,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: colorScheme.secondary.withValues(alpha: 0.12),
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          child: Text(
+                                            _getProfileBadge(p),
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w600,
+                                              color: colorScheme.secondary,
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     ),

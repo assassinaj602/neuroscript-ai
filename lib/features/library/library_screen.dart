@@ -187,35 +187,88 @@ class LibraryScreen extends ConsumerWidget {
                     );
                   }
 
-                  return Column(
-                    children: lessons.map((l) {
-                      return CardTile(
-                        title: l.title,
-                        subtitle:
-                            '${l.cardCount} flashcards • ${l.dueCount} due for review',
-                        badgeText: l.source.toUpperCase(),
-                        leading: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(10),
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isWide = constraints.maxWidth >= 640;
+                      if (isWide) {
+                        return GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisExtent: 115,
+                            crossAxisSpacing: 14,
+                            mainAxisSpacing: 14,
                           ),
-                          child: Icon(
-                            Icons.menu_book,
-                            color: colorScheme.primary,
-                            size: 22,
-                          ),
-                        ),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                          size: 16,
-                          color: colorScheme.onSurface.withValues(alpha: 0.4),
-                        ),
-                        onTap: () {
-                          context.push('/lesson/${l.lessonId}');
-                        },
+                          itemCount: lessons.length,
+                          itemBuilder: (context, index) {
+                            final l = lessons[index];
+                            return CardTile(
+                              title: l.title,
+                              subtitle:
+                                  '${l.cardCount} flashcards • ${l.dueCount} due for review',
+                              badgeText: l.source.toUpperCase(),
+                              leading: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primary
+                                      .withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                  Icons.menu_book,
+                                  color: colorScheme.primary,
+                                  size: 22,
+                                ),
+                              ),
+                              trailing: Icon(
+                                Icons.arrow_forward_ios,
+                                size: 16,
+                                color: colorScheme.onSurface
+                                    .withValues(alpha: 0.4),
+                              ),
+                              onTap: () {
+                                context.push('/lesson/${l.lessonId}');
+                              },
+                            );
+                          },
+                        );
+                      }
+
+                      return Column(
+                        children: lessons.map((l) {
+                          return CardTile(
+                            title: l.title,
+                            subtitle:
+                                '${l.cardCount} flashcards • ${l.dueCount} due for review',
+                            badgeText: l.source.toUpperCase(),
+                            leading: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color:
+                                    colorScheme.primary.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(
+                                Icons.menu_book,
+                                color: colorScheme.primary,
+                                size: 22,
+                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color:
+                                  colorScheme.onSurface.withValues(alpha: 0.4),
+                            ),
+                            onTap: () {
+                              context.push('/lesson/${l.lessonId}');
+                            },
+                          );
+                        }).toList(),
                       );
-                    }).toList(),
+                    },
                   );
                 },
                 loading: () => const Center(

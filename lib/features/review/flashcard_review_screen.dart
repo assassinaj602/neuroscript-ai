@@ -339,35 +339,46 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
                 ),
               ],
             ),
-            const Spacer(),
-            Center(
-              child: Text(
-                content,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  height: 1.4,
+            Expanded(
+              child: Center(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          content,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            height: 1.4,
+                          ),
+                        ),
+                        if (!isFront && chunks.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: chunks.map((c) {
+                              return Chip(
+                                label: Text(c, style: const TextStyle(fontSize: 12)),
+                                backgroundColor: colorScheme.secondary.withValues(
+                                  alpha: 0.1,
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-            if (!isFront && chunks.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 6,
-                runSpacing: 6,
-                children: chunks.map((c) {
-                  return Chip(
-                    label: Text(c, style: const TextStyle(fontSize: 12)),
-                    backgroundColor: colorScheme.secondary.withValues(
-                      alpha: 0.1,
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                  );
-                }).toList(),
-              ),
-            ],
-            const Spacer(),
             Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,

@@ -90,14 +90,15 @@ class LessonOverviewScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Row(
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
                       children: [
                         _infoBadge(
                           Icons.style_outlined,
                           '${lesson.flashcards.length} Flashcards',
                           colorScheme,
                         ),
-                        const SizedBox(width: 12),
                         _infoBadge(
                           Icons.account_tree_outlined,
                           '${lesson.conceptMap.nodes.length} Concept Nodes',
@@ -112,30 +113,57 @@ class LessonOverviewScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Main Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: AppButton(
-                    label: 'Review Now',
-                    icon: Icons.play_arrow,
-                    onPressed: () {
-                      context.push('/review/$lessonId');
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: AppButton(
-                    label: 'Concept Map',
-                    icon: Icons.account_tree_outlined,
-                    isSecondary: true,
-                    onPressed: () {
-                      context.push('/concept_map/$lessonId');
-                    },
-                  ),
-                ),
-              ],
+            // Main Action Buttons (Responsive Layout)
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrow = constraints.maxWidth < 420;
+                if (isNarrow) {
+                  return Column(
+                    children: [
+                      AppButton(
+                        label: 'Review Now',
+                        icon: Icons.play_arrow,
+                        onPressed: () {
+                          context.push('/review/$lessonId');
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      AppButton(
+                        label: 'Concept Map',
+                        icon: Icons.account_tree_outlined,
+                        isSecondary: true,
+                        onPressed: () {
+                          context.push('/concept_map/$lessonId');
+                        },
+                      ),
+                    ],
+                  );
+                }
+                return Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        label: 'Review Now',
+                        icon: Icons.play_arrow,
+                        onPressed: () {
+                          context.push('/review/$lessonId');
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: AppButton(
+                        label: 'Concept Map',
+                        icon: Icons.account_tree_outlined,
+                        isSecondary: true,
+                        onPressed: () {
+                          context.push('/concept_map/$lessonId');
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
 
             const SectionHeader(title: 'Included Flashcards'),

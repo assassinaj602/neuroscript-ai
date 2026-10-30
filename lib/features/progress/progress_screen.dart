@@ -45,19 +45,19 @@ class ProgressScreen extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 24,
-                    horizontal: 16,
+                    horizontal: 20,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      ProgressRing(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isNarrow = constraints.maxWidth < 440;
+                      final ring = ProgressRing(
                         progress: m.masteryPercentage / 100,
                         centerText:
                             '${m.masteryPercentage.toStringAsFixed(0)}%',
                         subText: 'Mastery',
                         radius: 46,
-                      ),
-                      Column(
+                      );
+                      final stats = Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _statRow(
@@ -81,8 +81,22 @@ class ProgressScreen extends ConsumerWidget {
                             theme,
                           ),
                         ],
-                      ),
-                    ],
+                      );
+
+                      if (isNarrow) {
+                        return Column(
+                          children: [
+                            ring,
+                            const SizedBox(height: 20),
+                            stats,
+                          ],
+                        );
+                      }
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [ring, stats],
+                      );
+                    },
                   ),
                 ),
               ),
@@ -105,8 +119,10 @@ class ProgressScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    Wrap(
+                      alignment: WrapAlignment.spaceAround,
+                      spacing: 12,
+                      runSpacing: 12,
                       children: [
                         _boxBadge('Box 1', '1 Day', colorScheme),
                         _boxBadge('Box 2', '3 Days', colorScheme),
