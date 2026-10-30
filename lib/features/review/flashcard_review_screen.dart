@@ -141,10 +141,13 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
         ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Progress Bar & Step Counter
               Row(
@@ -263,6 +266,8 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
           ),
         ),
       ),
+    ),
+  ),
     );
   }
 
@@ -396,24 +401,27 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
     return Scaffold(
       appBar: AppBar(title: const Text('Session Complete')),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: colorScheme.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.emoji_events,
-                  size: 64,
-                  color: colorScheme.primary,
-                ),
-              ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.workspace_premium,
+                      size: 64,
+                      color: colorScheme.primary,
+                    ),
+                  ),
               const SizedBox(height: 24),
               Text(
                 'Great Job!',
@@ -487,6 +495,8 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }

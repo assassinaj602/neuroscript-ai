@@ -89,14 +89,17 @@ class LibraryScreen extends ConsumerWidget {
         ],
       ),
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(allLessonsProvider);
-            ref.invalidate(schedulerMetricsProvider);
-          },
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            children: [
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 960),
+            child: RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(allLessonsProvider);
+                ref.invalidate(schedulerMetricsProvider);
+              },
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                children: [
               // Study Dashboard Banner
               metricsAsync.when(
                 data: (metrics) => Card(
@@ -228,6 +231,8 @@ class LibraryScreen extends ConsumerWidget {
           ),
         ),
       ),
+    ),
+  ),
       // Capture button: hidden in M1-M2 via enableCapture flag
       floatingActionButton: config.enableCapture
           ? FloatingActionButton.extended(

@@ -1,12 +1,12 @@
 {
-    "name": "neuro_script",
-    "short_name": "neuro_script",
+    "name": "NeuroScript AI",
+    "short_name": "NeuroScript",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#F8F9FA",
+    "theme_color": "#3F51B5",
+    "description": "Privacy-Preserving Study Platform for Neurodivergent Learners (ADHD, Dyslexia, Autism)",
+    "orientation": "any",
     "prefer_related_applications": false,
     "icons": [
         {

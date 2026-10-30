@@ -180,9 +180,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 880),
+            child: ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
             // Active Profile Selection
             const SectionHeader(title: 'Learner Accessibility Profile'),
             Card(
@@ -320,6 +323,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }

@@ -62,9 +62,12 @@ class LessonOverviewScreen extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 880),
+            child: ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
             // Title & Meta card
             Card(
               child: Padding(
@@ -205,7 +208,9 @@ class LessonOverviewScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 
   Widget _infoBadge(IconData icon, String label, ColorScheme colorScheme) {

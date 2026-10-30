@@ -34,9 +34,12 @@ class ProgressScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Learning Progress')),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 880),
+            child: ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
             metricsAsync.when(
               data: (m) => Card(
                 child: Padding(
@@ -170,7 +173,9 @@ class ProgressScreen extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 
   Widget _statRow(IconData icon, String text, Color color, ThemeData theme) {

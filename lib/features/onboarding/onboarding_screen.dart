@@ -34,11 +34,13 @@ class OnboardingScreen extends StatelessWidget {
           builder: (context, constraints) {
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight - 48,
-                ),
-                child: IntrinsicHeight(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight - 48,
+                    maxWidth: 640,
+                  ),
+                  child: IntrinsicHeight(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -110,7 +112,8 @@ class OnboardingScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            );
+            ),
+          );
           },
         ),
       ),

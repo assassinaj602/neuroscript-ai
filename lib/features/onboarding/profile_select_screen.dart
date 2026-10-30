@@ -60,10 +60,13 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Choose Your Learning Profile')),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 720),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
                 'Personalize Your Experience',
@@ -159,6 +162,8 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
           ),
         ),
       ),
+    ),
+  ),
     );
   }
 }

@@ -61,9 +61,12 @@ class ArchitectureScreen extends StatelessWidget {
   }
 
   Widget _buildFlowTab(ThemeData theme, ColorScheme colorScheme) {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 960),
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
         const SectionHeader(title: 'High-Level Pipeline (Figure 5.1)'),
         _stepCard(
           step: '1',
@@ -119,13 +122,18 @@ class ArchitectureScreen extends StatelessWidget {
           theme: theme,
         ),
       ],
-    );
-  }
+    ),
+  ),
+);
+}
 
   Widget _buildErTab(ThemeData theme, ColorScheme colorScheme) {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 960),
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
         const SectionHeader(title: 'On-Device Encrypted Database (Figure 5.2)'),
         CardTile(
           title: 'UserProfiles',
@@ -173,13 +181,18 @@ class ArchitectureScreen extends StatelessWidget {
           leading: const Icon(Icons.security),
         ),
       ],
-    );
-  }
+    ),
+  ),
+);
+}
 
   Widget _buildContractsTab(ThemeData theme, ColorScheme colorScheme) {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 960),
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
         const SectionHeader(title: 'Frozen Lesson JSON Contract (Appendix B)'),
         Card(
           color: colorScheme.surface,
@@ -238,17 +251,22 @@ class ArchitectureScreen extends StatelessWidget {
           badgeText: 'M5 Endpoint',
         ),
       ],
-    );
-  }
+    ),
+  ),
+);
+}
 
   Widget _buildRulesTab(
     BuildContext context,
     ThemeData theme,
     ColorScheme colorScheme,
   ) {
-    return Consumer(
-      builder: (context, ref, _) {
-        final config = ref.watch(appConfigProvider);
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 960),
+        child: Consumer(
+          builder: (context, ref, _) {
+            final config = ref.watch(appConfigProvider);
 
         return ListView(
           padding: const EdgeInsets.all(20),
@@ -337,8 +355,10 @@ class ArchitectureScreen extends StatelessWidget {
           ],
         );
       },
-    );
-  }
+    ),
+  ),
+);
+}
 
   Widget _flagRow(String name, String value, ColorScheme colorScheme) {
     return Padding(
