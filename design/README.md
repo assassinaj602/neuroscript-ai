@@ -1,6 +1,13 @@
 # Design System and UI/UX Specifications
 
-This directory contains user interface design tokens, accessibility specifications, and screen flow documentation for NeuroScript AI.
+This directory contains user interface design tokens, accessibility specifications, screen wireframes, and design guidelines for NeuroScript AI.
+
+---
+
+## Directory Index
+
+* **[design_tokens.json](design_tokens.json):** Machine-readable design tokens defining spacing scales, border radii, elevations, touch targets, and neuroinclusive profile color palettes.
+* **[wireframes.md](wireframes.md):** Low-fidelity and high-fidelity screen wireframes, visual hierarchies, and interaction flows across the 11 core application views.
 
 ---
 

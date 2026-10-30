@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "NeuroScript AI Design System Tokens",
+  "version": "1.0.0",
+  "global": {
+    "spacing": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "xxl": 48
+    },
+    "borderRadius": {
+      "none": 0,
+      "sm": 6,
+      "md": 12,
+      "lg": 16,
+      "xl": 24,
+      "full": 9999
+    },
+    "elevation": {
+      "level0": 0,
+      "level1": 1,
+      "level2": 3,
+      "level3": 6
+    },
+    "touchTarget": {
+      "minWidthDp": 48,
+      "minHeightDp": 48
+    },
+    "typography": {
+      "fontFamily": "Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+      "scale": {
+        "labelSmall": { "fontSize": 11, "lineHeight": 1.4 },
+        "labelMedium": { "fontSize": 12, "lineHeight": 1.4 },
+        "labelLarge": { "fontSize": 14, "lineHeight": 1.4 },
+        "bodySmall": { "fontSize": 12, "lineHeight": 1.5 },
+        "bodyMedium": { "fontSize": 14, "lineHeight": 1.5 },
+        "bodyLarge": { "fontSize": 16, "lineHeight": 1.5 },
+        "titleSmall": { "fontSize": 14, "lineHeight": 1.3 },
+        "titleMedium": { "fontSize": 16, "lineHeight": 1.3 },
+        "titleLarge": { "fontSize": 20, "lineHeight": 1.3 },
+        "headlineMedium": { "fontSize": 24, "lineHeight": 1.2 }
+      }
+    }
+  },
+  "profiles": {
+    "adhd": {
+      "name": "ADHD Focus Profile",
+      "targetNeeds": "Executive function support, chunked visual stimuli, dopamine completion reinforcement",
+      "colors": {
+        "primary": "#3F51B5",
+        "primaryContainer": "#E8EAF6",
+        "secondary": "#FF9800",
+        "secondaryContainer": "#FFF3E0",
+        "background": "#F8F9FA",
+        "surface": "#FFFFFF",
+        "onSurface": "#212121",
+        "border": "#E0E0E0"
+      },
+      "rules": {
+        "sessionCardCap": 5,
+        "reduceVisualClutter": true,
+        "highContrastDividers": true
+      }
+    },
+    "dyslexia": {
+      "name": "Dyslexia Reading Profile",
+      "targetNeeds": "Elimination of visual glare, reduced optical crowding, line tracking assistance",
+      "colors": {
+        "primary": "#2D6A4F",
+        "primaryContainer": "#D8F3DC",
+        "secondary": "#74C69D",
+        "secondaryContainer": "#E8F8F0",
+        "background": "#FBF8EE",
+        "surface": "#F4EEDC",
+        "onSurface": "#2B2D42",
+        "border": "#D8CFBA"
+      },
+      "typography": {
+        "lineSpacingMultiplier": 1.6,
+        "letterSpacing": 0.6,
+        "fontRecommendation": "OpenDyslexic, Lexend, or Atkinson Hyperlegible"
+      },
+      "rules": {
+        "sessionCardCap": 10,
+        "avoidPureBlackOnWhite": true,
+        "ttsAutoReadDefault": true
+      }
+    },
+    "autism": {
+      "name": "Autism Sensory & Predictability Profile",
+      "targetNeeds": "Calm low-saturation environment, literal phrasing, predictable spatial navigation",
+      "colors": {
+        "primary": "#3D6B7A",
+        "primaryContainer": "#CFE0E5",
+        "secondary": "#6A8E9A",
+        "secondaryContainer": "#DFE9EC",
+        "background": "#EEF3F4",
+        "surface": "#FFFFFF",
+        "onSurface": "#203038",
+        "border": "#C0D2D7"
+      },
+      "rules": {
+        "sessionCardCap": 10,
+        "disableAutoplayMotion": true,
+        "requireConfirmationForDestructiveActions": true,
+        "enableSimplifyWordingToggle": true,
+        "explicitStepCounters": true
+      }
+    }
+  }
+}

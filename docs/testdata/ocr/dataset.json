@@ -1,0 +1,36 @@
+{
+  "version": "1.0.0",
+  "samples": [
+    {
+      "id": "note_001",
+      "subject": "Biology - Photosynthesis",
+      "authorId": "writer_01",
+      "lighting": "direct_daylight",
+      "paper": "ruled",
+      "groundTruthLines": [
+        "Photosynthesis occurs inside plant chloroplasts.",
+        "Chlorophyll pigments absorb blue and red light spectrums.",
+        "Light energy splits water molecules producing oxygen and protons.",
+        "ATP and NADPH are synthesized during the light-dependent reactions.",
+        "Carbon dioxide fixation occurs during the Calvin cycle in the stroma.",
+        "Enzyme RuBisCO catalyzes the initial carbon capture step.",
+        "Glyceraldehyde 3-phosphate is converted into glucose carbohydrates."
+      ]
+    },
+    {
+      "id": "note_002",
+      "subject": "Computer Science - Algorithms",
+      "authorId": "writer_02",
+      "lighting": "warm_indoor",
+      "paper": "plain",
+      "groundTruthLines": [
+        "Binary search requires a sorted array with random access.",
+        "The search interval is halved on each comparison step.",
+        "Worst-case and average-case time complexity is O(log n).",
+        "Space complexity for iterative binary search is O(1).",
+        "Recursive implementations consume O(log n) call stack frames.",
+        "Edge case integer overflow: calculate mid as low + (high - low) / 2."
+      ]
+    }
+  ]
+}
