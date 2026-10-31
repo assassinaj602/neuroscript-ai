@@ -158,18 +158,20 @@ Review scheduling is governed by an implementation of the Leitner Spaced Repetit
 
 ---
 
-## Database Schemata (On-Device & Proxy)
+## Local Encrypted Database Architecture (Milestone 2)
 
-### Client Database (Drift / SQLCipher)
+Complete technical documentation: **[`lib/data/database/README.md`](lib/data/database/README.md)**
+
+The on-device relational database is implemented using **Drift ORM** and encrypted at rest with **SQLCipher AES-256** on native platforms (Android, iOS, Windows, macOS, Linux) and **sqlite3 WebAssembly** on Flutter Web.
+
+### Core Tables & Relationships
 * `UserProfiles`: `id` (PK), `profileType` (ADHD, Dyslexia, Autism), `themeSettings` (JSON), `createdAt`.
 * `SourceNotes`: `noteId` (PK), `rawOcrText`, `documentHash` (SHA-256), `createdAt`.
 * `Lessons`: `lessonId` (PK), `noteId` (FK, cascade delete), `title`, `conceptMapJson`, `promptVersion`, `source`, `createdAt`.
 * `Flashcards`: `cardId` (PK), `lessonId` (FK, cascade delete), `question`, `answer`, `sourceLineReference`, `groundingScore`, `verified`.
 * `ReviewProgress`: `progressId` (PK), `cardId` (FK, cascade delete), `box` (1..5), `spacedRepetitionInterval` (1, 3, 7, 14, 30), `nextReviewDate`, `lastReviewedAt`, `consecutiveCorrect`.
-* `PendingJobs` *(Milestone 4 extension)*: `jobId` (PK), `noteHash`, `status`, `attempts`, `nextAttemptAt`, `createdAt`.
 
-### Backend Database (Entity Framework Core / SQLite)
-* `RequestLog`: `Id` (PK), `InstallHash`, `Endpoint`, `Status`, `LatencyMs`, `Provider`, `CreatedAt`.
+Referential integrity enforces `onDelete: KeyAction.cascade` across all child relationships, ensuring atomic deletions and zero orphaned records.
 
 ---
 
