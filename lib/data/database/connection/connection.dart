@@ -4,7 +4,7 @@
 //
 // Description:
 //   Conditionally routes database connection construction to either
-//   native SQLite (dart.library.io) or WebAssembly SQLite (dart.library.js_interop).
+//   native SQLite with SQLCipher (dart.library.ffi) or WebAssembly SQLite (dart.library.js_interop).
 // ============================================================================
 
 export 'connection_stub.dart'

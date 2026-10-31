@@ -17,6 +17,8 @@
 //     and ReviewProgress in a single transaction, preventing partial states.
 // ============================================================================
 
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:flutter/services.dart';
 
@@ -82,7 +84,7 @@ class SeedImporter {
                   lessonId: lessonId,
                   noteId: noteId,
                   title: lessonModel.title,
-                  conceptMapJson: lessonModel.conceptMap.toJson().toString(),
+                  conceptMapJson: jsonEncode(lessonModel.conceptMap.toJson()),
                   promptVersion: Value(lessonModel.meta.promptVersion),
                   source: Value(lessonModel.meta.source),
                 ),
@@ -100,7 +102,7 @@ class SeedImporter {
                     lessonId: lessonId,
                     question: card.question,
                     answer: card.answer,
-                    sourceLineReference: card.sourceLines.toString(),
+                    sourceLineReference: jsonEncode(card.sourceLines),
                     groundingScore: Value(card.groundingScore ?? 0.95),
                     verified: Value(card.verified),
                   ),
