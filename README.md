@@ -1,6 +1,6 @@
 # NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
 
-A specialized, accessible study application engineered for students with Attention Deficit Hyperactivity Disorder (ADHD), Dyslexia, and Autism Spectrum Conditions. NeuroScript AI transforms raw handwritten lecture notes into line-grounded flashcards and interactive concept maps using a hybrid AI pipeline (Google Gemini 2.5 Flash via a secure ASP.NET Core proxy, with an on-device Small Language Model fallback), verified against strict lexical and semantic grounding metrics and stored within a locally encrypted database.
+A specialized, accessible study application engineered for students with Attention Deficit Hyperactivity Disorder (ADHD), Dyslexia, and Autism Spectrum Conditions. Built with Flutter and an encrypted local SQLite database (Drift + SQLCipher), NeuroScript AI delivers an offline-first learning system with Leitner spaced repetition flashcards, 2D concept maps, and neurodivergent-friendly UI/UX themes adhering strictly to WCAG 2.1 AA accessibility standards.
 
 ---
 
@@ -10,9 +10,9 @@ A specialized, accessible study application engineered for students with Attenti
 * **Course:** CS-400 Final Year Project (Academic Year 2026–2027)
 * **Supervisor:** Mr. Awais Mehmood
 * **Engineering Team:**
-  * **Zain Tahir** (Roll No. 23-CS-115) – Systems Architecture, Database Engineering, AI Logic, Client-Server Integration
+  * **Zain Tahir** (Roll No. 23-CS-115) – Systems Architecture, Database Engineering, Frontend Implementation
   * **Ujala Sahar** (Roll No. 23-CS-135) – UI/UX Design System, Accessibility Auditing, User Acceptance Testing, Documentation
-* **Current Delivery Status:** Milestone 1 (`v0.1.0-m1`) and Milestone 2 (`v0.2.0-m2`) Complete
+* **Current Delivery Status:** Milestone 1 (Project Planning & Design) and Milestone 2 (Frontend & Database Initialization) Complete
 
 ---
 
@@ -29,34 +29,38 @@ NeuroScript AI resolves these challenges through an accessibility-first client a
 
 ---
 
-## System Architecture
+## System Architecture (Milestones 1 & 2)
 
-The application adopts a hybrid cloud/edge topology. The client interface is implemented in Flutter, connecting to an ASP.NET Core proxy gateway for cloud-assisted synthesis, while retaining autonomous offline functionality through an embedded Small Language Model (SLM) and an encrypted local database.
+In accordance with the project proposal, Milestones 1 and 2 deliver the complete **Frontend & Database Initialization** layers:
+* **Presentation Layer (Flutter):** Fully responsive, multi-platform UI (Mobile, Desktop, Web) featuring custom neuroinclusive themes, 3D flip card flashcards, interactive 2D cubic Bezier concept map, and sensory-friendly navigation.
+* **Storage Layer (Drift + SQLCipher):** Local, encrypted SQLite database managing student notes, curriculum lessons, Leitner flashcard review progress, and user preference state with AES-256 encryption.
 
 ```
 +-------------------------------------------------------------------------+
-|                              Client Layer                               |
+|                    Client Layer (Flutter & Riverpod)                    |
 |                                                                         |
-|  [ Camera Capture ] ---> [ OpenCV Preprocessing ] ---> [ ML Kit OCR ]   |
-|                                                            │   │         |
-|                                                               ▼         |
-|  [ Flutter UI: Riverpod + GoRouter ] <---> [ Line-Number Review Screen] |
-|     │   │                                                                |
-|  │   │   ├── (Online Flow)  ────────────────┐                             |
-|     │   │                                  ▼                             |
-|     │   │                       [ ASP.NET Core Proxy ]                   |
-|     │   │                               │   │                             |
-|     │   │                                  ▼                             |
-|     │   │                       [ Google Gemini 2.5 ]                    |
-|     │   │                               │   │                             |
-|     │   │                                  ▼                             |
-|  │   │   ├── (Validation) <─── [ Grounding Validator ]                    |
-|     │   │                     (Lexical + Semantic)                       |
-|     │   │                                                                |
-|     │   └── (Offline Flow) ─> [ On-Device SLM ] ──> [ PendingJobs Queue ]|
-|                                    │   │                                 |
-|                                       ▼                                 |
-|                     [ Drift + SQLCipher (AES-256) ]                     |
+|  [ Splash & Onboarding ]  --->  [ Profile Selection: ADHD/Dyslexia/ASD ] |
+|                                              |                          |
+|                                              v                          |
+|  [ Library Screen ] <--------------> [ Lesson Overview Screen ]         |
+|     |                                        |                          |
+|     +-- [ Flashcard Review (3D Flip) ] <-----+                          |
+|     +-- [ Concept Map (2D Bezier Graph) ] <--+                          |
+|     +-- [ Progress & Analytics ] <-----------+                          |
+|                                                                         |
+|  [ "Where is this from?" Line-Level Grounding Provenance Sheet ]        |
++-------------------------------------------------------------------------+
+                                    |
+                                    v (Reactive Streams & SQLCipher AES-256)
++-------------------------------------------------------------------------+
+|               Local Encrypted Database Layer (Drift ORM)                |
+|                                                                         |
+|  - LearnerProfiles Table                                                |
+|  - Notes Table (raw text & document hashes)                             |
+|  - Lessons & LessonChunks Tables                                        |
+|  - Flashcards & FlashcardReviews Tables (5-Box Leitner Engine)          |
+|                                                                         |
+|  Cross-Platform: SQLCipher AES-256 (Native) / sqlite3 WASM (Web)        |
 +-------------------------------------------------------------------------+
 ```
 
@@ -199,12 +203,12 @@ Development strictly adheres to the eight engineering rules defined in the miles
 
 ## Repository Structure
 
-The project is arranged according to the standard Flutter application architecture, integrating mobile, web, and desktop clients, an ASP.NET Core proxy gateway, design guidelines, and formal contracts:
+The project is arranged according to the standard Flutter application architecture, integrating mobile, web, and desktop clients, design guidelines, and formal specifications:
 
 ```
 neuroscript-ai/
 ├── .github/
-│   ├── workflows/            # GitHub Actions CI/CD workflows (ci-app.yml, ci-backend.yml)
+│   ├── workflows/            # GitHub Actions CI workflow (ci-app.yml)
 │   ├── ISSUE_TEMPLATE/       # Standardized issue templates
 │   └── PULL_REQUEST_TEMPLATE.md
 ├── android/                  # Native Android host configuration
@@ -221,13 +225,8 @@ neuroscript-ai/
 │   ├── services/             # Leitner scheduler and seed loader
 │   └── main.dart             # Fast application entrypoint with splash initialization
 ├── test/                     # 34 automated unit and widget tests
-├── backend/                  # ASP.NET Core proxy & validation gateway
-│   ├── NeuroScript.Backend.sln
-│   ├── prompts/v1/           # System prompt templates & few-shot schema
-│   ├── src/                  # Minimal API, Core contracts, Infrastructure
-│   └── tests/                # Backend xUnit tests
-├── design/                   # UI/UX design specifications and accessibility guidelines
-├── docs/                     # Formal contracts, SRS, personas, blueprints
+├── design/                   # UI/UX design specifications, wireframes, and tokens
+├── docs/                     # Formal contracts, requirements, personas, ER diagrams
 ├── analysis_options.yaml     # Flutter strict lint configurations
 ├── pubspec.yaml              # Flutter dependency manifest
 ├── .editorconfig             # Cross-IDE formatting conventions
@@ -243,7 +242,6 @@ neuroscript-ai/
 ### Prerequisites
 * Flutter SDK (version 3.47.x or higher)
 * Dart SDK (version 3.13.x or higher)
-* .NET SDK (version 9.0.x or higher)
 * Android SDK (API Level 34 or higher, Build Tools 36.0.0)
 * Java Development Kit (JDK 17 or higher)
 
@@ -263,21 +261,6 @@ flutter run
 
 # Compile optimized release APKs with architecture splits
 flutter build apk --release --split-per-abi
-```
-
-### Backend Proxy (.NET 9)
-```bash
-# Navigate to backend directory
-cd backend
-
-# Build solution
-dotnet build NeuroScript.Backend.sln
-
-# Run backend test suite
-dotnet test NeuroScript.Backend.sln
-
-# Start backend locally
-dotnet run --project src/Api/NeuroScript.Api.csproj
 ```
 Generated binaries:
 * `build/app/outputs/flutter-apk/app-arm64-v8a-release.apk` (~19.5 MB, modern 64-bit devices)
