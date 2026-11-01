@@ -15,5 +15,10 @@ QueryExecutor openConnection() {
 
 /// Opens an isolated in-memory database connection for testing.
 QueryExecutor openMemoryConnection() {
-  throw UnsupportedError('Platform in-memory database connection is not supported.');
+  throw UnsupportedError(
+    'Platform in-memory database connection is not supported.',
+  );
 }
+
+/// Stub for deleting the encryption key.
+Future<void> deleteDatabaseEncryptionKey({Object? secureStorage}) async {}

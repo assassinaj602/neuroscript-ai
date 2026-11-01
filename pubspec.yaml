@@ -41,8 +41,7 @@ dependencies:
   drift: ^2.35.3
   path_provider: ^2.1.6
   path: ^1.9.1
-  sqlcipher_flutter_libs: ^0.7.0+eol
-
+  sqlite3: 3.5.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -69,6 +68,11 @@ flutter:
   uses-material-design: true
   assets:
     - assets/seed/
+
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc
 
   # To add assets to your application, add an assets section, like this:
   # assets:

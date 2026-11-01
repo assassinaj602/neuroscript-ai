@@ -38,7 +38,7 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? openMemoryConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -47,7 +47,9 @@ class AppDatabase extends _$AppDatabase {
       await m.createAll();
     },
     onUpgrade: (m, from, to) async {
-      // Future schema migrations (e.g., PendingJobs table in Milestone 4C) will go here.
+      if (from < 2) {
+        await m.addColumn(lessons, lessons.isDeleted);
+      }
     },
     beforeOpen: (details) async {
       // Explicitly activate SQLite foreign key enforcement
@@ -55,9 +57,9 @@ class AppDatabase extends _$AppDatabase {
     },
   );
 
-  /// Atomic transaction that purges all user data from the local device.
+  /// Atomic transaction that purges all user data and encryption keys from the local device.
   /// Triggered via Settings -> "Clear All Study Data" with user confirmation.
-  Future<void> clearAllData() async {
+  Future<void> clearAllData({dynamic secureStorage}) async {
     await transaction(() async {
       await delete(reviewProgress).go();
       await delete(flashcards).go();
@@ -65,5 +67,6 @@ class AppDatabase extends _$AppDatabase {
       await delete(sourceNotes).go();
       await delete(userProfiles).go();
     });
+    await deleteDatabaseEncryptionKey(secureStorage: secureStorage);
   }
 }

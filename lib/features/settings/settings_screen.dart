@@ -3,28 +3,21 @@
 // File: lib/features/settings/settings_screen.dart
 //
 // Description:
-//   Learner accessibility preferences and privacy management interface (WP2.4).
-//   Allows learners to switch profiles on the fly, adjust typography scaling (1.0x to 2.0x),
-//   inspect local database encryption status, and wipe all local study data.
-//
-// Key Concepts:
-//   - Live Profile Switching: Changing between ADHD, Dyslexia, and Autism profiles
-//     instantly updates the global Riverpod state and recalculates theme tokens.
-//   - Local Database Zero-Retention Wipe: Features a two-step confirmation dialog
-//     that executes an atomic wipe of all local SQLite tables, guaranteeing complete
-//     user privacy on shared or public devices.
+//   Learner accessibility preferences, privacy governance, and app settings.
+//   Enables profile switching, typography scaling (1.0x - 2.0x) with live preview,
+//   sensory reduced-motion toggle, high-contrast toggle, academic project metadata,
+//   and atomic zero-retention database wipe.
 // ============================================================================
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_palettes.dart';
-import '../../core/document_hash.dart';
 import '../../core/widgets/app_button.dart';
 import '../../core/widgets/card_tile.dart';
 import '../../core/widgets/section_header.dart';
-import '../../data/models/lesson_model.dart';
 import '../providers.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -35,101 +28,122 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  final TextEditingController _pasteController = TextEditingController();
-  bool _isImporting = false;
-
-  @override
-  void dispose() {
-    _pasteController.dispose();
-    super.dispose();
+  void _showPrivacyDetailsDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.shield_outlined, color: Colors.green),
+            SizedBox(width: 10),
+            Text('Privacy & Cryptography'),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Zero Cloud Retention Policy',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              SizedBox(height: 6),
+              Text(
+                'Your handwritten lecture notes and study telemetry remain strictly on your local device. No raw notes are transmitted to unencrypted cloud databases.',
+                style: TextStyle(fontSize: 13),
+              ),
+              SizedBox(height: 12),
+              Text(
+                kIsWeb ? 'Web Storage (Demo Only)' : 'AES-256 SQLCipher at Rest',
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                kIsWeb
+                    ? 'On web platforms, data is stored locally in IndexedDB using WebAssembly. Note: Web storage is not encrypted (demo only). Use native Android, iOS, or Desktop builds for hardware-secured AES-256 encryption at rest.'
+                    : 'Every database page is encrypted using AES-256 in CBC mode with PBKDF2 key derivation. The 256-bit cryptographic key is stored inside hardware keystores (Android Keystore / iOS Keychain) and is never hardcoded or printed to logs.',
+                style: const TextStyle(fontSize: 13),
+              ),
+              SizedBox(height: 12),
+              Text(
+                'Deterministic Document Hashing',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              SizedBox(height: 6),
+              Text(
+                'Each note transcript is hashed with SHA-256 after normalization to enforce on-device deduplication without cloud roundtrips.',
+                style: TextStyle(fontSize: 13),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 
-  Future<void> _handleImportPastedText() async {
-    final text = _pasteController.text.trim();
-    if (text.isEmpty) return;
-
-    setState(() => _isImporting = true);
-    try {
-      final noteRepo = ref.read(noteRepositoryProvider);
-      final lessonRepo = ref.read(lessonRepositoryProvider);
-
-      final hash = DocumentHash.compute(text);
-      final noteId = await noteRepo.saveNote(
-        rawOcrText: text,
-        documentHash: hash,
-      );
-
-      // Create simple extractive cards from pasted note lines
-      final lines = text.split('\n').where((l) => l.trim().isNotEmpty).toList();
-      final cards = <FlashcardModel>[];
-      final nodes = <ConceptNodeModel>[];
-
-      for (int i = 0; i < lines.length; i++) {
-        final line = lines[i];
-        final parts = line.split(RegExp(r'[:–\-]'));
-        final q = parts.isNotEmpty ? parts[0].trim() : 'Note point ${i + 1}';
-        final a = parts.length > 1
-            ? parts.sublist(1).join(' ').trim()
-            : line.trim();
-
-        cards.add(
-          FlashcardModel(
-            id: 'paste_card_${i + 1}',
-            question: q,
-            answer: a,
-            sourceLines: [i + 1],
-          ),
-        );
-
-        nodes.add(
-          ConceptNodeModel(
-            id: 'node_${i + 1}',
-            label: q.length > 25 ? '${q.substring(0, 22)}...' : q,
-            sourceLines: [i + 1],
-          ),
-        );
-      }
-
-      final edges = <ConceptEdgeModel>[];
-      for (int i = 0; i < nodes.length - 1; i++) {
-        edges.add(
-          ConceptEdgeModel(
-            from: nodes[i].id,
-            to: nodes[i + 1].id,
-            label: 'leads to',
-          ),
-        );
-      }
-
-      final lesson = LessonModel(
-        schemaVersion: 1,
-        title: lines.isNotEmpty ? lines[0] : 'Pasted Note Lesson',
-        meta: const LessonMeta(
-          profile: 'Dyslexia',
-          source: 'mock',
-          promptVersion: 'v1',
+  void _showAboutDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.info_outline),
+            SizedBox(width: 10),
+            Text('About NeuroScript AI'),
+          ],
         ),
-        conceptMap: ConceptMapModel(nodes: nodes, edges: edges),
-        flashcards: cards,
-        rawNotes: text,
-      );
-
-      await lessonRepo.saveLesson(noteId: noteId, lesson: lesson);
-
-      _pasteController.clear();
-      ref.invalidate(allLessonsProvider);
-      ref.invalidate(schedulerMetricsProvider);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Custom note converted into study lesson!'),
+        content: const SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'NeuroScript AI v1.0.0 (Milestones 1 & 2)',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              SizedBox(height: 6),
+              Text(
+                'Privacy-preserving study platform designed for neurodivergent learners (ADHD, Dyslexia, and Autism Spectrum Conditions).',
+                style: TextStyle(fontSize: 13),
+              ),
+              SizedBox(height: 12),
+              Text(
+                'Academic Project Details',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              SizedBox(height: 4),
+              Text(
+                '• Department of Computer Science, UET Taxila\n• CS-400 Final Year Project (2026–2027)\n• Supervisor: Mr. Awais Mehmood\n• Authors: Zain Tahir (23-CS-115) & Ujala Sahar (23-CS-135)',
+                style: TextStyle(fontSize: 13, height: 1.4),
+              ),
+              SizedBox(height: 12),
+              Text(
+                'Milestone Status',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              SizedBox(height: 4),
+              Text(
+                '• Milestone 1: Planning, Requirements, & Architecture (Complete)\n• Milestone 2: Offline Study App & Encrypted Database (Complete)\n• Milestone 3: OCR Capture & Preprocessing (Scheduled)',
+                style: TextStyle(fontSize: 13, height: 1.4),
+              ),
+            ],
           ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isImporting = false);
-    }
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _confirmDeleteAllData() async {
@@ -176,6 +190,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final colorScheme = theme.colorScheme;
     final currentProfile =
         ref.watch(activeProfileProvider).value ?? ProfileType.dyslexia;
+    final a11y = ref.watch(accessibilityPreferencesProvider);
+    final a11yNotifier = ref.read(accessibilityPreferencesProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
@@ -186,145 +202,218 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-            // Active Profile Selection
-            const SectionHeader(title: 'Learner Accessibility Profile'),
-            Card(
-              child: RadioGroup<ProfileType>(
-                groupValue: currentProfile,
-                onChanged: (newProfile) async {
-                  if (newProfile != null) {
-                    await ref
-                        .read(profileRepositoryProvider)
-                        .saveProfile(newProfile);
-                    ref.invalidate(activeProfileProvider);
-                  }
-                },
-                child: Column(
-                  children: ProfileType.values.map((p) {
-                    return RadioListTile<ProfileType>(
-                      value: p,
-                      title: Text(
-                        p.displayName,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      subtitle: Text(
-                        p.description,
-                        style: theme.textTheme.bodySmall,
-                      ),
-                      activeColor: colorScheme.primary,
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Architecture & Specifications
-            const SectionHeader(title: 'Engineering & Specifications'),
-            CardTile(
-              title: 'System Architecture & Contracts',
-              subtitle: 'Pipeline flow, ER schemas, OpenAPI contract, and the 8 Demoability rules.',
-              badgeText: 'Milestone 1 Specification',
-              leading: const Icon(Icons.account_tree_outlined),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () => context.push('/architecture'),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Privacy & Database Encryption Info
-            const SectionHeader(title: 'Security & Privacy'),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withValues(alpha: 0.12),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.lock_outline,
-                        color: Colors.green,
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Encrypted Local Database',
-                            style: TextStyle(fontWeight: FontWeight.w700),
+                // Active Profile Selection
+                const SectionHeader(title: 'Learner Accessibility Profile'),
+                Card(
+                  child: RadioGroup<ProfileType>(
+                    groupValue: currentProfile,
+                    onChanged: (newProfile) async {
+                      if (newProfile != null) {
+                        await ref
+                            .read(profileRepositoryProvider)
+                            .saveProfile(newProfile);
+                        ref.invalidate(activeProfileProvider);
+                      }
+                    },
+                    child: Column(
+                      children: ProfileType.values.map((p) {
+                        return RadioListTile<ProfileType>(
+                          value: p,
+                          title: Text(
+                            p.displayName,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'AES-256 bit SQLCipher key stored securely via FlutterSecureStorage.',
+                          subtitle: Text(
+                            p.description,
                             style: theme.textTheme.bodySmall,
                           ),
-                        ],
-                      ),
+                          activeColor: colorScheme.primary,
+                        );
+                      }).toList(),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
 
-            const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-            // Developer / Demo Import Tool
-            const SectionHeader(title: 'Developer Test Note Import'),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'Paste raw handwritten/typed study notes to instantly generate a local lesson slice:',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: _pasteController,
-                      maxLines: 4,
-                      decoration: InputDecoration(
-                        hintText: 'Line 1: Term - Definition\nLine 2: Concept - Explanation',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                // Accessibility Fine-Tuning
+                const SectionHeader(title: 'Accessibility Fine-Tuning'),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Typography Scaling',
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              '${(a11y.textScale * 100).toInt()}%',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: colorScheme.primary,
+                              ),
+                            ),
+                          ],
                         ),
-                        contentPadding: const EdgeInsets.all(12),
-                      ),
+                        const SizedBox(height: 6),
+                        Slider(
+                          value: a11y.textScale,
+                          min: 1.0,
+                          max: 2.0,
+                          divisions: 10,
+                          label: '${(a11y.textScale * 100).toInt()}%',
+                          onChanged: (val) {
+                            a11yNotifier.setTextScale(val);
+                          },
+                        ),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            'Sample text at ${(a11y.textScale * 100).toInt()}% scale.',
+                            style: TextStyle(
+                              fontSize: 14 * a11y.textScale,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        const Divider(height: 24),
+                        SwitchListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text(
+                            'Reduced Motion',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          subtitle: const Text(
+                            'Disables 3D card flips and bouncy animation transitions.',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          value: a11y.reducedMotion,
+                          onChanged: (val) {
+                            a11yNotifier.setReducedMotion(val);
+                          },
+                        ),
+                        SwitchListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text(
+                            'High Contrast Outlines',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          subtitle: const Text(
+                            'Increases contrast borders around all cards and buttons.',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          value: a11y.highContrast,
+                          onChanged: (val) {
+                            a11yNotifier.setHighContrast(val);
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    AppButton(
-                      label: 'Import as Lesson Slice',
-                      icon: Icons.input,
-                      isLoading: _isImporting,
-                      onPressed: _handleImportPastedText,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
 
-            const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
-            // Clear Data Danger Zone
-            AppButton(
-              label: 'Delete All Data & Reset',
-              icon: Icons.delete_forever,
-              isSecondary: true,
-              onPressed: _confirmDeleteAllData,
+                // Privacy & Database Encryption Info
+                const SectionHeader(title: 'Security & Privacy'),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: kIsWeb
+                                ? Colors.amber.withValues(alpha: 0.12)
+                                : Colors.green.withValues(alpha: 0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            kIsWeb ? Icons.cloud_queue : Icons.lock_outline,
+                            color: kIsWeb ? Colors.amber.shade800 : Colors.green,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                kIsWeb
+                                    ? 'Not encrypted (demo only)'
+                                    : 'Encrypted Local Database',
+                                style: const TextStyle(fontWeight: FontWeight.w700),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                kIsWeb
+                                    ? 'Web storage uses IndexedDB WASM. Not encrypted (demo only).'
+                                    : 'AES-256 bit hardware-keyed encryption at rest. Zero unencrypted cloud data transmission.',
+                                style: theme.textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: _showPrivacyDetailsDialog,
+                          child: const Text('Details'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Project & About
+                const SectionHeader(title: 'Application Information'),
+                CardTile(
+                  title: 'About NeuroScript AI',
+                  subtitle: 'Academic project details, team credits, and architecture documentation.',
+                  leading: const Icon(Icons.info_outline),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: _showAboutDialog,
+                ),
+
+                const SizedBox(height: 10),
+
+                // Study Analytics Shortcut
+                CardTile(
+                  title: 'Learning Analytics & Leitner Boxes',
+                  subtitle: 'Inspect review streaks, 5-box card distribution, and mastery metrics.',
+                  leading: const Icon(Icons.bar_chart_outlined),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () => context.push('/progress'),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Clear Data Danger Zone
+                AppButton(
+                  label: 'Delete All Data & Reset',
+                  icon: Icons.delete_forever,
+                  isSecondary: true,
+                  onPressed: _confirmDeleteAllData,
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-    ),
-  ),
-);
+    );
   }
 }
