@@ -22,7 +22,7 @@ QueryExecutor openConnection() {
           driftWorkerUri: Uri.parse('drift_worker.js'),
         );
         return result.resolvedExecutor;
-      } catch (e) {
+      } on Exception {
         // Fallback to in-memory WASM if web worker / OPFS is constrained
         final fallback = await WasmDatabase.open(
           databaseName: 'neuroscript_memory_db',

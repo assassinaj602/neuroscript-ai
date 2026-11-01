@@ -51,13 +51,25 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
     // 1. Asynchronously seed bundled curriculum without blocking main UI thread
     try {
-      await ref.read(seedImporterProvider).importSeedLessons();
-    } catch (e) {
-      debugPrint('Seed initialization skipped or encountered non-fatal error: $e');
+      await ref
+          .read(seedImporterProvider)
+          .importSeedLessons()
+          .timeout(const Duration(seconds: 3));
+    } on Exception catch (e, st) {
+      debugPrint(
+        'Seed initialization skipped or encountered non-fatal error: $e\n$st',
+      );
     }
 
     // 2. Read user profile status from secure storage / local database
-    final profile = await ref.read(activeProfileProvider.future);
+    dynamic profile;
+    try {
+      profile = await ref
+          .read(activeProfileProvider.future)
+          .timeout(const Duration(seconds: 3));
+    } on Exception catch (e, st) {
+      debugPrint('Profile read error or timeout: $e\n$st');
+    }
 
     // 3. Guarantee minimum splash duration to avoid jarring UI flickers
     final remainingMs =
@@ -132,7 +144,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 Text(
                   'Privacy-Preserving Study Platform\nfor Neurodivergent Learners',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.75),
+                    color: theme.textTheme.bodyMedium?.color?.withValues(
+                      alpha: 0.75,
+                    ),
                     height: 1.4,
                   ),
                   textAlign: TextAlign.center,
@@ -146,7 +160,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   height: 28,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      colorScheme.primary,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -154,7 +170,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 Text(
                   'Initializing secure offline workspace...',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+                    color: theme.textTheme.bodySmall?.color?.withValues(
+                      alpha: 0.6,
+                    ),
                   ),
                 ),
 

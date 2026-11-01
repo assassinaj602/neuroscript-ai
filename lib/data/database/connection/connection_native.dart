@@ -43,7 +43,7 @@ Future<String> getOrCreateEncryptionKey({
       await storage.write(key: 'neuroscript_master_aes_key', value: key);
     }
     return key;
-  } catch (e) {
+  } on Exception catch (e) {
     throw DatabaseEncryptionException(
       'Failed to securely access or generate hardware-backed encryption key from FlutterSecureStorage.',
       e,
@@ -82,7 +82,7 @@ QueryExecutor openConnection({String? overrideKey, File? overrideFile}) {
           }
         } on DatabaseEncryptionException {
           rethrow;
-        } catch (e) {
+        } on Exception catch (e) {
           throw DatabaseEncryptionException(
             'Failed to configure or verify SQLCipher/SQLite3MultipleCiphers encryption key on native SQLite handle.',
             e,

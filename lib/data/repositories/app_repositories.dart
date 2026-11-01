@@ -19,6 +19,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../core/theme/app_palettes.dart';
 import '../../services/leitner_scheduler.dart';
@@ -87,7 +88,8 @@ class AppNoteRepository implements NoteRepository {
             ),
           );
       return noteId;
-    } catch (_) {
+    } on Exception catch (e) {
+      debugPrint('saveNote collision or database error: $e');
       // If a concurrent insert occurred and hit the UNIQUE constraint on documentHash,
       // return the canonical existing noteId gracefully.
       final fallback = await getNoteIdByHash(documentHash);
@@ -193,7 +195,8 @@ class AppLessonRepository implements LessonRepository {
     try {
       final mapData = jsonDecode(lesson.conceptMapJson) as Map<String, dynamic>;
       conceptMap = ConceptMapModel.fromJson(mapData);
-    } catch (_) {
+    } on Exception catch (e) {
+      debugPrint('Failed to parse concept map JSON for ${lesson.lessonId}: $e');
       conceptMap = const ConceptMapModel(nodes: [], edges: []);
     }
 
@@ -202,7 +205,9 @@ class AppLessonRepository implements LessonRepository {
       try {
         final decoded = jsonDecode(c.sourceLineReference);
         if (decoded is List) lines = decoded.map((e) => e as int).toList();
-      } catch (_) {}
+      } on Exception catch (e) {
+        debugPrint('Failed to parse sourceLineReference for ${c.cardId}: $e');
+      }
 
       return FlashcardModel(
         id: c.cardId,
@@ -443,7 +448,9 @@ class AppReviewRepository implements ReviewRepository {
       try {
         final decoded = jsonDecode(c.sourceLineReference);
         if (decoded is List) lines = decoded.map((e) => e as int).toList();
-      } catch (_) {}
+      } on Exception catch (e) {
+        debugPrint('Failed to decode sourceLineReference for ${c.cardId}: $e');
+      }
 
       final cardModel = FlashcardModel(
         id: c.cardId,
