@@ -55,7 +55,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               SizedBox(height: 12),
               Text(
-                kIsWeb ? 'Web Storage (Demo Only)' : 'AES-256 SQLCipher at Rest',
+                kIsWeb
+                    ? 'Web Storage (Demo Only)'
+                    : 'AES-256 SQLCipher at Rest',
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 6),
@@ -344,7 +346,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           ),
                           child: Icon(
                             kIsWeb ? Icons.cloud_queue : Icons.lock_outline,
-                            color: kIsWeb ? Colors.amber.shade800 : Colors.green,
+                            color: kIsWeb
+                                ? Colors.amber.shade800
+                                : Colors.green,
                           ),
                         ),
                         const SizedBox(width: 14),
@@ -356,7 +360,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 kIsWeb
                                     ? 'Not encrypted (demo only)'
                                     : 'Encrypted Local Database',
-                                style: const TextStyle(fontWeight: FontWeight.w700),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                               const SizedBox(height: 2),
                               Text(

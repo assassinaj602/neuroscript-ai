@@ -118,31 +118,34 @@ void main() {
       expect(allLessons.length, equals(1));
     });
 
-    test('SeedImporter rolls back transaction when a seed file is malformed', () async {
-      final fakeBundle = FakeAssetBundle({
-        'assets/seed/photosynthesis.json': sampleLessonJson,
-        'assets/seed/computer_architecture.json': 'NOT_VALID_JSON{{[',
-        'assets/seed/algorithms.json': sampleLessonJson,
-      });
+    test(
+      'SeedImporter rolls back transaction when a seed file is malformed',
+      () async {
+        final fakeBundle = FakeAssetBundle({
+          'assets/seed/photosynthesis.json': sampleLessonJson,
+          'assets/seed/computer_architecture.json': 'NOT_VALID_JSON{{[',
+          'assets/seed/algorithms.json': sampleLessonJson,
+        });
 
-      final importer = SeedImporter(db);
-      expect(
-        () => importer.importSeedLessons(bundle: fakeBundle),
-        throwsA(isA<SeedImportException>()),
-      );
+        final importer = SeedImporter(db);
+        expect(
+          () => importer.importSeedLessons(bundle: fakeBundle),
+          throwsA(isA<SeedImportException>()),
+        );
 
-      // Verify transaction rollback: nothing was persisted, not even the first lesson
-      final allLessons = await db.select(db.lessons).get();
-      expect(allLessons, isEmpty);
+        // Verify transaction rollback: nothing was persisted, not even the first lesson
+        final allLessons = await db.select(db.lessons).get();
+        expect(allLessons, isEmpty);
 
-      final allNotes = await db.select(db.sourceNotes).get();
-      expect(allNotes, isEmpty);
+        final allNotes = await db.select(db.sourceNotes).get();
+        expect(allNotes, isEmpty);
 
-      final allCards = await db.select(db.flashcards).get();
-      expect(allCards, isEmpty);
+        final allCards = await db.select(db.flashcards).get();
+        expect(allCards, isEmpty);
 
-      final allProgress = await db.select(db.reviewProgress).get();
-      expect(allProgress, isEmpty);
-    });
+        final allProgress = await db.select(db.reviewProgress).get();
+        expect(allProgress, isEmpty);
+      },
+    );
   });
 }

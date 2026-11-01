@@ -22,8 +22,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/architecture/architecture_screen.dart';
 import '../../features/concept_map/concept_map_screen.dart';
+import '../../features/lesson/edit_lesson_screen.dart';
 import '../../features/lesson/lesson_overview_screen.dart';
 import '../../features/library/library_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
@@ -34,6 +34,35 @@ import '../../features/review/flashcard_review_screen.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/splash/splash_screen.dart';
 
+/// Pure route guard evaluation function, decoupling redirection business logic
+/// from widget lifecycle and enabling deterministic unit testing.
+String? evaluateAppRouteGuard({
+  required bool isLoading,
+  required dynamic profile,
+  required String matchedLocation,
+}) {
+  // Do not redirect while the database is still being read during cold-start
+  if (isLoading) return null;
+
+  final isSplash = matchedLocation == '/splash';
+  if (isSplash) return null;
+
+  final isGoingToOnboarding =
+      matchedLocation == '/onboarding' || matchedLocation == '/profile_select';
+
+  // Guard 1: First-time user with no profile -> Force redirection to Onboarding
+  if (profile == null) {
+    return isGoingToOnboarding ? null : '/onboarding';
+  }
+
+  // Guard 2: Existing learner attempting to navigate to onboarding -> Route to Library
+  if (isGoingToOnboarding) {
+    return '/library';
+  }
+
+  return null;
+}
+
 /// Riverpod provider delivering the global [GoRouter] instance.
 final appRouterProvider = Provider<GoRouter>((ref) {
   // Watch profile state to dynamically redirect based on learner setup status
@@ -41,32 +70,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     initialLocation: '/splash',
-    redirect: (context, state) {
-      final isLoading = activeProfileAsync.isLoading;
-      final profile = activeProfileAsync.value;
-
-      // Do not redirect while the database is still being read during cold-start
-      if (isLoading) return null;
-
-      final isSplash = state.matchedLocation == '/splash';
-      if (isSplash) return null;
-
-      final isGoingToOnboarding =
-          state.matchedLocation == '/onboarding' ||
-          state.matchedLocation == '/profile_select';
-
-      // Guard 1: First-time user with no profile -> Force redirection to Onboarding
-      if (profile == null) {
-        return isGoingToOnboarding ? null : '/onboarding';
-      }
-
-      // Guard 2: Existing learner attempting to navigate to onboarding -> Route to Library
-      if (isGoingToOnboarding) {
-        return '/library';
-      }
-
-      return null;
-    },
+    redirect: (context, state) => evaluateAppRouteGuard(
+      isLoading: activeProfileAsync.isLoading,
+      profile: activeProfileAsync.value,
+      matchedLocation: state.matchedLocation,
+    ),
     routes: [
       // 1. Cold-start branding & seed loader screen
       GoRoute(
@@ -105,13 +113,97 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   body: Center(child: CircularProgressIndicator()),
                 );
               }
+              if (snapshot.hasError) {
+                return Scaffold(
+                  appBar: AppBar(title: const Text('Error')),
+                  body: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.cloud_off,
+                            size: 48,
+                            color: Colors.orange,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Failed to load lesson: ${snapshot.error}',
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: () => context.go('/library'),
+                            icon: const Icon(Icons.arrow_back),
+                            label: const Text('Back to Library'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
               final lesson = snapshot.data;
               if (lesson == null) {
-                return const Scaffold(
-                  body: Center(child: Text('Lesson not found.')),
+                return Scaffold(
+                  appBar: AppBar(title: const Text('Not Found')),
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Lesson not found.'),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: () => context.go('/library'),
+                          icon: const Icon(Icons.arrow_back),
+                          label: const Text('Back to Library'),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               }
               return LessonOverviewScreen(lessonId: id, lesson: lesson);
+            },
+          );
+        },
+      ),
+
+      // 5b. Edit flashcard set / lesson
+      GoRoute(
+        path: '/lesson/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return FutureBuilder(
+            future: ref.read(lessonRepositoryProvider).getLessonById(id),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+              final lesson = snapshot.data;
+              if (lesson == null) {
+                return Scaffold(
+                  appBar: AppBar(title: const Text('Not Found')),
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Lesson not found.'),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: () => context.go('/library'),
+                          icon: const Icon(Icons.arrow_back),
+                          label: const Text('Back to Library'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+              return EditLessonScreen(lessonId: id, lesson: lesson);
             },
           );
         },
@@ -133,10 +225,55 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   body: Center(child: CircularProgressIndicator()),
                 );
               }
+              if (snapshot.hasError) {
+                return Scaffold(
+                  appBar: AppBar(title: const Text('Error')),
+                  body: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.cloud_off,
+                            size: 48,
+                            color: Colors.orange,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Failed to load review cards: ${snapshot.error}',
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: () => context.go('/library'),
+                            icon: const Icon(Icons.arrow_back),
+                            label: const Text('Back to Library'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
               final results = snapshot.data;
               if (results == null || results[0] == null) {
-                return const Scaffold(
-                  body: Center(child: Text('Lesson not found.')),
+                return Scaffold(
+                  appBar: AppBar(title: const Text('Not Found')),
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Review cards not found.'),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: () => context.go('/library'),
+                          icon: const Icon(Icons.arrow_back),
+                          label: const Text('Back to Library'),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               }
               final lesson = results[0] as dynamic;
@@ -171,10 +308,55 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   body: Center(child: CircularProgressIndicator()),
                 );
               }
+              if (snapshot.hasError) {
+                return Scaffold(
+                  appBar: AppBar(title: const Text('Error')),
+                  body: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.cloud_off,
+                            size: 48,
+                            color: Colors.orange,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Failed to load concept map: ${snapshot.error}',
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: () => context.go('/library'),
+                            icon: const Icon(Icons.arrow_back),
+                            label: const Text('Back to Library'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
               final lesson = snapshot.data;
               if (lesson == null) {
-                return const Scaffold(
-                  body: Center(child: Text('Lesson not found.')),
+                return Scaffold(
+                  appBar: AppBar(title: const Text('Not Found')),
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Lesson not found.'),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: () => context.go('/library'),
+                          icon: const Icon(Icons.arrow_back),
+                          label: const Text('Back to Library'),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               }
               return ConceptMapScreen(
@@ -193,13 +375,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ProgressScreen(),
       ),
 
-      // 9. Milestone 1 System Architecture, ER Schemas, and Contract Blueprints
-      GoRoute(
-        path: '/architecture',
-        builder: (context, state) => const ArchitectureScreen(),
-      ),
-
-      // 10. Application settings, accessibility fine-tuning, and data deletion
+      // 9. Application settings, accessibility fine-tuning, and data deletion
       GoRoute(
         path: '/settings',
         builder: (context, state) => const SettingsScreen(),

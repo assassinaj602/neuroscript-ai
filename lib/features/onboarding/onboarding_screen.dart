@@ -41,79 +41,81 @@ class OnboardingScreen extends StatelessWidget {
                     maxWidth: 640,
                   ),
                   child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 16),
-                      Center(
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary.withValues(alpha: 0.12),
-                            shape: BoxShape.circle,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 16),
+                        Center(
+                          child: Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary.withValues(
+                                alpha: 0.12,
+                              ),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.psychology,
+                              size: 48,
+                              color: colorScheme.primary,
+                            ),
                           ),
-                          child: Icon(
-                            Icons.psychology,
-                            size: 48,
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'NeuroScript AI',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.headlineLarge?.copyWith(
+                            fontWeight: FontWeight.w800,
                             color: colorScheme.primary,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'NeuroScript AI',
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: colorScheme.primary,
+                        const SizedBox(height: 10),
+                        Text(
+                          'Privacy-first study app designed for neurodivergent learners.',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: colorScheme.onSurface.withValues(alpha: 0.8),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Privacy-first study app designed for neurodivergent learners.',
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onSurface.withValues(alpha: 0.8),
+                        const SizedBox(height: 28),
+                        _featureRow(
+                          icon: Icons.verified_user_outlined,
+                          title: 'Grounded Active Recall',
+                          desc: 'Every flashcard cites exact line numbers back to your original notes.',
+                          colorScheme: colorScheme,
+                          theme: theme,
                         ),
-                      ),
-                      const SizedBox(height: 28),
-                      _featureRow(
-                        icon: Icons.verified_user_outlined,
-                        title: 'Grounded Active Recall',
-                        desc: 'Every flashcard cites exact line numbers back to your original notes.',
-                        colorScheme: colorScheme,
-                        theme: theme,
-                      ),
-                      const SizedBox(height: 16),
-                      _featureRow(
-                        icon: Icons.account_tree_outlined,
-                        title: 'Interactive Concept Maps',
-                        desc: 'Explore structural visual relationships between terms with pinch-to-zoom.',
-                        colorScheme: colorScheme,
-                        theme: theme,
-                      ),
-                      const SizedBox(height: 16),
-                      _featureRow(
-                        icon: Icons.lock_outline,
-                        title: 'Encrypted & Offline First',
-                        desc: 'Your study material never leaves your device unencrypted.',
-                        colorScheme: colorScheme,
-                        theme: theme,
-                      ),
-                      const Spacer(),
-                      const SizedBox(height: 24),
-                      AppButton(
-                        label: 'Get Started',
-                        icon: Icons.arrow_forward,
-                        onPressed: () => context.go('/profile_select'),
-                      ),
-                    ],
+                        const SizedBox(height: 16),
+                        _featureRow(
+                          icon: Icons.account_tree_outlined,
+                          title: 'Interactive Concept Maps',
+                          desc: 'Explore structural visual relationships between terms with pinch-to-zoom.',
+                          colorScheme: colorScheme,
+                          theme: theme,
+                        ),
+                        const SizedBox(height: 16),
+                        _featureRow(
+                          icon: Icons.lock_outline,
+                          title: 'Encrypted & Offline First',
+                          desc: 'Your study material never leaves your device unencrypted.',
+                          colorScheme: colorScheme,
+                          theme: theme,
+                        ),
+                        const Spacer(),
+                        const SizedBox(height: 24),
+                        AppButton(
+                          label: 'Get Started',
+                          icon: Icons.arrow_forward,
+                          onPressed: () => context.go('/profile_select'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
+            );
           },
         ),
       ),

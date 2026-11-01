@@ -384,13 +384,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
 
                       return LayoutBuilder(
                         builder: (context, constraints) {
-                          final textScale =
-                              MediaQuery.textScalerOf(context).scale(1.0);
+                          final textScale = MediaQuery.textScalerOf(context)
+                              .scale(1.0);
                           final isWide =
                               constraints.maxWidth >= 640 && textScale < 1.4;
                           if (isWide) {
-                            final extent =
-                                (148.0 * textScale).clamp(148.0, 320.0);
+                            final extent = (148.0 * textScale).clamp(
+                              148.0,
+                              320.0,
+                            );
                             return GridView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),

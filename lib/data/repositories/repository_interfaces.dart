@@ -30,6 +30,21 @@ abstract class ProfileRepository {
   Future<void> resetProfile();
 }
 
+/// Full metadata and raw OCR transcript for a source lecture note.
+class NoteDetails {
+  final String noteId;
+  final String rawOcrText;
+  final String documentHash;
+  final DateTime createdAt;
+
+  const NoteDetails({
+    required this.noteId,
+    required this.rawOcrText,
+    required this.documentHash,
+    required this.createdAt,
+  });
+}
+
 /// Contract for persisting raw OCR student lecture transcripts.
 abstract class NoteRepository {
   /// Stores a new raw note transcript and returns the generated noteId.
@@ -43,6 +58,9 @@ abstract class NoteRepository {
 
   /// Retrieves the raw transcript lines for a specific note.
   Future<String?> getRawNoteText(String noteId);
+
+  /// Retrieves full note metadata including document hash and creation timestamp.
+  Future<NoteDetails?> getNoteById(String noteId);
 }
 
 /// Contract for managing compiled lesson entities and concept maps.
@@ -59,8 +77,24 @@ abstract class LessonRepository {
     required LessonModel lesson,
   });
 
-  /// Deletes a lesson and cascades removal to all its flashcards and review metrics.
+  /// Deletes a lesson by moving it to recently deleted trash (soft delete).
   Future<void> deleteLesson(String lessonId);
+
+  /// Restores a recently deleted lesson back to the active library.
+  Future<void> restoreLesson(String lessonId);
+
+  /// Permanently removes a lesson and cascades removal to all flashcards and progress.
+  Future<void> permanentlyDeleteLesson(String lessonId);
+
+  /// Fetches a list of all soft-deleted lessons currently in trash.
+  Future<List<LessonSummary>> getDeletedLessons();
+
+  /// Updates a lesson's title and its set of flashcards (edit questions, answers, add/remove cards).
+  Future<void> updateLesson({
+    required String lessonId,
+    required String title,
+    required List<FlashcardModel> flashcards,
+  });
 }
 
 /// Contract for Leitner review tracking and spaced repetition scheduling.

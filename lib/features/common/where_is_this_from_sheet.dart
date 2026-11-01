@@ -185,13 +185,18 @@ class WhereIsThisFromSheet extends StatelessWidget {
 
               if (source == 'seed')
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 4,
+                  ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                    color: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.5,
+                    ),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: colorScheme.outline.withValues(alpha: 0.3),
@@ -199,7 +204,11 @@ class WhereIsThisFromSheet extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.edit_note, size: 18, color: colorScheme.primary),
+                      Icon(
+                        Icons.edit_note,
+                        size: 18,
+                        color: colorScheme.primary,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -216,7 +225,10 @@ class WhereIsThisFromSheet extends StatelessWidget {
                 )
               else if (groundingScore != null)
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 4,
+                  ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 8,
@@ -230,7 +242,11 @@ class WhereIsThisFromSheet extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.verified, size: 18, color: colorScheme.primary),
+                      Icon(
+                        Icons.verified,
+                        size: 18,
+                        color: colorScheme.primary,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(

@@ -40,158 +40,171 @@ class ProgressScreen extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-            metricsAsync.when(
-              data: (m) => Card(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 24,
-                    horizontal: 20,
-                  ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final isNarrow = constraints.maxWidth < 440;
-                      final ring = ProgressRing(
-                        progress: m.masteryPercentage / 100,
-                        centerText:
-                            '${m.masteryPercentage.toStringAsFixed(0)}%',
-                        subText: 'Mastery',
-                        radius: 46,
-                      );
-                      final stats = Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _statRow(
-                            Icons.schedule,
-                            '${m.dueToday} Due Today',
-                            colorScheme.primary,
-                            theme,
-                          ),
-                          const SizedBox(height: 10),
-                          _statRow(
-                            Icons.check_circle,
-                            '${m.masteredCards} Mastered (Box 5)',
-                            Colors.green,
-                            theme,
-                          ),
-                          const SizedBox(height: 10),
-                          _statRow(
-                            Icons.refresh,
-                            '${m.learningCards} In Progress',
-                            Colors.orange,
-                            theme,
-                          ),
-                        ],
-                      );
+                metricsAsync.when(
+                  data: (m) => Card(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 24,
+                        horizontal: 20,
+                      ),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final isNarrow = constraints.maxWidth < 440;
+                          final ring = ProgressRing(
+                            progress: m.masteryPercentage / 100,
+                            centerText:
+                                '${m.masteryPercentage.toStringAsFixed(0)}%',
+                            subText: 'Mastery',
+                            radius: 46,
+                          );
+                          final stats = Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _statRow(
+                                Icons.schedule,
+                                '${m.dueToday} Due Today',
+                                colorScheme.primary,
+                                theme,
+                              ),
+                              const SizedBox(height: 10),
+                              _statRow(
+                                Icons.check_circle,
+                                '${m.masteredCards} Mastered (Box 5)',
+                                Colors.green,
+                                theme,
+                              ),
+                              const SizedBox(height: 10),
+                              _statRow(
+                                Icons.refresh,
+                                '${m.learningCards} In Progress',
+                                Colors.orange,
+                                theme,
+                              ),
+                            ],
+                          );
 
-                      if (isNarrow) {
-                        return Column(
-                          children: [
-                            ring,
-                            const SizedBox(height: 20),
-                            stats,
-                          ],
-                        );
-                      }
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [ring, stats],
-                      );
-                    },
-                  ),
-                ),
-              ),
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text('Error: $e'),
-            ),
-
-            const SizedBox(height: 16),
-
-            const SectionHeader(title: 'Spaced Repetition (Leitner System)'),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    Text(
-                      'NeuroScript AI schedules active recall sessions on intervals of 1, 3, 7, 14, and 30 days to counter the Ebbinghaus forgetting curve.',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface.withValues(alpha: 0.8),
+                          if (isNarrow) {
+                            return Column(
+                              children: [
+                                ring,
+                                const SizedBox(height: 20),
+                                stats,
+                              ],
+                            );
+                          }
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [ring, stats],
+                          );
+                        },
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    Wrap(
-                      alignment: WrapAlignment.spaceAround,
-                      spacing: 12,
-                      runSpacing: 12,
+                  ),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => Text('Error: $e'),
+                ),
+
+                const SizedBox(height: 16),
+
+                const SectionHeader(
+                  title: 'Spaced Repetition (Leitner System)',
+                ),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
                       children: [
-                        _boxBadge('Box 1', '1 Day', colorScheme),
-                        _boxBadge('Box 2', '3 Days', colorScheme),
-                        _boxBadge('Box 3', '7 Days', colorScheme),
-                        _boxBadge('Box 4', '14 Days', colorScheme),
-                        _boxBadge(
-                          'Box 5',
-                          '30 Days',
-                          colorScheme,
-                          isMastered: true,
+                        Text(
+                          'NeuroScript AI schedules active recall sessions on intervals of 1, 3, 7, 14, and 30 days to counter the Ebbinghaus forgetting curve.',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onSurface.withValues(alpha: 0.8),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Wrap(
+                          alignment: WrapAlignment.spaceAround,
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: [
+                            _boxBadge('Box 1', '1 Day', colorScheme),
+                            _boxBadge('Box 2', '3 Days', colorScheme),
+                            _boxBadge('Box 3', '7 Days', colorScheme),
+                            _boxBadge('Box 4', '14 Days', colorScheme),
+                            _boxBadge(
+                              'Box 5',
+                              '30 Days',
+                              colorScheme,
+                              isMastered: true,
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
 
-            const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-            const SectionHeader(title: 'Per-Lesson Status'),
-            lessonsAsync.when(
-              data: (lessons) => Column(
-                children: lessons.map((l) {
-                  final duePct = l.cardCount > 0
-                      ? (l.dueCount / l.cardCount)
-                      : 0.0;
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                const SectionHeader(title: 'Per-Lesson Status'),
+                lessonsAsync.when(
+                  data: (lessons) => Column(
+                    children: lessons.map((l) {
+                      final duePct = l.cardCount > 0
+                          ? (l.dueCount / l.cardCount)
+                          : 0.0;
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 6),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(l.title, style: theme.textTheme.titleMedium),
-                              Text(
-                                '${l.cardCount - l.dueCount}/${l.cardCount} reviewed',
-                                style: theme.textTheme.bodySmall,
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      l.title,
+                                      style: theme.textTheme.titleMedium,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    '${l.cardCount - l.dueCount}/${l.cardCount} reviewed',
+                                    style: theme.textTheme.bodySmall,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              LinearProgressIndicator(
+                                value: 1.0 - duePct,
+                                minHeight: 6,
+                                borderRadius: BorderRadius.circular(4),
+                                color: colorScheme.primary,
+                                backgroundColor: colorScheme.outline.withValues(
+                                  alpha: 0.2,
+                                ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          LinearProgressIndicator(
-                            value: 1.0 - duePct,
-                            minHeight: 6,
-                            borderRadius: BorderRadius.circular(4),
-                            color: colorScheme.primary,
-                            backgroundColor: colorScheme.outline.withValues(
-                              alpha: 0.2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-              loading: () => const SizedBox.shrink(),
-              error: (_, _) => const SizedBox.shrink(),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, _) => const SizedBox.shrink(),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-    ),
-  ),
-);
+    );
   }
 
   Widget _statRow(IconData icon, String text, Color color, ThemeData theme) {

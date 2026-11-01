@@ -108,7 +108,8 @@ void main() {
         expect(
           header,
           isNot(equals('SQLite format 3\x00')),
-          reason: 'Encrypted DB file must never begin with plaintext SQLite header',
+          reason:
+              'Encrypted DB file must never begin with plaintext SQLite header',
         );
       } finally {
         if (await tempDir.exists()) {
@@ -117,44 +118,47 @@ void main() {
       }
     });
 
-    test('5. (b) Reopening an encrypted database with a wrong key fails', () async {
-      final tempDir = await Directory.systemTemp.createTemp(
-        'neuroscript_wrong_key_test_',
-      );
-      final testDbFile = File('${tempDir.path}/test_wrong_key.db');
-
-      try {
-        // Step 1: Create and populate with correct key
-        final executorCorrect = openConnection(
-          overrideKey: 'correct_key_256_bit_abc_xyz_001',
-          overrideFile: testDbFile,
+    test(
+      '5. (b) Reopening an encrypted database with a wrong key fails',
+      () async {
+        final tempDir = await Directory.systemTemp.createTemp(
+          'neuroscript_wrong_key_test_',
         );
-        final dbCorrect = AppDatabase(executorCorrect);
-        await dbCorrect
-            .into(dbCorrect.userProfiles)
-            .insert(UserProfilesCompanion.insert(profileType: 'Dyslexia'));
-        await dbCorrect.close();
+        final testDbFile = File('${tempDir.path}/test_wrong_key.db');
 
-        // Step 2: Attempt to reopen with an incorrect key
-        final executorWrong = openConnection(
-          overrideKey: 'wrong_key_different_bit_abc_xyz_999',
-          overrideFile: testDbFile,
-        );
-        final dbWrong = AppDatabase(executorWrong);
+        try {
+          // Step 1: Create and populate with correct key
+          final executorCorrect = openConnection(
+            overrideKey: 'correct_key_256_bit_abc_xyz_001',
+            overrideFile: testDbFile,
+          );
+          final dbCorrect = AppDatabase(executorCorrect);
+          await dbCorrect
+              .into(dbCorrect.userProfiles)
+              .insert(UserProfilesCompanion.insert(profileType: 'Dyslexia'));
+          await dbCorrect.close();
 
-        // Querying with wrong key must fail closed
-        expect(
-          () => dbWrong.select(dbWrong.userProfiles).get(),
-          throwsA(anything),
-          reason: 'Attempting to query an encrypted database with wrong key must fail',
-        );
-        await dbWrong.close();
-      } finally {
-        if (await tempDir.exists()) {
-          await tempDir.delete(recursive: true);
+          // Step 2: Attempt to reopen with an incorrect key
+          final executorWrong = openConnection(
+            overrideKey: 'wrong_key_different_bit_abc_xyz_999',
+            overrideFile: testDbFile,
+          );
+          final dbWrong = AppDatabase(executorWrong);
+
+          // Querying with wrong key must fail closed
+          expect(
+            () => dbWrong.select(dbWrong.userProfiles).get(),
+            throwsA(anything),
+            reason: 'Attempting to query an encrypted database with wrong key must fail',
+          );
+          await dbWrong.close();
+        } finally {
+          if (await tempDir.exists()) {
+            await tempDir.delete(recursive: true);
+          }
         }
-      }
-    });
+      },
+    );
 
     test('6. clearAllData() deletes all database records and purges master encryption key', () async {
       when(() => mockStorage.delete(key: 'neuroscript_master_aes_key'))
@@ -169,9 +173,9 @@ void main() {
       await db.clearAllData(secureStorage: mockStorage);
 
       expect((await db.select(db.userProfiles).get()).length, equals(0));
-      verify(() => mockStorage.delete(key: 'neuroscript_master_aes_key')).called(1);
+      verify(() => mockStorage.delete(key: 'neuroscript_master_aes_key'))
+          .called(1);
       await db.close();
     });
   });
 }
-

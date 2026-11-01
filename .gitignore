@@ -115,3 +115,17 @@ artifacts/
 .vs/
 _ReSharper*/
 *.DotSettings.user
+
+# --------------------------------------------------
+# Documentation Exports & Study Guides
+# --------------------------------------------------
+# Exclude generated documentation PDFs and study guide exports.
+# Note: Does NOT globally ignore *.pdf to preserve legitimate project assets (e.g. execution plans).
+docs/**/*.pdf
+docs/FYP_STUDY_GUIDE/
+docs/study_guides/
+docs/study-guides/
+study_guides/
+study-guides/
+*.study_guide.pdf
+*.study-guide.pdf

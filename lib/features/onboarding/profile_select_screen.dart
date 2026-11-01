@@ -89,140 +89,154 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Personalize Your Experience',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Select the profile that best fits your focus and reading style. You can change this anytime in Settings.',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurface.withValues(alpha: 0.75),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Expanded(
-                child: RadioGroup<ProfileType>(
-                  groupValue: _selected,
-                  onChanged: (val) {
-                    if (val != null) setState(() => _selected = val);
-                  },
-                  child: ListView(
-                    children: ProfileType.values.map((p) {
-                      final isSelected = p == _selected;
-                      return Semantics(
-                        selected: isSelected,
-                        child: Card(
-                          elevation: isSelected ? 3 : 1,
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(
-                              color: isSelected
-                                  ? colorScheme.primary
-                                  : colorScheme.outline.withValues(alpha: 0.5),
-                              width: isSelected ? 2.2 : 1.0,
-                            ),
-                          ),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(16),
-                            onTap: () => setState(() => _selected = p),
-                            child: Padding(
-                              padding: const EdgeInsets.all(18),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Radio<ProfileType>(
-                                    value: p,
-                                    activeColor: colorScheme.primary,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
+                children: [
+                  Text(
+                    'Personalize Your Experience',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Select the profile that best fits your focus and reading style. You can change this anytime in Settings.',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withValues(alpha: 0.75),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Expanded(
+                    child: RadioGroup<ProfileType>(
+                      groupValue: _selected,
+                      onChanged: (val) {
+                        if (val != null) setState(() => _selected = val);
+                      },
+                      child: ListView(
+                        children: ProfileType.values.map((p) {
+                          final isSelected = p == _selected;
+                          return Semantics(
+                            selected: isSelected,
+                            child: Card(
+                              elevation: isSelected ? 3 : 1,
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                side: BorderSide(
+                                  color: isSelected
+                                      ? colorScheme.primary
+                                      : colorScheme.outline.withValues(
+                                          alpha: 0.5,
+                                        ),
+                                  width: isSelected ? 2.2 : 1.0,
+                                ),
+                              ),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(16),
+                                onTap: () => setState(() => _selected = p),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(18),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Radio<ProfileType>(
+                                        value: p,
+                                        activeColor: colorScheme.primary,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Expanded(
-                                              child: Text(
-                                                p.displayName,
-                                                style: theme.textTheme.titleMedium
-                                                    ?.copyWith(
-                                                      fontWeight: FontWeight.w700,
-                                                    ),
-                                              ),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    p.displayName,
+                                                    style: theme
+                                                        .textTheme
+                                                        .titleMedium
+                                                        ?.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                        ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: const EdgeInsets.all(
+                                                    6,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: colorScheme.primary
+                                                        .withValues(alpha: 0.1),
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: Icon(
+                                                    _getProfileIcon(p),
+                                                    size: 18,
+                                                    color: colorScheme.primary,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              p.description,
+                                              style: theme.textTheme.bodyMedium
+                                                  ?.copyWith(
+                                                    color: colorScheme.onSurface
+                                                        .withValues(
+                                                          alpha: 0.85,
+                                                        ),
+                                                  ),
+                                            ),
+                                            const SizedBox(height: 8),
                                             Container(
-                                              padding: const EdgeInsets.all(6),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 3,
+                                                  ),
                                               decoration: BoxDecoration(
-                                                color: colorScheme.primary.withValues(alpha: 0.1),
-                                                shape: BoxShape.circle,
+                                                color: colorScheme.secondary
+                                                    .withValues(alpha: 0.12),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
                                               ),
-                                              child: Icon(
-                                                _getProfileIcon(p),
-                                                size: 18,
-                                                color: colorScheme.primary,
+                                              child: Text(
+                                                _getProfileBadge(p),
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: colorScheme.secondary,
+                                                ),
                                               ),
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          p.description,
-                                          style: theme.textTheme.bodyMedium
-                                              ?.copyWith(
-                                                color: colorScheme.onSurface
-                                                    .withValues(alpha: 0.85),
-                                              ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 3,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: colorScheme.secondary.withValues(alpha: 0.12),
-                                            borderRadius: BorderRadius.circular(6),
-                                          ),
-                                          child: Text(
-                                            _getProfileBadge(p),
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w600,
-                                              color: colorScheme.secondary,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   ),
-                ),
+                  AppButton(
+                    label: 'Save & Continue',
+                    icon: Icons.check,
+                    isLoading: _isLoading,
+                    onPressed: _handleContinue,
+                  ),
+                ],
               ),
-              AppButton(
-                label: 'Save & Continue',
-                icon: Icons.check,
-                isLoading: _isLoading,
-                onPressed: _handleContinue,
-              ),
-            ],
+            ),
           ),
         ),
       ),
-    ),
-  ),
     );
   }
 }

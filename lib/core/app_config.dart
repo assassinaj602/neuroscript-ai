@@ -30,7 +30,7 @@ class AppConfig {
     this.enableLocalFallback = false,
     this.enableSimplify = false,
     this.enableTts = false,
-    this.demoMode = true,
+    this.demoMode = false,
     this.proxyBaseUrl = 'https://localhost:5001',
     this.apiKey = '',
   });
@@ -98,7 +98,7 @@ class AppConfig {
       defaultValue: false,
     );
     const tts = bool.fromEnvironment('ENABLE_TTS', defaultValue: false);
-    const demo = bool.fromEnvironment('DEMO_MODE', defaultValue: true);
+    const demo = bool.fromEnvironment('DEMO_MODE', defaultValue: false);
     const proxyUrl = String.fromEnvironment(
       'PROXY_URL',
       defaultValue: 'https://localhost:5001',

@@ -220,8 +220,9 @@ The database layer is verified by dedicated automated tests in the `/test` direc
 
 | Test Suite | File | Focus Areas Verified |
 | :--- | :--- | :--- |
-| **Repository CRUD & Cascades** | `test/repository_test.dart` | Note creation, document hash lookup, lesson retrieval, review answer updates, and foreign key cascade deletion of flashcards and progress records. |
-| **Schema Migration Scaffold** | `test/migration_test.dart` | Verifies `schemaVersion == 1` and confirms migration scaffold handles initial creation cleanly. |
+| **Repository CRUD & Cascades** | `test/repository_test.dart` | Note creation, document hash lookup, unique constraint enforcement, duplicate deduplication, lesson retrieval, review answer updates, soft delete/recovery, and foreign key cascade deletion of flashcards and progress records. |
+| **Schema Migration Scaffold** | `test/migration_test.dart` | Verifies `schemaVersion == 2` and confirms migration scaffold handles table creation and column addition (`isDeleted`) cleanly. |
+| **Cryptographic Encryption** | `test/encryption_verification_test.dart` | Hardware key acquisition via `FlutterSecureStorage`, 256-bit AES generation, fail-fast `DatabaseEncryptionException`, and PRAGMA key disk verification. |
 | **Cryptographic Hashing** | `test/document_hash_test.dart` | Normalization invariance (case, whitespace, line endings) and deterministic SHA-256 output. |
 | **Idempotent Seed Seeding** | `test/seed_importer_test.dart` | Verifies transactional seed loading and tests that duplicate runs produce zero duplicated database rows. |
 | **Spaced Repetition Scheduler** | `test/scheduler_test.dart` | 15 test scenarios verifying Leitner interval progression (1 $\rightarrow$ 3 $\rightarrow$ 7 $\rightarrow$ 14 $\rightarrow$ 30 days), Box 1 resets, and ADHD 5-card queue capping. |

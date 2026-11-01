@@ -72,8 +72,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     }
 
     // 3. Guarantee minimum splash duration unless reduced motion is requested
-    final disableAnimations =
-        mounted ? MediaQuery.disableAnimationsOf(context) : false;
+    final disableAnimations = mounted
+        ? MediaQuery.disableAnimationsOf(context)
+        : false;
     final remainingMs = disableAnimations
         ? 0
         : widget.minimumDuration.inMilliseconds - stopwatch.elapsedMilliseconds;

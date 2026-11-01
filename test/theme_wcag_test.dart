@@ -126,7 +126,8 @@ void main() {
       expect(
         whiteOnPrimary,
         greaterThanOrEqualTo(4.5),
-        reason: 'White text on Dyslexia primary contrast ratio: $whiteOnPrimary',
+        reason:
+            'White text on Dyslexia primary contrast ratio: $whiteOnPrimary',
       );
 
       // Large text & UI components >= 3.0:1
@@ -138,7 +139,8 @@ void main() {
       expect(
         secondaryOnBg,
         greaterThanOrEqualTo(3.0),
-        reason: 'Dyslexia secondary on background contrast ratio: $secondaryOnBg',
+        reason:
+            'Dyslexia secondary on background contrast ratio: $secondaryOnBg',
       );
       expect(
         whiteOnSecondary,
