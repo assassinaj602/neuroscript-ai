@@ -30,6 +30,8 @@ class CardTile extends StatelessWidget {
     this.onTap,
     this.badgeText,
     this.badgeColor,
+    this.margin,
+    this.padding,
   });
 
   /// The primary header text of the card.
@@ -53,6 +55,12 @@ class CardTile extends StatelessWidget {
   /// Background and border tint for the badge tag.
   final Color? badgeColor;
 
+  /// Optional external margin around the card tile.
+  final EdgeInsetsGeometry? margin;
+
+  /// Optional internal padding inside the card tile.
+  final EdgeInsetsGeometry? padding;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -62,12 +70,13 @@ class CardTile extends StatelessWidget {
       button: onTap != null,
       label: title,
       child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+        margin:
+            margin ?? const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: padding ?? const EdgeInsets.all(14),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -103,11 +112,18 @@ class CardTile extends StatelessWidget {
                           ),
                         ),
                       ],
-                      Text(title, style: theme.textTheme.titleMedium),
+                      Text(
+                        title,
+                        style: theme.textTheme.titleMedium,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       if (subtitle != null) ...[
                         const SizedBox(height: 4),
                         Text(
                           subtitle!,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurface.withValues(
                               alpha: 0.75,

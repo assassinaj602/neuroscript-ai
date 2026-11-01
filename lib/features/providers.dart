@@ -82,8 +82,65 @@ final allLessonsProvider = FutureProvider<List<LessonSummary>>((ref) async {
   return repo.getAllLessons();
 });
 
+/// FutureProvider loading the list of soft-deleted lessons in trash.
+final deletedLessonsProvider = FutureProvider<List<LessonSummary>>((ref) async {
+  final repo = ref.watch(lessonRepositoryProvider);
+  return repo.getDeletedLessons();
+});
+
 /// FutureProvider computing active recall study metrics and daily review counts.
 final schedulerMetricsProvider = FutureProvider<SchedulerMetrics>((ref) async {
   final repo = ref.watch(reviewRepositoryProvider);
   return repo.getMetrics();
 });
+
+/// Accessibility preference state (text scaling, reduced motion, high contrast).
+class AccessibilityPreferences {
+  final double textScale;
+  final bool reducedMotion;
+  final bool highContrast;
+
+  const AccessibilityPreferences({
+    this.textScale = 1.0,
+    this.reducedMotion = false,
+    this.highContrast = false,
+  });
+
+  AccessibilityPreferences copyWith({
+    double? textScale,
+    bool? reducedMotion,
+    bool? highContrast,
+  }) {
+    return AccessibilityPreferences(
+      textScale: textScale ?? this.textScale,
+      reducedMotion: reducedMotion ?? this.reducedMotion,
+      highContrast: highContrast ?? this.highContrast,
+    );
+  }
+}
+
+class AccessibilityPreferencesNotifier
+    extends Notifier<AccessibilityPreferences> {
+  @override
+  AccessibilityPreferences build() {
+    return const AccessibilityPreferences();
+  }
+
+  void setTextScale(double scale) {
+    state = state.copyWith(textScale: scale);
+  }
+
+  void setReducedMotion(bool val) {
+    state = state.copyWith(reducedMotion: val);
+  }
+
+  void setHighContrast(bool val) {
+    state = state.copyWith(highContrast: val);
+  }
+}
+
+final accessibilityPreferencesProvider =
+    NotifierProvider<
+      AccessibilityPreferencesNotifier,
+      AccessibilityPreferences
+    >(AccessibilityPreferencesNotifier.new);

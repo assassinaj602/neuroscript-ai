@@ -84,8 +84,10 @@ class AppPalettes {
   // ADHD Design Tokens: High Focus, Clear Structure, and Dopamine Feedback
   // --------------------------------------------------------------------------
   static const adhdPrimary = Color(0xFF3F51B5); // Deep Indigo
-  static const adhdSecondary = Color(0xFFFF9800); // Warm Amber
-  static const adhdBackground = Color(0xFFF8F9FA); // Ultra-clean minimal background
+  static const adhdSecondary = Color(0xFFB45309); // Accessible Warm Amber / Ochre (>= 4.5:1)
+  static const adhdBackground = Color(
+    0xFFF8F9FA,
+  ); // Ultra-clean minimal background
   static const adhdSurface = Colors.white;
   static const adhdText = Color(0xFF1A1A24); // High contrast dark charcoal
 
@@ -93,16 +95,20 @@ class AppPalettes {
   // Dyslexia Design Tokens: Anti-Glare, Calming Contrast, and Scotopic Relief
   // --------------------------------------------------------------------------
   static const dyslexiaPrimary = Color(0xFF1E3A8A); // Slate Blue
-  static const dyslexiaSecondary = Color(0xFF0D9488); // Calming Teal
-  static const dyslexiaBackground = Color(0xFFFBF8EE); // Warm Cream (anti-glare)
+  static const dyslexiaSecondary = Color(0xFF0F766E); // Accessible Calming Deep Teal (>= 4.5:1)
+  static const dyslexiaBackground = Color(
+    0xFFFBF8EE,
+  ); // Warm Cream (anti-glare)
   static const dyslexiaSurface = Color(0xFFFFFDF8); // Soft off-white surface
-  static const dyslexiaText = Color(0xFF2B2D42); // Soft Charcoal (no stark black glare)
+  static const dyslexiaText = Color(
+    0xFF2B2D42,
+  ); // Soft Charcoal (no stark black glare)
 
   // --------------------------------------------------------------------------
   // Autism Design Tokens: Sensory Regulation, Low Saturation, and Predictability
   // --------------------------------------------------------------------------
   static const autismPrimary = Color(0xFF3D6B7A); // Muted Sage / Slate Teal
-  static const autismSecondary = Color(0xFF7A9E9F); // Pastel Blue-Green
+  static const autismSecondary = Color(0xFF2E5B66); // Accessible Pastel Deep Slate Teal (>= 4.5:1)
   static const autismBackground = Color(0xFFEEF3F4); // Gentle Ice Mist
   static const autismSurface = Color(0xFFF8FAFB); // Very soft neutral surface
   static const autismText = Color(0xFF263238); // Low-saturation Navy Grey

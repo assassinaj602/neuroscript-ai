@@ -42,9 +42,7 @@ void main() {
   // 3. Mount ProviderScope at the application root with our database singleton
   runApp(
     ProviderScope(
-      overrides: [
-        appDatabaseProvider.overrideWithValue(db),
-      ],
+      overrides: [appDatabaseProvider.overrideWithValue(db)],
       child: const NeuroScriptApp(),
     ),
   );
@@ -62,10 +60,11 @@ class NeuroScriptApp extends ConsumerWidget {
 
     // Watch the active learner profile to dynamically switch accessibility themes
     final profileAsync = ref.watch(activeProfileProvider);
+    final a11y = ref.watch(accessibilityPreferencesProvider);
 
     // Default to the Dyslexia profile (soft cream anti-glare background) if loading
     final currentProfile = profileAsync.value ?? ProfileType.dyslexia;
-    final theme = AppTheme.getTheme(currentProfile);
+    final theme = AppTheme.getTheme(currentProfile, textScale: a11y.textScale);
 
     return MaterialApp.router(
       title: 'NeuroScript AI',

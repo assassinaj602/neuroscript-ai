@@ -144,16 +144,45 @@ class _ConceptMapScreenState extends State<ConceptMapScreen> {
                       width: 900,
                       height: 800,
                       color: theme.scaffoldBackgroundColor,
-                      child: CustomPaint(
-                        painter: _ConceptMapPainter(
-                          nodes: widget.conceptMap.nodes,
-                          edges: widget.conceptMap.edges,
-                          positions: _nodePositions,
-                          nodeWidth: _nodeWidth,
-                          nodeHeight: _nodeHeight,
-                          colorScheme: colorScheme,
-                          selectedNodeId: _selectedNode?.id,
-                        ),
+                      child: Stack(
+                        children: [
+                          CustomPaint(
+                            size: const Size(900, 800),
+                            painter: _ConceptMapPainter(
+                              nodes: widget.conceptMap.nodes,
+                              edges: widget.conceptMap.edges,
+                              positions: _nodePositions,
+                              nodeWidth: _nodeWidth,
+                              nodeHeight: _nodeHeight,
+                              colorScheme: colorScheme,
+                              selectedNodeId: _selectedNode?.id,
+                            ),
+                          ),
+                          // Accessible node semantics overlay
+                          for (final node in widget.conceptMap.nodes)
+                            if (_nodePositions.containsKey(node.id))
+                              Positioned(
+                                left: _nodePositions[node.id]!.dx,
+                                top: _nodePositions[node.id]!.dy,
+                                width: _nodeWidth,
+                                height: _nodeHeight,
+                                child: Semantics(
+                                  button: true,
+                                  label: 'Concept: ${node.label}',
+                                  hint:
+                                      'Double tap to open source note lines for ${node.label}',
+                                  onTap: () {
+                                    setState(() => _selectedNode = node);
+                                    WhereIsThisFromSheet.show(
+                                      context,
+                                      title: node.label,
+                                      sourceLines: node.sourceLines,
+                                      rawNoteLines: widget.rawNoteLines,
+                                    );
+                                  },
+                                ),
+                              ),
+                        ],
                       ),
                     ),
                   ),

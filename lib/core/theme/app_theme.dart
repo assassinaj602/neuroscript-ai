@@ -90,7 +90,10 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, 52), // Satisfies >= 48dp target
+          minimumSize: const Size(
+            double.infinity,
+            52,
+          ), // Satisfies >= 48dp target
           elevation: 2,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -149,7 +152,10 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, 52), // Satisfies >= 48dp target
+          minimumSize: const Size(
+            double.infinity,
+            52,
+          ), // Satisfies >= 48dp target
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -210,7 +216,10 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, 52), // Satisfies >= 48dp target
+          minimumSize: const Size(
+            double.infinity,
+            52,
+          ), // Satisfies >= 48dp target
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),

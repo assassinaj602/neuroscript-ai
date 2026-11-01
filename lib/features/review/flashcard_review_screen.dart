@@ -71,6 +71,12 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
   }
 
   void _flipCard() {
+    final disableAnimations = MediaQuery.disableAnimationsOf(context);
+    if (disableAnimations) {
+      _flipController.value = _isFront ? 1.0 : 0.0;
+      setState(() => _isFront = !_isFront);
+      return;
+    }
     if (_isFront) {
       _flipController.forward();
     } else {
@@ -194,26 +200,34 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
 
               const SizedBox(height: 20),
 
-              // Flippable Card Area
               Expanded(
-                child: GestureDetector(
+                child: Semantics(
+                  button: true,
+                  label: _isFront
+                      ? 'Flashcard front: ${current.card.question}. Double tap to flip to answer.'
+                      : 'Flashcard back: ${current.card.answer}. Double tap to flip to question.',
+                  hint: 'Flips the flashcard between question and answer',
                   onTap: _flipCard,
-                  child: AnimatedBuilder(
-                    animation: _flipAnimation,
-                    builder: (context, child) {
-                      final angle = _flipAnimation.value * pi;
-                      final isUnder = angle > pi / 2;
-
-                      return Transform(
-                        transform: Matrix4.identity()
-                          ..setEntry(3, 2, 0.001) // perspective
-                          ..rotateY(angle),
-                        alignment: Alignment.center,
-                        child: isUnder
-                            ? Transform(
-                                transform: Matrix4.identity()..rotateY(pi),
-                                alignment: Alignment.center,
-                                child: _buildCardFace(
+                  child: GestureDetector(
+                    onTap: _flipCard,
+                    child: Builder(
+                      builder: (context) {
+                        final disableAnimations =
+                            MediaQuery.disableAnimationsOf(context);
+                        if (disableAnimations) {
+                          return _isFront
+                              ? _buildCardFace(
+                                  isFront: true,
+                                  title: 'QUESTION',
+                                  content: current.card.question,
+                                  theme: theme,
+                                  colorScheme: colorScheme,
+                                  chunks: const [],
+                                  sourceLines: current.card.sourceLines,
+                                  rawLines: current.rawNoteLines,
+                                  groundingScore: current.card.groundingScore,
+                                )
+                              : _buildCardFace(
                                   isFront: false,
                                   title: 'ANSWER',
                                   content: current.card.answer,
@@ -223,21 +237,54 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
                                   sourceLines: current.card.sourceLines,
                                   rawLines: current.rawNoteLines,
                                   groundingScore: current.card.groundingScore,
-                                ),
-                              )
-                            : _buildCardFace(
-                                isFront: true,
-                                title: 'QUESTION',
-                                content: current.card.question,
-                                theme: theme,
-                                colorScheme: colorScheme,
-                                chunks: const [],
-                                sourceLines: current.card.sourceLines,
-                                rawLines: current.rawNoteLines,
-                                groundingScore: current.card.groundingScore,
-                              ),
-                      );
-                    },
+                                );
+                        }
+
+                        return AnimatedBuilder(
+                          animation: _flipAnimation,
+                          builder: (context, child) {
+                            final angle = _flipAnimation.value * pi;
+                            final isUnder = angle > pi / 2;
+
+                            return Transform(
+                              transform: Matrix4.identity()
+                                ..setEntry(3, 2, 0.001) // perspective
+                                ..rotateY(angle),
+                              alignment: Alignment.center,
+                              child: isUnder
+                                  ? Transform(
+                                      transform: Matrix4.identity()..rotateY(pi),
+                                      alignment: Alignment.center,
+                                      child: _buildCardFace(
+                                        isFront: false,
+                                        title: 'ANSWER',
+                                        content: current.card.answer,
+                                        theme: theme,
+                                        colorScheme: colorScheme,
+                                        chunks: current.card.chunks,
+                                        sourceLines: current.card.sourceLines,
+                                        rawLines: current.rawNoteLines,
+                                        groundingScore:
+                                            current.card.groundingScore,
+                                      ),
+                                    )
+                                  : _buildCardFace(
+                                      isFront: true,
+                                      title: 'QUESTION',
+                                      content: current.card.question,
+                                      theme: theme,
+                                      colorScheme: colorScheme,
+                                      chunks: const [],
+                                      sourceLines: current.card.sourceLines,
+                                      rawLines: current.rawNoteLines,
+                                      groundingScore:
+                                          current.card.groundingScore,
+                                    ),
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

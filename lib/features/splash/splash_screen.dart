@@ -71,9 +71,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       debugPrint('Profile read error or timeout: $e\n$st');
     }
 
-    // 3. Guarantee minimum splash duration to avoid jarring UI flickers
-    final remainingMs =
-        widget.minimumDuration.inMilliseconds - stopwatch.elapsedMilliseconds;
+    // 3. Guarantee minimum splash duration unless reduced motion is requested
+    final disableAnimations =
+        mounted ? MediaQuery.disableAnimationsOf(context) : false;
+    final remainingMs = disableAnimations
+        ? 0
+        : widget.minimumDuration.inMilliseconds - stopwatch.elapsedMilliseconds;
     if (remainingMs > 0) {
       await Future.delayed(Duration(milliseconds: remainingMs));
     }
