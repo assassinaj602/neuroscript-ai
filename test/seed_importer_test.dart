@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Automated Unit Tests
-// File: app/test/seed_importer_test.dart
+// File: test/seed_importer_test.dart
 //
 // Description:
 //   Unit test suite verifying idempotent curriculum seed loading and transaction

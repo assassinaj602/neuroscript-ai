@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Automated Unit Tests
-// File: app/test/scheduler_test.dart
+// File: test/scheduler_test.dart
 //
 // Description:
 //   Exhaustive test suite verifying the 5-box Leitner Spaced Repetition engine

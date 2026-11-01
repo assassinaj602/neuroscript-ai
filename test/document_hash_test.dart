@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Automated Unit Tests
-// File: app/test/document_hash_test.dart
+// File: test/document_hash_test.dart
 //
 // Description:
 //   Unit test suite verifying cryptographic SHA-256 document hash normalization

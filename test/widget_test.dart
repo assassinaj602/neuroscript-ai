@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Automated Widget Tests
-// File: app/test/widget_test.dart
+// File: test/widget_test.dart
 //
 // Description:
 //   Component and end-to-end flow verification tests across all primary screens.

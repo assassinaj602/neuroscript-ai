@@ -1,6 +1,6 @@
 // ============================================================================
 // NeuroScript AI: Automated Unit Tests
-// File: app/test/repository_test.dart
+// File: test/repository_test.dart
 //
 // Description:
 //   Unit test suite verifying Drift database repository operations, foreign key
