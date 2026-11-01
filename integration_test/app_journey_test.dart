@@ -57,22 +57,22 @@ void main() {
         documentHash: 'journey_test_doc_hash_001',
       );
 
-      final lesson = LessonModel(
+      final lesson = const LessonModel(
         schemaVersion: 1,
         title: 'Photosynthesis Fundamentals',
-        meta: const LessonMeta(
+        meta: LessonMeta(
           profile: 'Dyslexia',
           source: 'seed',
           promptVersion: 'v1',
         ),
-        conceptMap: const ConceptMapModel(
+        conceptMap: ConceptMapModel(
           nodes: [
             ConceptNodeModel(id: 'n1', label: 'Chloroplasts', sourceLines: [2]),
             ConceptNodeModel(id: 'n2', label: 'Light Energy', sourceLines: [1]),
           ],
           edges: [ConceptEdgeModel(from: 'n2', to: 'n1', label: 'absorbed by')],
         ),
-        flashcards: const [
+        flashcards: [
           FlashcardModel(
             id: 'journey_card_01',
             question: 'Where does photosynthesis occur?',

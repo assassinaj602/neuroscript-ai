@@ -73,21 +73,17 @@ void main() {
         documentHash: 'fakehash123',
       );
 
-      final lesson = LessonModel(
+      final lesson = const LessonModel(
         schemaVersion: 1,
         title: 'Test Lesson',
-        meta: const LessonMeta(
-          profile: 'ADHD',
-          source: 'seed',
-          promptVersion: 'v1',
-        ),
-        conceptMap: const ConceptMapModel(
+        meta: LessonMeta(profile: 'ADHD', source: 'seed', promptVersion: 'v1'),
+        conceptMap: ConceptMapModel(
           nodes: [
             ConceptNodeModel(id: 'n1', label: 'Node 1', sourceLines: [1]),
           ],
           edges: [],
         ),
-        flashcards: const [
+        flashcards: [
           FlashcardModel(
             id: 'c1',
             question: 'What is A?',
@@ -133,16 +129,16 @@ void main() {
           documentHash: 'hash321',
         );
 
-        final lesson = LessonModel(
+        final lesson = const LessonModel(
           schemaVersion: 1,
           title: 'Review Test Lesson',
-          meta: const LessonMeta(
+          meta: LessonMeta(
             profile: 'Dyslexia',
             source: 'seed',
             promptVersion: 'v1',
           ),
-          conceptMap: const ConceptMapModel(nodes: [], edges: []),
-          flashcards: const [
+          conceptMap: ConceptMapModel(nodes: [], edges: []),
+          flashcards: [
             FlashcardModel(
               id: 'c1',
               question: 'Question 1',
@@ -182,16 +178,16 @@ void main() {
         documentHash: 'delhash',
       );
 
-      final lesson = LessonModel(
+      final lesson = const LessonModel(
         schemaVersion: 1,
         title: 'Delete Test',
-        meta: const LessonMeta(
+        meta: LessonMeta(
           profile: 'Autism',
           source: 'seed',
           promptVersion: 'v1',
         ),
-        conceptMap: const ConceptMapModel(nodes: [], edges: []),
-        flashcards: const [
+        conceptMap: ConceptMapModel(nodes: [], edges: []),
+        flashcards: [
           FlashcardModel(
             id: 'del_c1',
             question: 'Q',
@@ -225,16 +221,12 @@ void main() {
         documentHash: 'recover_hash',
       );
 
-      final lesson = LessonModel(
+      final lesson = const LessonModel(
         schemaVersion: 1,
         title: 'Recoverable Lesson',
-        meta: const LessonMeta(
-          profile: 'ADHD',
-          source: 'seed',
-          promptVersion: 'v1',
-        ),
-        conceptMap: const ConceptMapModel(nodes: [], edges: []),
-        flashcards: const [
+        meta: LessonMeta(profile: 'ADHD', source: 'seed', promptVersion: 'v1'),
+        conceptMap: ConceptMapModel(nodes: [], edges: []),
+        flashcards: [
           FlashcardModel(
             id: 'rec_c1',
             question: 'Question 1',
@@ -284,16 +276,16 @@ void main() {
         documentHash: 'update_hash',
       );
 
-      final lesson = LessonModel(
+      final lesson = const LessonModel(
         schemaVersion: 1,
         title: 'Original Title',
-        meta: const LessonMeta(
+        meta: LessonMeta(
           profile: 'Dyslexia',
           source: 'seed',
           promptVersion: 'v1',
         ),
-        conceptMap: const ConceptMapModel(nodes: [], edges: []),
-        flashcards: const [
+        conceptMap: ConceptMapModel(nodes: [], edges: []),
+        flashcards: [
           FlashcardModel(
             id: 'c_keep',
             question: 'Original Q1',

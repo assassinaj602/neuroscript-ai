@@ -158,7 +158,7 @@ class _EditLessonScreenState extends ConsumerState<EditLessonScreen> {
         );
         Navigator.of(context).pop(true);
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Error saving changes: $e')));

@@ -52,14 +52,14 @@ class AppTheme {
     const surface = AppPalettes.adhdSurface;
     const text = AppPalettes.adhdText;
 
-    final colorScheme = ColorScheme.light(
+    final colorScheme = const ColorScheme.light(
       primary: primary,
       secondary: secondary,
       surface: surface,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       onSurface: text,
-      outline: const Color(0xFFD1D5DB),
+      outline: Color(0xFFD1D5DB),
     );
 
     return ThemeData(
@@ -113,14 +113,14 @@ class AppTheme {
     const surface = AppPalettes.dyslexiaSurface;
     const text = AppPalettes.dyslexiaText;
 
-    final colorScheme = ColorScheme.light(
+    final colorScheme = const ColorScheme.light(
       primary: primary,
       secondary: secondary,
       surface: surface,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       onSurface: text,
-      outline: const Color(0xFFD5CEBA),
+      outline: Color(0xFFD5CEBA),
     );
 
     return ThemeData(
@@ -178,14 +178,14 @@ class AppTheme {
     const surface = AppPalettes.autismSurface;
     const text = AppPalettes.autismText;
 
-    final colorScheme = ColorScheme.light(
+    final colorScheme = const ColorScheme.light(
       primary: primary,
       secondary: secondary,
       surface: surface,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
       onSurface: text,
-      outline: const Color(0xFFCFD8DC),
+      outline: Color(0xFFCFD8DC),
     );
 
     return ThemeData(
