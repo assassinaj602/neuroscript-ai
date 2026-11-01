@@ -103,8 +103,8 @@ class SeedImporter {
                     question: card.question,
                     answer: card.answer,
                     sourceLineReference: jsonEncode(card.sourceLines),
-                    groundingScore: Value(card.groundingScore ?? 0.95),
-                    verified: Value(card.verified),
+                    groundingScore: Value(card.groundingScore),
+                    verified: const Value(false),
                   ),
                 );
 

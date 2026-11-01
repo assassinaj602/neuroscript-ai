@@ -79,6 +79,14 @@
           "chunks": {
             "type": "array",
             "items": { "type": "string" }
+          },
+          "groundingScore": {
+            "type": ["number", "null"],
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "verified": {
+            "type": "boolean"
           }
         }
       }

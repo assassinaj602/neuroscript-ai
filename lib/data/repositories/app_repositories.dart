@@ -69,17 +69,33 @@ class AppNoteRepository implements NoteRepository {
     required String rawOcrText,
     required String documentHash,
   }) async {
+    // Check if a note with this exact document hash already exists (deduplication)
+    final existingId = await getNoteIdByHash(documentHash);
+    if (existingId != null) {
+      return existingId;
+    }
+
     final noteId = 'note_${DateTime.now().millisecondsSinceEpoch}';
-    await db
-        .into(db.sourceNotes)
-        .insert(
-          SourceNotesCompanion.insert(
-            noteId: noteId,
-            rawOcrText: rawOcrText,
-            documentHash: documentHash,
-          ),
-        );
-    return noteId;
+    try {
+      await db
+          .into(db.sourceNotes)
+          .insert(
+            SourceNotesCompanion.insert(
+              noteId: noteId,
+              rawOcrText: rawOcrText,
+              documentHash: documentHash,
+            ),
+          );
+      return noteId;
+    } catch (_) {
+      // If a concurrent insert occurred and hit the UNIQUE constraint on documentHash,
+      // return the canonical existing noteId gracefully.
+      final fallback = await getNoteIdByHash(documentHash);
+      if (fallback != null) {
+        return fallback;
+      }
+      rethrow;
+    }
   }
 
   @override
@@ -97,6 +113,20 @@ class AppNoteRepository implements NoteRepository {
     )..where((t) => t.noteId.equals(noteId))).getSingleOrNull();
     return note?.rawOcrText;
   }
+
+  @override
+  Future<NoteDetails?> getNoteById(String noteId) async {
+    final note = await (db.select(
+      db.sourceNotes,
+    )..where((t) => t.noteId.equals(noteId))).getSingleOrNull();
+    if (note == null) return null;
+    return NoteDetails(
+      noteId: note.noteId,
+      rawOcrText: note.rawOcrText,
+      documentHash: note.documentHash,
+      createdAt: note.createdAt,
+    );
+  }
 }
 
 class AppLessonRepository implements LessonRepository {
@@ -105,7 +135,9 @@ class AppLessonRepository implements LessonRepository {
 
   @override
   Future<List<LessonSummary>> getAllLessons() async {
-    final allLessons = await db.select(db.lessons).get();
+    final allLessons = await (db.select(
+      db.lessons,
+    )..where((l) => l.isDeleted.equals(false))).get();
     final summaries = <LessonSummary>[];
     final now = DateTime.now();
 
@@ -182,11 +214,17 @@ class AppLessonRepository implements LessonRepository {
       );
     }).toList();
 
+    final activeProfile =
+        await (db.select(db.userProfiles)
+              ..orderBy([(t) => OrderingTerm.desc(t.id)])
+              ..limit(1))
+            .getSingleOrNull();
+
     return LessonModel(
       schemaVersion: 1,
       title: lesson.title,
       meta: LessonMeta(
-        profile: 'Dyslexia',
+        profile: activeProfile?.profileType ?? 'Dyslexia',
         source: lesson.source,
         promptVersion: lesson.promptVersion,
       ),
@@ -228,7 +266,7 @@ class AppLessonRepository implements LessonRepository {
                 question: card.question,
                 answer: card.answer,
                 sourceLineReference: jsonEncode(card.sourceLines),
-                groundingScore: Value(card.groundingScore ?? 0.95),
+                groundingScore: Value(card.groundingScore),
                 verified: Value(card.verified),
               ),
             );
@@ -248,10 +286,123 @@ class AppLessonRepository implements LessonRepository {
   }
 
   @override
+  Future<List<LessonSummary>> getDeletedLessons() async {
+    final trashedLessons = await (db.select(
+      db.lessons,
+    )..where((l) => l.isDeleted.equals(true))).get();
+    final summaries = <LessonSummary>[];
+    for (final lesson in trashedLessons) {
+      final cards = await (db.select(
+        db.flashcards,
+      )..where((f) => f.lessonId.equals(lesson.lessonId))).get();
+
+      summaries.add(
+        LessonSummary(
+          lessonId: lesson.lessonId,
+          title: lesson.title,
+          profile: lesson.source,
+          source: lesson.source,
+          cardCount: cards.length,
+          dueCount: 0,
+          createdAt: lesson.createdAt,
+          noteId: lesson.noteId,
+        ),
+      );
+    }
+    return summaries;
+  }
+
+  @override
   Future<void> deleteLesson(String lessonId) async {
+    await (db.update(db.lessons)..where((l) => l.lessonId.equals(lessonId)))
+        .write(const LessonsCompanion(isDeleted: Value(true)));
+  }
+
+  @override
+  Future<void> restoreLesson(String lessonId) async {
+    await (db.update(db.lessons)..where((l) => l.lessonId.equals(lessonId)))
+        .write(const LessonsCompanion(isDeleted: Value(false)));
+  }
+
+  @override
+  Future<void> permanentlyDeleteLesson(String lessonId) async {
     await (db.delete(
       db.lessons,
     )..where((l) => l.lessonId.equals(lessonId))).go();
+  }
+
+  @override
+  Future<void> updateLesson({
+    required String lessonId,
+    required String title,
+    required List<FlashcardModel> flashcards,
+  }) async {
+    await db.transaction(() async {
+      // 1. Update lesson title
+      await (db.update(db.lessons)..where((l) => l.lessonId.equals(lessonId)))
+          .write(LessonsCompanion(title: Value(title)));
+
+      // 2. Fetch existing cards in DB
+      final existingDbCards = await (db.select(
+        db.flashcards,
+      )..where((f) => f.lessonId.equals(lessonId))).get();
+      final existingIds = existingDbCards.map((c) => c.cardId).toSet();
+      final incomingIds = flashcards.map((c) => c.id).toSet();
+
+      // 3. Delete cards that were removed
+      for (final existing in existingDbCards) {
+        if (!incomingIds.contains(existing.cardId)) {
+          await (db.delete(
+            db.flashcards,
+          )..where((f) => f.cardId.equals(existing.cardId))).go();
+        }
+      }
+
+      // 4. Update existing or insert new cards
+      final now = DateTime.now();
+      for (final card in flashcards) {
+        if (existingIds.contains(card.id)) {
+          // Update existing card
+          await (db.update(
+            db.flashcards,
+          )..where((f) => f.cardId.equals(card.id))).write(
+            FlashcardsCompanion(
+              question: Value(card.question),
+              answer: Value(card.answer),
+              sourceLineReference: Value(jsonEncode(card.sourceLines)),
+            ),
+          );
+        } else {
+          // Insert new card
+          final newCardId = card.id.isNotEmpty && !card.id.startsWith('new_')
+              ? card.id
+              : '${lessonId}_c_${DateTime.now().microsecondsSinceEpoch}_${card.hashCode.abs()}';
+          await db
+              .into(db.flashcards)
+              .insert(
+                FlashcardsCompanion.insert(
+                  cardId: newCardId,
+                  lessonId: lessonId,
+                  question: card.question,
+                  answer: card.answer,
+                  sourceLineReference: jsonEncode(card.sourceLines),
+                  groundingScore: Value(card.groundingScore ?? 0.95),
+                  verified: Value(card.verified),
+                ),
+              );
+          await db
+              .into(db.reviewProgress)
+              .insert(
+                ReviewProgressCompanion.insert(
+                  cardId: newCardId,
+                  box: const Value(1),
+                  spacedRepetitionInterval: const Value(1),
+                  nextReviewDate: now,
+                ),
+              );
+        }
+      }
+    });
   }
 }
 
@@ -327,7 +478,9 @@ class AppReviewRepository implements ReviewRepository {
 
   @override
   Future<List<FlashcardReviewItem>> getAllReviewItems() async {
-    final allLessons = await db.select(db.lessons).get();
+    final allLessons = await (db.select(
+      db.lessons,
+    )..where((l) => l.isDeleted.equals(false))).get();
     final items = <FlashcardReviewItem>[];
     for (final l in allLessons) {
       final lessonItems = await getReviewItemsForLesson(l.lessonId);

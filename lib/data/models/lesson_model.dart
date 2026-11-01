@@ -222,7 +222,7 @@ class FlashcardModel {
     required this.sourceLines,
     this.chunks = const [],
     this.groundingScore,
-    this.verified = true,
+    this.verified = false,
   });
 
   /// Unique card identifier (e.g., 'c1').
@@ -258,7 +258,7 @@ class FlashcardModel {
           .map((chunk) => chunk as String)
           .toList(),
       groundingScore: (json['groundingScore'] as num?)?.toDouble(),
-      verified: json['verified'] as bool? ?? true,
+      verified: json['verified'] as bool? ?? false,
     );
   }
 

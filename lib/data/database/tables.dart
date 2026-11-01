@@ -44,8 +44,8 @@ class SourceNotes extends Table {
   /// The raw, unformatted OCR text extracted from the handwritten note pages.
   TextColumn get rawOcrText => text()();
 
-  /// Deterministic SHA-256 hash of normalized note text, used for on-device caching.
-  TextColumn get documentHash => text()();
+  /// Deterministic SHA-256 hash of normalized note text, used for on-device caching and deduplication.
+  TextColumn get documentHash => text().unique()();
 
   /// Timestamp of optical acquisition or note creation.
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
@@ -78,6 +78,9 @@ class Lessons extends Table {
   /// Timestamp when the lesson was generated and stored.
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
+  /// Boolean flag indicating soft deletion, enabling user recovery / undo.
+  BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
+
   @override
   Set<Column> get primaryKey => {lessonId};
 }
@@ -104,7 +107,7 @@ class Flashcards extends Table {
   RealColumn get groundingScore => real().nullable()();
 
   /// Boolean flag indicating whether this card passed the grounding verification gate.
-  BoolColumn get verified => boolean().withDefault(const Constant(true))();
+  BoolColumn get verified => boolean().withDefault(const Constant(false))();
 
   @override
   Set<Column> get primaryKey => {cardId};

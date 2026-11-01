@@ -140,9 +140,16 @@ class $UserProfilesTable extends UserProfiles
 }
 
 class UserProfile extends DataClass implements Insertable<UserProfile> {
+  /// Auto-incrementing primary key.
   final int id;
+
+  /// Profile type identifier: 'ADHD', 'Dyslexia', or 'Autism'.
   final String profileType;
+
+  /// JSON string containing profile-specific fine-tuning (e.g. textScale, speechSpeed).
   final String themeSettings;
+
+  /// Timestamp when the profile was chosen or created.
   final DateTime createdAt;
   const UserProfile({
     required this.id,
@@ -350,6 +357,7 @@ class $SourceNotesTable extends SourceNotes
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
@@ -453,9 +461,16 @@ class $SourceNotesTable extends SourceNotes
 }
 
 class SourceNote extends DataClass implements Insertable<SourceNote> {
+  /// Unique identifier (PK) for the source note.
   final String noteId;
+
+  /// The raw, unformatted OCR text extracted from the handwritten note pages.
   final String rawOcrText;
+
+  /// Deterministic SHA-256 hash of normalized note text, used for on-device caching and deduplication.
   final String documentHash;
+
+  /// Timestamp of optical acquisition or note creation.
   final DateTime createdAt;
   const SourceNote({
     required this.noteId,
@@ -722,6 +737,21 @@ class $LessonsTable extends Lessons with TableInfo<$LessonsTable, Lesson> {
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _isDeletedMeta = const VerificationMeta(
+    'isDeleted',
+  );
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+    'is_deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     lessonId,
@@ -731,6 +761,7 @@ class $LessonsTable extends Lessons with TableInfo<$LessonsTable, Lesson> {
     promptVersion,
     source,
     createdAt,
+    isDeleted,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -800,6 +831,12 @@ class $LessonsTable extends Lessons with TableInfo<$LessonsTable, Lesson> {
         createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
       );
     }
+    if (data.containsKey('is_deleted')) {
+      context.handle(
+        _isDeletedMeta,
+        isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta),
+      );
+    }
     return context;
   }
 
@@ -837,6 +874,10 @@ class $LessonsTable extends Lessons with TableInfo<$LessonsTable, Lesson> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      isDeleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_deleted'],
+      )!,
     );
   }
 
@@ -847,13 +888,29 @@ class $LessonsTable extends Lessons with TableInfo<$LessonsTable, Lesson> {
 }
 
 class Lesson extends DataClass implements Insertable<Lesson> {
+  /// Unique identifier (PK) for the lesson.
   final String lessonId;
+
+  /// Foreign key referencing the parent note in [SourceNotes], with cascade delete.
   final String noteId;
+
+  /// The topic or title of the lesson (e.g., 'Photosynthesis and Cellular Respiration').
   final String title;
+
+  /// JSON representation of the visual concept map graph (nodes, edges, and citations).
   final String conceptMapJson;
+
+  /// Version of the prompt engineering template used for compilation (e.g., 'v1').
   final String promptVersion;
+
+  /// Origin of the lesson content: 'seed', 'mock', 'cloud', or 'device'.
   final String source;
+
+  /// Timestamp when the lesson was generated and stored.
   final DateTime createdAt;
+
+  /// Boolean flag indicating soft deletion, enabling user recovery / undo.
+  final bool isDeleted;
   const Lesson({
     required this.lessonId,
     required this.noteId,
@@ -862,6 +919,7 @@ class Lesson extends DataClass implements Insertable<Lesson> {
     required this.promptVersion,
     required this.source,
     required this.createdAt,
+    required this.isDeleted,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -873,6 +931,7 @@ class Lesson extends DataClass implements Insertable<Lesson> {
     map['prompt_version'] = Variable<String>(promptVersion);
     map['source'] = Variable<String>(source);
     map['created_at'] = Variable<DateTime>(createdAt);
+    map['is_deleted'] = Variable<bool>(isDeleted);
     return map;
   }
 
@@ -885,6 +944,7 @@ class Lesson extends DataClass implements Insertable<Lesson> {
       promptVersion: Value(promptVersion),
       source: Value(source),
       createdAt: Value(createdAt),
+      isDeleted: Value(isDeleted),
     );
   }
 
@@ -901,6 +961,7 @@ class Lesson extends DataClass implements Insertable<Lesson> {
       promptVersion: serializer.fromJson<String>(json['promptVersion']),
       source: serializer.fromJson<String>(json['source']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
     );
   }
   @override
@@ -914,6 +975,7 @@ class Lesson extends DataClass implements Insertable<Lesson> {
       'promptVersion': serializer.toJson<String>(promptVersion),
       'source': serializer.toJson<String>(source),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
     };
   }
 
@@ -925,6 +987,7 @@ class Lesson extends DataClass implements Insertable<Lesson> {
     String? promptVersion,
     String? source,
     DateTime? createdAt,
+    bool? isDeleted,
   }) => Lesson(
     lessonId: lessonId ?? this.lessonId,
     noteId: noteId ?? this.noteId,
@@ -933,6 +996,7 @@ class Lesson extends DataClass implements Insertable<Lesson> {
     promptVersion: promptVersion ?? this.promptVersion,
     source: source ?? this.source,
     createdAt: createdAt ?? this.createdAt,
+    isDeleted: isDeleted ?? this.isDeleted,
   );
   Lesson copyWithCompanion(LessonsCompanion data) {
     return Lesson(
@@ -947,6 +1011,7 @@ class Lesson extends DataClass implements Insertable<Lesson> {
           : this.promptVersion,
       source: data.source.present ? data.source.value : this.source,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
     );
   }
 
@@ -959,7 +1024,8 @@ class Lesson extends DataClass implements Insertable<Lesson> {
           ..write('conceptMapJson: $conceptMapJson, ')
           ..write('promptVersion: $promptVersion, ')
           ..write('source: $source, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('isDeleted: $isDeleted')
           ..write(')'))
         .toString();
   }
@@ -973,6 +1039,7 @@ class Lesson extends DataClass implements Insertable<Lesson> {
     promptVersion,
     source,
     createdAt,
+    isDeleted,
   );
   @override
   bool operator ==(Object other) =>
@@ -984,7 +1051,8 @@ class Lesson extends DataClass implements Insertable<Lesson> {
           other.conceptMapJson == this.conceptMapJson &&
           other.promptVersion == this.promptVersion &&
           other.source == this.source &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.isDeleted == this.isDeleted);
 }
 
 class LessonsCompanion extends UpdateCompanion<Lesson> {
@@ -995,6 +1063,7 @@ class LessonsCompanion extends UpdateCompanion<Lesson> {
   final Value<String> promptVersion;
   final Value<String> source;
   final Value<DateTime> createdAt;
+  final Value<bool> isDeleted;
   final Value<int> rowid;
   const LessonsCompanion({
     this.lessonId = const Value.absent(),
@@ -1004,6 +1073,7 @@ class LessonsCompanion extends UpdateCompanion<Lesson> {
     this.promptVersion = const Value.absent(),
     this.source = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LessonsCompanion.insert({
@@ -1014,6 +1084,7 @@ class LessonsCompanion extends UpdateCompanion<Lesson> {
     this.promptVersion = const Value.absent(),
     this.source = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : lessonId = Value(lessonId),
        noteId = Value(noteId),
@@ -1027,6 +1098,7 @@ class LessonsCompanion extends UpdateCompanion<Lesson> {
     Expression<String>? promptVersion,
     Expression<String>? source,
     Expression<DateTime>? createdAt,
+    Expression<bool>? isDeleted,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1037,6 +1109,7 @@ class LessonsCompanion extends UpdateCompanion<Lesson> {
       if (promptVersion != null) 'prompt_version': promptVersion,
       if (source != null) 'source': source,
       if (createdAt != null) 'created_at': createdAt,
+      if (isDeleted != null) 'is_deleted': isDeleted,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1049,6 +1122,7 @@ class LessonsCompanion extends UpdateCompanion<Lesson> {
     Value<String>? promptVersion,
     Value<String>? source,
     Value<DateTime>? createdAt,
+    Value<bool>? isDeleted,
     Value<int>? rowid,
   }) {
     return LessonsCompanion(
@@ -1059,6 +1133,7 @@ class LessonsCompanion extends UpdateCompanion<Lesson> {
       promptVersion: promptVersion ?? this.promptVersion,
       source: source ?? this.source,
       createdAt: createdAt ?? this.createdAt,
+      isDeleted: isDeleted ?? this.isDeleted,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1087,6 +1162,9 @@ class LessonsCompanion extends UpdateCompanion<Lesson> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (isDeleted.present) {
+      map['is_deleted'] = Variable<bool>(isDeleted.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1103,6 +1181,7 @@ class LessonsCompanion extends UpdateCompanion<Lesson> {
           ..write('promptVersion: $promptVersion, ')
           ..write('source: $source, ')
           ..write('createdAt: $createdAt, ')
+          ..write('isDeleted: $isDeleted, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1193,7 +1272,7 @@ class $FlashcardsTable extends Flashcards
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'CHECK ("verified" IN (0, 1))',
     ),
-    defaultValue: const Constant(true),
+    defaultValue: const Constant(false),
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -1322,12 +1401,25 @@ class $FlashcardsTable extends Flashcards
 }
 
 class Flashcard extends DataClass implements Insertable<Flashcard> {
+  /// Unique identifier (PK) for the flashcard.
   final String cardId;
+
+  /// Foreign key referencing the parent lesson in [Lessons], with cascade delete.
   final String lessonId;
+
+  /// Prompt / Question displayed on the front of the active recall card.
   final String question;
+
+  /// Answer revealed on the back of the card after learner interaction.
   final String answer;
+
+  /// JSON-encoded array of 1-based source OCR line numbers supporting this card (e.g., '[3, 4]').
   final String sourceLineReference;
+
+  /// Mathematical grounding verification score G (normalized 0.0 to 1.0).
   final double? groundingScore;
+
+  /// Boolean flag indicating whether this card passed the grounding verification gate.
   final bool verified;
   const Flashcard({
     required this.cardId,
@@ -1814,12 +1906,25 @@ class $ReviewProgressTable extends ReviewProgress
 
 class ReviewProgressData extends DataClass
     implements Insertable<ReviewProgressData> {
+  /// Auto-incrementing primary key.
   final int progressId;
+
+  /// Foreign key referencing the associated [Flashcards] row, with cascade delete.
   final String cardId;
+
+  /// Current Leitner Box level (1 through 5).
   final int box;
+
+  /// Interval in days before this card is due for review again (1, 3, 7, 14, 30 days).
   final int spacedRepetitionInterval;
+
+  /// Precise calendar date and time when the card becomes due for review.
   final DateTime nextReviewDate;
+
+  /// Timestamp of the most recent review session for this card.
   final DateTime? lastReviewedAt;
+
+  /// Number of consecutive times this card has been answered correctly.
   final int consecutiveCorrect;
   const ReviewProgressData({
     required this.progressId,
@@ -2612,6 +2717,7 @@ typedef $$LessonsTableCreateCompanionBuilder = LessonsCompanion Function({
   Value<String> promptVersion,
   Value<String> source,
   Value<DateTime> createdAt,
+  Value<bool> isDeleted,
   Value<int> rowid,
 });
 typedef $$LessonsTableUpdateCompanionBuilder = LessonsCompanion Function({
@@ -2622,6 +2728,7 @@ typedef $$LessonsTableUpdateCompanionBuilder = LessonsCompanion Function({
   Value<String> promptVersion,
   Value<String> source,
   Value<DateTime> createdAt,
+  Value<bool> isDeleted,
   Value<int> rowid,
 });
 
@@ -2700,6 +2807,11 @@ class $$LessonsTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2791,6 +2903,11 @@ class $$LessonsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$SourceNotesTableOrderingComposer get noteId {
     final $$SourceNotesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2845,6 +2962,9 @@ class $$LessonsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isDeleted =>
+      $composableBuilder(column: $table.isDeleted, builder: (column) => column);
 
   $$SourceNotesTableAnnotationComposer get noteId {
     final $$SourceNotesTableAnnotationComposer composer = $composerBuilder(
@@ -2930,6 +3050,7 @@ class $$LessonsTableTableManager
                 Value<String> promptVersion = const Value.absent(),
                 Value<String> source = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LessonsCompanion(
                 lessonId: lessonId,
@@ -2939,6 +3060,7 @@ class $$LessonsTableTableManager
                 promptVersion: promptVersion,
                 source: source,
                 createdAt: createdAt,
+                isDeleted: isDeleted,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2950,6 +3072,7 @@ class $$LessonsTableTableManager
                 Value<String> promptVersion = const Value.absent(),
                 Value<String> source = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LessonsCompanion.insert(
                 lessonId: lessonId,
@@ -2959,6 +3082,7 @@ class $$LessonsTableTableManager
                 promptVersion: promptVersion,
                 source: source,
                 createdAt: createdAt,
+                isDeleted: isDeleted,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

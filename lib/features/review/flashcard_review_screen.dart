@@ -135,6 +135,7 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
                 title: current.card.question,
                 sourceLines: current.card.sourceLines,
                 rawNoteLines: current.rawNoteLines,
+                groundingScore: current.card.groundingScore,
               );
             },
           ),
@@ -221,6 +222,7 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
                                   chunks: current.card.chunks,
                                   sourceLines: current.card.sourceLines,
                                   rawLines: current.rawNoteLines,
+                                  groundingScore: current.card.groundingScore,
                                 ),
                               )
                             : _buildCardFace(
@@ -232,6 +234,7 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
                                 chunks: const [],
                                 sourceLines: current.card.sourceLines,
                                 rawLines: current.rawNoteLines,
+                                groundingScore: current.card.groundingScore,
                               ),
                       );
                     },
@@ -280,6 +283,7 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
     required List<String> chunks,
     required List<int> sourceLines,
     required List<String> rawLines,
+    double? groundingScore,
   }) {
     return Card(
       elevation: 4,
@@ -329,6 +333,7 @@ class _FlashcardReviewScreenState extends State<FlashcardReviewScreen>
                       title: content,
                       sourceLines: sourceLines,
                       rawNoteLines: rawLines,
+                      groundingScore: groundingScore,
                     );
                   },
                   icon: const Icon(Icons.search, size: 16),
