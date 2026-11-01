@@ -21,7 +21,8 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../core/theme/app_palettes.dart';
+import '../../core/models/profile_type.dart';
+
 import '../../services/leitner_scheduler.dart';
 import '../database/database.dart';
 import '../models/lesson_model.dart';
@@ -140,19 +141,24 @@ class AppLessonRepository implements LessonRepository {
     final allLessons = await (db.select(
       db.lessons,
     )..where((l) => l.isDeleted.equals(false))).get();
+    if (allLessons.isEmpty) return [];
+
+    final allCards = await db.select(db.flashcards).get();
+    final allProgress = await db.select(db.reviewProgress).get();
+    final progressMap = {for (final p in allProgress) p.cardId: p};
+    final cardsByLesson = <String, List<Flashcard>>{};
+    for (final c in allCards) {
+      cardsByLesson.putIfAbsent(c.lessonId, () => []).add(c);
+    }
+
     final summaries = <LessonSummary>[];
     final now = DateTime.now();
 
     for (final lesson in allLessons) {
-      final cards = await (db.select(
-        db.flashcards,
-      )..where((f) => f.lessonId.equals(lesson.lessonId))).get();
-
+      final cards = cardsByLesson[lesson.lessonId] ?? [];
       int dueCount = 0;
       for (final c in cards) {
-        final progress = await (db.select(
-          db.reviewProgress,
-        )..where((p) => p.cardId.equals(c.cardId))).getSingleOrNull();
+        final progress = progressMap[c.cardId];
         if (progress == null || !progress.nextReviewDate.isAfter(now)) {
           dueCount++;
         }
@@ -219,17 +225,21 @@ class AppLessonRepository implements LessonRepository {
       );
     }).toList();
 
-    final activeProfile =
+    final activeProfileRecord =
         await (db.select(db.userProfiles)
               ..orderBy([(t) => OrderingTerm.desc(t.id)])
               ..limit(1))
             .getSingleOrNull();
 
+    final activeProfile = activeProfileRecord != null
+        ? ProfileType.fromString(activeProfileRecord.profileType).displayName
+        : 'Dyslexia';
+
     return LessonModel(
       schemaVersion: 1,
       title: lesson.title,
       meta: LessonMeta(
-        profile: activeProfile?.profileType ?? 'Dyslexia',
+        profile: activeProfile,
         source: lesson.source,
         promptVersion: lesson.promptVersion,
       ),
@@ -295,12 +305,17 @@ class AppLessonRepository implements LessonRepository {
     final trashedLessons = await (db.select(
       db.lessons,
     )..where((l) => l.isDeleted.equals(true))).get();
+    if (trashedLessons.isEmpty) return [];
+
+    final allCards = await db.select(db.flashcards).get();
+    final cardsByLesson = <String, List<Flashcard>>{};
+    for (final c in allCards) {
+      cardsByLesson.putIfAbsent(c.lessonId, () => []).add(c);
+    }
+
     final summaries = <LessonSummary>[];
     for (final lesson in trashedLessons) {
-      final cards = await (db.select(
-        db.flashcards,
-      )..where((f) => f.lessonId.equals(lesson.lessonId))).get();
-
+      final cards = cardsByLesson[lesson.lessonId] ?? [];
       summaries.add(
         LessonSummary(
           lessonId: lesson.lessonId,
@@ -438,11 +453,17 @@ class AppReviewRepository implements ReviewRepository {
       db.flashcards,
     )..where((f) => f.lessonId.equals(lessonId))).get();
 
+    final cardIds = cards.map((c) => c.cardId).toList();
+    final progressList = cardIds.isEmpty
+        ? <ReviewProgressData>[]
+        : await (db.select(
+            db.reviewProgress,
+          )..where((rp) => rp.cardId.isIn(cardIds))).get();
+    final progressMap = {for (final p in progressList) p.cardId: p};
+
     final result = <FlashcardReviewItem>[];
     for (final c in cards) {
-      final p = await (db.select(
-        db.reviewProgress,
-      )..where((rp) => rp.cardId.equals(c.cardId))).getSingleOrNull();
+      final p = progressMap[c.cardId];
 
       List<int> lines = [];
       try {

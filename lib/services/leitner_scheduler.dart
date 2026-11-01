@@ -28,7 +28,7 @@
 
 import 'dart:math';
 
-import '../core/theme/app_palettes.dart';
+import '../core/models/profile_type.dart';
 
 /// Abstract clock to allow unit tests to simulate advancing days or time-zones.
 abstract class Clock {

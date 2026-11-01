@@ -21,7 +21,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/app_config.dart';
-import '../core/theme/app_palettes.dart';
+import '../core/models/profile_type.dart';
+
 import '../data/database/database.dart';
 import '../data/repositories/app_repositories.dart';
 import '../data/repositories/repository_interfaces.dart';

@@ -14,8 +14,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/document_hash.dart';
 import '../../core/widgets/card_tile.dart';
 import '../../core/widgets/section_header.dart';
+import '../../data/models/lesson_model.dart';
 import '../../data/repositories/repository_interfaces.dart';
 import '../providers.dart';
 
@@ -83,11 +85,18 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
             loading: () => const SizedBox.shrink(),
             error: (_, _) => const SizedBox.shrink(),
           ),
+          if (config.demoMode)
+            IconButton(
+              icon: const Icon(Icons.note_add_outlined),
+              tooltip: 'Developer: Paste Test Note (Debug/Demo)',
+              onPressed: () => _showPasteTestNoteDialog(context, ref),
+            ),
           IconButton(
             icon: const Icon(Icons.account_tree_outlined),
             tooltip: 'Concept Maps',
             onPressed: () => _showConceptMapPicker(context, ref),
           ),
+
           IconButton(
             icon: Badge(
               isLabelVisible: (deletedAsync.asData?.value.length ?? 0) > 0,
@@ -1190,6 +1199,171 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
           ),
         );
       },
+    );
+  }
+
+  /// Milestone 2 developer utility: paste raw test note text to import cards
+  /// into the local encrypted SQLite database without needing camera OCR.
+  /// Guarded so it is accessible only in demoMode / debug mode.
+  void _showPasteTestNoteDialog(BuildContext context, WidgetRef ref) {
+    final titleController = TextEditingController();
+    final noteController = TextEditingController();
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.developer_mode, size: 20),
+            SizedBox(width: 8),
+            Text('Paste Test Note (Debug)'),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Milestone 2 test note importer: parses lines into study flashcards and persists them into the encrypted database.',
+                style: Theme.of(dialogContext).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Lesson Title',
+                  hintText: 'e.g., Computer Operating Systems',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: noteController,
+                maxLines: 6,
+                decoration: const InputDecoration(
+                  labelText: 'Lecture Note Text',
+                  hintText: 'Operating systems manage hardware resources.\nVirtual memory provides process isolation.\nContext switching swaps CPU state.',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              final rawText = noteController.text.trim();
+              if (rawText.isEmpty) return;
+
+              final title = titleController.text.trim().isNotEmpty
+                  ? titleController.text.trim()
+                  : rawText.split('\n').first;
+
+              final docHash = DocumentHash.compute(rawText);
+              final noteRepo = ref.read(noteRepositoryProvider);
+              final lessonRepo = ref.read(lessonRepositoryProvider);
+
+              final existingNoteId = await noteRepo.getNoteIdByHash(docHash);
+              final noteId =
+                  existingNoteId ??
+                  await noteRepo.saveNote(
+                    rawOcrText: rawText,
+                    documentHash: docHash,
+                  );
+
+              final lines = rawText
+                  .split('\n')
+                  .map((l) => l.trim())
+                  .where((l) => l.isNotEmpty)
+                  .toList();
+
+              final flashcards = <FlashcardModel>[];
+              final nodes = <ConceptNodeModel>[];
+
+              for (var i = 0; i < lines.length; i++) {
+                final lineNum = i + 1;
+                final textLine = lines[i];
+                final parts = textLine.contains(':')
+                    ? textLine.split(':')
+                    : textLine.contains(' - ')
+                    ? textLine.split(' - ')
+                    : [textLine, textLine];
+
+                final q = parts[0].trim();
+                final a = parts.length > 1 ? parts[1].trim() : textLine;
+
+                flashcards.add(
+                  FlashcardModel(
+                    id: 'c$lineNum',
+                    question: q,
+                    answer: a,
+                    sourceLines: [lineNum],
+                    chunks: [q, a],
+                    groundingScore: null,
+                    verified: false,
+                  ),
+                );
+
+                nodes.add(
+                  ConceptNodeModel(
+                    id: 'n$lineNum',
+                    label: q,
+                    sourceLines: [lineNum],
+                  ),
+                );
+              }
+
+              final edges = <ConceptEdgeModel>[];
+              for (var i = 0; i < nodes.length - 1; i++) {
+                edges.add(
+                  ConceptEdgeModel(
+                    from: nodes[i].id,
+                    to: nodes[i + 1].id,
+                    label: 'leads to',
+                  ),
+                );
+              }
+
+              final activeProf = await ref
+                  .read(profileRepositoryProvider)
+                  .getActiveProfile();
+              final lessonModel = LessonModel(
+                schemaVersion: 1,
+                title: title,
+                meta: LessonMeta(
+                  profile: activeProf?.displayName ?? 'Dyslexia',
+                  source: 'custom_import',
+                  promptVersion: 'v1',
+                ),
+                conceptMap: ConceptMapModel(nodes: nodes, edges: edges),
+                flashcards: flashcards,
+                rawNotes: rawText,
+              );
+
+              await lessonRepo.saveLesson(noteId: noteId, lesson: lessonModel);
+
+              if (context.mounted) {
+                Navigator.of(dialogContext).pop();
+                ref.invalidate(allLessonsProvider);
+                ref.invalidate(schedulerMetricsProvider);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Imported "$title" with ${flashcards.length} cards into encrypted DB!',
+                    ),
+                  ),
+                );
+              }
+            },
+            child: const Text('Import Note'),
+          ),
+        ],
+      ),
     );
   }
 }

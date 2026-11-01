@@ -15,7 +15,7 @@
 // ============================================================================
 
 import '../models/lesson_model.dart';
-import '../../core/theme/app_palettes.dart';
+import '../../core/models/profile_type.dart';
 import '../../services/leitner_scheduler.dart';
 
 /// Contract for managing learner profile persistence and preferences.

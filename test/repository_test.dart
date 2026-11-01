@@ -404,5 +404,62 @@ void main() {
         throwsA(isA<Exception>()),
       );
     });
+
+    test(
+      'getLessonById dynamically retrieves active profile from userProfiles',
+      () async {
+        const lesson = LessonModel(
+          schemaVersion: 1,
+          title: 'Quantum Mechanics',
+          meta: LessonMeta(
+            profile: 'Dyslexia',
+            source: 'seed',
+            promptVersion: 'v1',
+          ),
+          conceptMap: ConceptMapModel(nodes: [], edges: []),
+          flashcards: [
+            FlashcardModel(
+              id: 'qm_1',
+              question: 'What is superposition?',
+              answer: 'State where system exists in multiple states.',
+              sourceLines: [1],
+            ),
+          ],
+        );
+
+        final noteId = await noteRepo.saveNote(
+          rawOcrText: 'Quantum mechanics notes',
+          documentHash: 'qm_doc_hash_1',
+        );
+        await lessonRepo.saveLesson(noteId: noteId, lesson: lesson);
+
+        final allLessons = await lessonRepo.getAllLessons();
+        final lessonId = allLessons.first.lessonId;
+
+        // When no profile is saved, falls back to 'Dyslexia'
+        var loaded = await lessonRepo.getLessonById(lessonId);
+        expect(loaded?.meta.profile, equals('Dyslexia'));
+
+        // Save Autism profile
+        await profileRepo.saveProfile(ProfileType.autism);
+        loaded = await lessonRepo.getLessonById(lessonId);
+        expect(loaded?.meta.profile, equals('Autism'));
+
+        // Update to ADHD profile
+        await profileRepo.saveProfile(ProfileType.adhd);
+        loaded = await lessonRepo.getLessonById(lessonId);
+        expect(loaded?.meta.profile, equals('ADHD'));
+
+        // Verify getReviewItemsForLesson batches queries and retrieves cards with progress
+        final reviewItems = await reviewRepo.getReviewItemsForLesson(lessonId);
+        expect(reviewItems.length, equals(1));
+        expect(
+          reviewItems.first.card.question,
+          equals('What is superposition?'),
+        );
+        expect(reviewItems.first.progress.box, equals(1));
+        expect(reviewItems.first.progress.isNew, isFalse);
+      },
+    );
   });
 }

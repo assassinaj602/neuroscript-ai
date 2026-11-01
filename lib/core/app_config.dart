@@ -19,6 +19,8 @@
 //     remain hidden behind boolean flags until their corresponding milestone passes.
 // ============================================================================
 
+import 'package:flutter/foundation.dart';
+
 /// Application configuration and feature flags driven by `--dart-define`.
 ///
 /// Follows the NeuroScript AI Milestone Execution Plan (Section 3.2).
@@ -98,7 +100,11 @@ class AppConfig {
       defaultValue: false,
     );
     const tts = bool.fromEnvironment('ENABLE_TTS', defaultValue: false);
-    const demo = bool.fromEnvironment('DEMO_MODE', defaultValue: false);
+    const hasDemoFlag = bool.hasEnvironment('DEMO_MODE');
+    final demo = hasDemoFlag
+        ? const bool.fromEnvironment('DEMO_MODE')
+        : kDebugMode;
+
     const proxyUrl = String.fromEnvironment(
       'PROXY_URL',
       defaultValue: 'https://localhost:5001',
