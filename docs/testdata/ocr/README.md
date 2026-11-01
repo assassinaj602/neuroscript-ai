@@ -15,14 +15,13 @@ This directory stores standardized handwritten note samples and reference ground
 
 ---
 
-## 2. Baseline Test Data Index
+## 2. Test Data Index
 
-| Note ID | Subject Domain | Pen / Paper Style | Lighting Condition | Target Line Count |
-| :--- | :--- | :--- | :--- | :--- |
-| `note_001` | Biology (Photosynthesis) | Dark blue ink on ruled paper | Direct daylight | 12 lines |
-| `note_002` | Computer Science (Algorithms) | Black gel pen on unruled paper | Warm indoor lamp | 15 lines |
-| `note_003` | Computer Architecture | Blue ballpoint on grid paper | Low contrast shadow | 14 lines |
-| `note_004` | Psychology (Memory Models) | Pencil on ruled notebook | Uneven side lighting | 11 lines |
-| `note_005` | Linear Algebra (Matrices) | Black fountain pen on plain sheet | High exposure glare | 13 lines |
+> **Current Status:** Exactly 2 index entries exist currently in [`dataset.json`](dataset.json) (`note_001` and `note_002`). The full target corpus of 30 physical note samples is scheduled for collection in Milestone 3. Fabricate nothing.
 
-Ground truth line definitions and normalized test strings are maintained in [`dataset.json`](dataset.json).
+| Note ID | Subject Domain | Pen / Paper Style | Lighting Condition | Verified Line Count | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `note_001` | Biology (Photosynthesis) | Dark blue ink on ruled paper | Direct daylight | 7 lines | In Index ([`dataset.json`](dataset.json)) |
+| `note_002` | Computer Science (Algorithms) | Black gel pen on plain paper | Warm indoor lamp | 6 lines | In Index ([`dataset.json`](dataset.json)) |
+
+The remaining 28 samples (target: 30) will be collected and indexed during Milestone 3.
