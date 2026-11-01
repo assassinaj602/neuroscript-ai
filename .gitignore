@@ -122,6 +122,7 @@ _ReSharper*/
 # Exclude generated documentation PDFs and study guide exports.
 # Note: Does NOT globally ignore *.pdf to preserve legitimate project assets (e.g. execution plans).
 docs/**/*.pdf
+!docs/NeuroScript_AI_Milestone_Execution_Plan.pdf
 docs/FYP_STUDY_GUIDE/
 docs/study_guides/
 docs/study-guides/
@@ -129,3 +130,4 @@ study_guides/
 study-guides/
 *.study_guide.pdf
 *.study-guide.pdf
+

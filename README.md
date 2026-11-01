@@ -1,6 +1,11 @@
 # NeuroScript AI: Privacy-Preserving Study Platform for Neurodivergent Learners
 
-A specialized, accessible study application engineered for students with Attention Deficit Hyperactivity Disorder (ADHD), Dyslexia, and Autism Spectrum Conditions. Built with Flutter and an encrypted local SQLite database (Drift + SQLCipher), NeuroScript AI delivers an offline-first learning system with Leitner spaced repetition flashcards, 2D concept maps, and neurodivergent-friendly UI/UX themes adhering strictly to WCAG 2.1 AA accessibility standards.
+[![CI](https://github.com/zaintahir2025/neuroscript-ai/actions/workflows/ci.yml/badge.svg?branch=fix%2Fm2-evaluation-readiness)](https://github.com/zaintahir2025/neuroscript-ai/actions/workflows/ci.yml)
+[![Flutter Version](https://img.shields.io/badge/Flutter-3.24%2B-blue.svg)](https://flutter.dev)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/Release-v0.2.1--m2-orange.svg)](docs/EVALUATION.md)
+
+A specialized, accessible study application engineered for students with Attention Deficit Hyperactivity Disorder (ADHD), Dyslexia, and Autism Spectrum Conditions. Built with Flutter and an encrypted local SQLite database (Drift + SQLite3MultipleCiphers), NeuroScript AI delivers an offline-first learning system featuring Leitner spaced repetition flashcards, 2D interactive concept maps, and neurodivergent-friendly UI/UX themes adhering strictly to WCAG 2.1 AA accessibility standards.
 
 ---
 
@@ -12,303 +17,196 @@ A specialized, accessible study application engineered for students with Attenti
 * **Engineering Team:**
   * **Zain Tahir** (Roll No. 23-CS-115) – Systems Architecture, Database Engineering, Frontend Implementation
   * **Ujala Sahar** (Roll No. 23-CS-135) – UI/UX Design System, Accessibility Auditing, User Acceptance Testing, Documentation
-* **Current Delivery Status:** Milestone 1 (Project Planning & Design) and Milestone 2 (Frontend & Database Initialization) Complete
+* **Delivery Scope:** **Milestone 1** (Project Planning, Contracts & System Design) and **Milestone 2** (Encrypted Local Storage, Study Engines & Multi-Profile UI) Complete and Verified.
 
 ---
 
 ## Documentation Index
 
-Essential, lightweight architecture, database, and milestone documentation included in this repository:
-* **System Architecture & Component Diagrams:** [`docs/diagrams/architecture.md`](docs/diagrams/architecture.md)
+Comprehensive, lightweight architecture, database, and milestone documentation:
+
+* **[Evaluation Matrix & Traceability](docs/EVALUATION.md)**: Requirement-by-requirement mapping to tests and evidence files.
+* **[Release Changelog](CHANGELOG.md)**: Version history, security migrations, and feature releases.
+* **Architectural Decision Records (ADRs)**:
+  * [`ADR-001: Adoption of Drift ORM`](docs/adr/ADR-001-drift-orm.md)
+  * [`ADR-002: Adoption of Riverpod State Management`](docs/adr/ADR-002-riverpod-state-management.md)
+  * [`ADR-003: Pure-Dart 5-Box Leitner Spaced Repetition Engine`](docs/adr/ADR-003-leitner-srs-engine.md)
+  * [`ADR-004: Migration to SQLite3MultipleCiphers (sqlite3mc)`](docs/adr/ADR-004-sqlite3mc-encryption-migration.md)
+* **Master Milestone Execution Plan:** [`docs/NeuroScript_AI_Milestone_Execution_Plan.pdf`](docs/NeuroScript_AI_Milestone_Execution_Plan.pdf)
 * **Database Relational Schema & ER Diagram:** [`docs/diagrams/database_er.md`](docs/diagrams/database_er.md)
+* **System Architecture & Component Diagrams:** [`docs/diagrams/architecture.md`](docs/diagrams/architecture.md)
 * **Runtime Sequence Diagrams:** [`docs/diagrams/sequence_diagrams.md`](docs/diagrams/sequence_diagrams.md)
-* **Database Engine & SQLCipher Architecture:** [`lib/data/database/README.md`](lib/data/database/README.md)
 * **Data Contracts (Lesson Schema & OpenAPI):** [`docs/contracts/`](docs/contracts/)
-* **Master Milestone Execution Plan:** [`NeuroScript_AI_Milestone_Execution_Plan.pdf`](NeuroScript_AI_Milestone_Execution_Plan.pdf)
+* **Database Layer Documentation:** [`lib/data/database/README.md`](lib/data/database/README.md)
 
 ---
 
 ## Problem Statement and Motivation
 
-Undergraduate students with learning differences encounter severe cognitive barriers when revising from handwritten notes:
-1. **Executive Dysfunction & Task Initiation (ADHD):** Students experience cognitive overwhelm when confronting dense, unorganized notes. Large study decks cause focus fatigue and task abandonment.
-2. **Visual Stress & Phonological Processing (Dyslexia):** High-contrast black text on pure white backgrounds produces visual glare, letter distortion, and fatigue. Crowded text layouts impede reading speed and comprehension.
-3. **Sensory Sensitivity & Ambiguity (Autism):** Unpredictable layouts, gratuitous animations, and metaphorical expressions induce cognitive load. Autistic learners require predictable structures and literal wording.
-4. **AI Hallucinations in Educational Tools:** Mainstream generative assistants routinely invent non-existent facts or extrapolate beyond provided context without source citations, misguiding revision.
-5. **Data Privacy Deficits:** Conventional commercial platforms store student notes and academic records in plaintext on proprietary cloud servers without end-to-end user encryption.
+Undergraduate students with learning differences encounter severe cognitive barriers when revising from lecture notes:
+
+1. **Executive Dysfunction & Task Initiation (ADHD):** Confronting dense, unorganized notes causes task paralysis and cognitive overwhelm. Uncapped study queues of 100+ cards trigger focus fatigue and abandonment.
+2. **Visual Stress & Scotopic Sensitivity (Dyslexia):** Harsh black text on pure white backgrounds produces visual glare, letter distortion ("dancing text"), and rapid eye strain. Crowded layouts impede phonological decoding.
+3. **Sensory Sensitivity & Ambiguity (Autism):** Unpredictable navigation, gratuitous motion animations, and figurative language induce sensory overload and frustration.
+4. **AI Hallucinations in Educational Tools:** Mainstream generative assistants routinely invent non-existent facts or extrapolate beyond provided lecture materials without verifiable source citations.
+5. **Data Privacy Deficits:** Commercial flashcard tools store student notes in plaintext on cloud servers without end-to-end user encryption.
 
 NeuroScript AI resolves these challenges through an accessibility-first client architecture, strict source-grounding verification, and a zero-retention, encrypted offline storage model.
 
 ---
 
-## System Architecture (Milestones 1 & 2)
+## System Architecture
 
-In accordance with the project proposal, Milestones 1 and 2 deliver the complete **Frontend & Database Initialization** layers:
-* **Presentation Layer (Flutter):** Fully responsive, multi-platform UI (Mobile, Desktop, Web) featuring custom neuroinclusive themes, 3D flip card flashcards, interactive 2D cubic Bezier concept map, and sensory-friendly navigation.
-* **Storage Layer (Drift + SQLCipher):** Local, encrypted SQLite database managing student notes, curriculum lessons, Leitner flashcard review progress, and user preference state with AES-256 encryption.
+### 1. Implemented & Operational Features (Milestones 1 & 2)
+
+The current release (`v0.2.1-m2`) delivers the complete client and database foundation:
 
 ```
 +-------------------------------------------------------------------------+
 |                    Client Layer (Flutter & Riverpod)                    |
 |                                                                         |
-|  [ Splash & Onboarding ]  --->  [ Profile Selection: ADHD/Dyslexia/ASD ] |
-|                                              |                          |
-|                                              v                          |
-|  [ Library Screen ] <--------------> [ Lesson Overview Screen ]         |
-|     |                                        |                          |
-|     +-- [ Flashcard Review (3D Flip) ] <-----+                          |
-|     +-- [ Concept Map (2D Bezier Graph) ] <--+                          |
-|     +-- [ Progress & Analytics ] <-----------+                          |
+|  [ Splash Screen ]  -------->  [ Onboarding ]  --->  [ Profile Select ] |
+|                                                             |           |
+|                                                             v           |
+|  [ Library Dashboard ] <-------------------------> [ Lesson Overview ]  |
+|     |                                                       |           |
+|     +-- [ Active Recall Review (3D Flip) ] <----------------+           |
+|     +-- [ Concept Map Graph (2D Interactive) ] <------------+           |
+|     +-- [ Progress & Study Analytics ] <--------------------+           |
+|     +-- [ Flashcard Set Editor (/lesson/:id/edit) ]                     |
+|     +-- [ Recently Deleted Trash & Recovery Sheet ]                     |
 |                                                                         |
-|  [ "Where is this from?" Line-Level Grounding Provenance Sheet ]        |
+|  [ "Where is this from?" Line-Level Source Provenance Modal ]           |
 +-------------------------------------------------------------------------+
                                     |
-                                    v (Reactive Streams & SQLCipher AES-256)
+                                    v (Reactive Streams & AES-256 Fail-Closed)
 +-------------------------------------------------------------------------+
 |               Local Encrypted Database Layer (Drift ORM)                |
 |                                                                         |
-|  - LearnerProfiles Table                                                |
-|  - Notes Table (raw text & document hashes)                             |
-|  - Lessons & LessonChunks Tables                                        |
-|  - Flashcards & FlashcardReviews Tables (5-Box Leitner Engine)          |
+|  - user_profiles (ADHD, Dyslexia, Autism configurations)                |
+|  - source_notes (Raw text & unique SHA-256 documentHash index)          |
+|  - lessons (Title, conceptMapJson, soft-delete is_deleted)              |
+|  - flashcards (Question, answer, sourceLineReference citations)         |
+|  - review_progress (5-Box Leitner interval, nextReviewDate, metrics)    |
 |                                                                         |
-|  Cross-Platform: SQLCipher AES-256 (Native) / sqlite3 WASM (Web)        |
+|  Engine: sqlite3 3.x + SQLite3MultipleCiphers (sqlite3mc AES-256)       |
+|  Keys: Hardware-backed 256-bit AES key via FlutterSecureStorage         |
 +-------------------------------------------------------------------------+
 ```
 
-### The Six-Stage Processing Pipeline
-
-1. **Optical Acquisition:** Capture multi-page handwritten notes (1–5 pages) with framing guides and flash control.
-2. **Computer Vision Enhancement:** Execute background-isolate OpenCV preprocessing: long-side resize to 2000px, Contrast Limited Adaptive Histogram Equalization (CLAHE), bilateral denoising, adaptive Gaussian thresholding, and deskewing.
-3. **Optical Character Recognition (OCR):** Transcribe text blocks into ordered, 1-based numbered lines ($1 \dots N$) via Google ML Kit Text Recognition.
-4. **Human-in-the-Loop Verification:** Display an editable line-by-line review screen enabling students to correct, merge, or delete transcription errors prior to AI processing.
-5. **Synthesis & Closed-Book Compilation:** Transmit confirmed lines to Google Gemini 2.5 Flash using structured delimiters and profile-tailored prompts that forbid external knowledge injection.
-6. **Grounding Verification & Storage:** Validate every flashcard and concept map node against cited source lines. Grounded items are committed to the local encrypted SQLite database (Drift + SQLCipher).
-
----
-
-## Accessibility Profiles
-
-The user interface implements three distinct design systems compliant with WCAG 2.1 AA specifications (contrast ratios $\ge 4.5:1$, touch targets $\ge 48$ dp, scalable typography up to $2.0\times$ without layout clipping).
-
-| Feature / Dimension | ADHD Profile | Dyslexia Profile | Autism Profile |
-|---|---|---|---|
-| **Primary Palette** | Deep Indigo (`#3F51B5`) & Warm Amber (`#FF9800`) | Slate Blue (`#1E3A8A`) & Teal (`#0D9488`) | Muted Sage Teal (`#3D6B7A`) & Ice Mist (`#EEF3F4`) |
-| **Background Tone** | Clean Minimal Grey (`#F8F9FA`) | Warm Anti-Glare Cream (`#FBF8EE`) | Low-Saturation Mist (`#EEF3F4`) |
-| **Typography** | Sans-Serif (Standard letter spacing) | Relaxed spacing (Line height $\ge 1.6$, tracking $+0.6$) | Structured, clear hierarchy (Tracking $+0.2$) |
-| **Study Sizing** | **5-card micro-sessions** with immediate feedback | Standard 10-card sessions with read-aloud option | Predictable step progression ("Card 2 of 5") |
-| **Motion & Audio** | Engaging progress rings and completion badges | Text-to-Speech read-aloud with sentence tracking | Zero autoplay motion (respects `reduce-motion`), silent by default |
-| **Wording Mode** | Punchy, single-concept flashcards | Plain language with highlighted keywords | Literal simplification mode (removes idioms and metaphors) |
-
----
-
-## Grounding-Score Verification Methodology
-
-To prevent hallucinations, every generated study item $g$ citing an evidence window $E$ (the cited line indices plus one adjacent line on either side) is evaluated against a composite mathematical metric before storage:
-
-### 1. Lexical Containment ($L$)
-Evaluates unigram ($C_1$) and bigram ($C_2$) token overlap between the generated item and the source window:
-$$C_n = \frac{|N_n(g) \cap N_n(E)|}{|N_n(g)|}, \quad L = \frac{C_1 + C_2}{2}$$
-
-### 2. Semantic Embedding Similarity ($Sem$)
-Computes cosine similarity between sentence embeddings generated by an on-device quantized MiniLM model:
-$$Sem = \max_{j \in E} \left( \frac{v_g \cdot v_j}{\|v_g\| \|v_j\|} \right)$$
-
-### 3. Entity Verification Constraint ($X$)
-Extracts all numerical values, proper nouns, dates, and formulas from $g$. If any entity in $g$ does not appear identically within $E$, the item is penalized:
-$$X = \begin{cases} 1 & \text{if all entities in } g \text{ exist in } E \\ 0 & \text{otherwise} \end{cases}$$
-
-### 4. Composite Grounding Metric ($G$) and Decision Gate
-$$G = \begin{cases} 0.6 \cdot Sem + 0.4 \cdot L & \text{if } X = 1 \\ 0 & \text{if } X = 0 \end{cases}$$
-
-* **Acceptance ($G \ge 0.75 \land X = 1$):** Item is marked verified and stored with source line citations.
-* **Regeneration ($0.50 \le G < 0.75$):** Re-prompt generator once with an explicit quote-only constraint.
-* **Rejection ($G < 0.50 \lor X = 0$):** Discard item permanently to protect the learner from incorrect data.
+* **Cryptographic Local Database (WP2.1):**
+  - Drift ORM managing encrypted SQLite via SQLite3MultipleCiphers (`sqlite3mc`).
+  - Hardware-backed 256-bit AES key generated via `Random.secure()` and persisted in `FlutterSecureStorage` (Android KeyStore / iOS Keychain).
+  - **Fail-Closed Runtime**: Throws typed `DatabaseEncryptionException` if cipher is missing or inactive; unencrypted fallback is strictly prohibited.
+  - Foreign-key cascade deletion across `source_notes` $\to$ `lessons` $\to$ `flashcards` $\to$ `review_progress`.
+  - Android ADB backup disabled (`android:allowBackup="false"`).
+  - Schema migration from v1 to v2 supporting soft-delete (`is_deleted`).
+* **5-Box Leitner Spaced Repetition Engine (WP2.2):**
+  - Pure-Dart scheduling algorithm with intervals: Box 1 (1 day), Box 2 (3 days), Box 3 (7 days), Box 4 (14 days), Box 5 (30 days).
+  - **Profile-Driven Queue Capping**: Strictly capped at **5 cards per session** for ADHD learners to eliminate review anxiety; capped at **10 cards** for Dyslexia and Autism.
+  - Injected `Clock` interface enabling deterministic time simulation in unit tests.
+* **Idempotent Bundled Curriculum (WP2.3):**
+  - Bundled seed curriculum JSON files loaded transactionally on initial launch.
+  - Exactly 0 duplicate rows inserted on subsequent launches or re-imports.
+  - **Honest Content Attribution**: Human-authored seed lessons have `groundingScore` set to `null` and display a clear "Seed lesson (author-written)" badge.
+* **Study Dashboard & Library (WP2.4):**
+  - Dynamic search filtering, multi-criteria sorting (Title, Due, Card Count), and study progress metrics.
+  - Full provenance modal displaying note metadata, creation date, and SHA-256 document hash.
+  - Recently Deleted trash sheet supporting instant set restoration or permanent cascading purge.
+  - Flashcard Set Editor (`/lesson/:id/edit`) allowing users to edit titles, modify cards, or add new items.
+  - Developer Paste-Text Importer available in debug/demo mode (`demoMode`).
+* **Accessibility-First Study Modes (WP2.5):**
+  - Interactive Flashcard Review with card flipping, box progression, and source line reference links.
+  - Interactive Concept Map graph with pan/zoom (`InteractiveViewer`) and node line inspection.
+  - Zero `RenderFlex` overflows verified at both standard 1.0x and high-contrast 2.0x text scaling.
 
 ---
 
-## Active Recall and Spaced Repetition
+### 2. Planned Architecture & Roadmap (Milestones 3 through 6)
 
-Review scheduling is governed by an implementation of the Leitner Spaced Repetition System:
+The following components are designed in the architecture blueprints but belong to **Milestone 3 and beyond**; they are **NOT** present in the Milestone 1-2 evaluation release:
 
 ```
-[ New Cards ] ──> [ Box 1: 1 Day ]
-                     │   │
-       ┌────────────────┴───────────────┐
-  Correct (Got it)               Incorrect (Not yet)
-    │   │                             │   │
-       ▼                             │   │
-[ Box 2: 3 Days ]                    │   │
-    │   │                             │   │
-  Correct (Got it)                   │   │
-    │   │                             │   │
-       ▼                             │   │
-[ Box 3: 7 Days ]                    │   │
-    │   │                             │   │
-  Correct (Got it)                   │   │
-    │   │                             │   │
-       ▼                             │   │
-[ Box 4: 14 Days ]                   │   │
-    │   │                             │   │
-  Correct (Got it)                   │   │
-    │   │                             │   │
-       ▼                                ▼
-[ Box 5: 30 Days (Mastered) ]   [ Reset to Box 1 ]
++-------------------------------------------------------------------------+
+|                  PLANNED PIPELINE (Milestone 3+)                        |
+|                                                                         |
+|  [ Camera Capture ]  --->  [ OpenCV C++ ]  --->  [ Google ML Kit OCR ]  |
+|   (Framing Guides)        (Bilateral Filter)      (Ordered Line Blocks) |
+|                                                              |          |
+|                                                              v          |
+|  [ Local Encrypted DB ] <--- [ Closed-Book Gemini ] <--- [ Proxy Gate ] |
+|   (Grounding Verified)        (Delimited Synthesis)       (ASP.NET Core)|
++-------------------------------------------------------------------------+
 ```
 
-* **Session Scheduling:** The daily queue prioritizes overdue cards (`nextReviewDate <= now`), followed by unreviewed cards.
-* **Cognitive Caps:** Daily session sizes are capped per profile (ADHD: 5 cards; Dyslexia/Autism: 10 cards).
-* **Line-Level Provenance:** A dedicated sheet links each flashcard and concept map node directly back to the original handwritten note lines.
+1. **Stage 1: Optical Acquisition (Milestone 3):** Camera capture with multi-page burst (1–5 pages), edge-detection framing guides, and ambient light metering. Flagged off via `enableCapture = false`.
+2. **Stage 2: OpenCV Image Enhancement (Milestone 3):** Background-isolated C++ preprocessing pipeline executing CLAHE, bilateral filtering, and deskewing via Native Assets FFI.
+3. **Stage 3: OCR Transcription (Milestone 3):** Transcribing notes into ordered, 1-based numbered lines via Google ML Kit / Tesseract. Benchmark dataset established in `docs/benchmarks/ocr_benchmark.csv`.
+4. **Stage 4: ASP.NET Core Proxy Gateway (Milestone 3):** Rate-limited, authenticated API gateway proxying requests to Gemini models. Contract defined in `docs/contracts/proxy_api.yaml`.
+5. **Stage 5: LLM Synthesis & MiniLM Grounding Verification (Milestone 4):** Closed-book prompt compilation with Google Gemini 2.5 Flash and all-MiniLM-L6-v2 semantic embeddings. Generator mode defaults to `GeneratorMode.seed`.
+6. **Stage 6: Text-to-Speech (TTS) & Simplification (Milestone 5):** Auditory read-aloud engine with word-level highlight tracking and literal simplification mode for Autism. Flagged off via `enableTts = false` and `enableSimplify = false`.
 
 ---
 
-## Privacy by Design and Data Governance
+## Neurodivergent Accessibility Profiles
 
-1. **Local Database Encryption:** User data is encrypted at rest using AES-256 via Drift and SQLCipher. The database encryption key is generated using a cryptographically secure pseudo-random number generator (`Random.secure()`) on first execution and held in hardware-backed secure storage (`FlutterSecureStorage`).
-2. **Stateless Backend Proxy:** The ASP.NET Core server stores zero note text and zero generated lesson content. It maintains only metadata in an operational audit log (`RequestLog`: install hash, endpoint, latency, status code, timestamp).
-3. **No Unencrypted Cloud Storage:** Notes are never transmitted to cloud endpoints without explicit user consent. When offline, all processing remains strictly local.
+NeuroScript AI provides three dedicated, WCAG 2.1 AA compliant design systems:
 
----
+| Dimension | ADHD Profile | Dyslexia Profile | Autism Profile |
+| :--- | :--- | :--- | :--- |
+| **Cognitive Goal** | Dopamine feedback, minimal clutter | Scotopic sensitivity, anti-glare | Low sensory arousal, predictability |
+| **Primary Color** | Deep Indigo (`#3F51B5`) | Slate Blue (`#1E3A8A`) | Muted Sage Teal (`#3D6B7A`) |
+| **Accent Color** | Warm Amber (`#FF9800`) | Warm Amber (`#FF9800`) | Ice Mist Soft Slate (`#607D8B`) |
+| **Canvas Background** | Clean Minimal Grey (`#F8F9FA`) | Anti-Glare Warm Cream (`#FBF8EE`) | Uniform Ice Mist (`#EEF3F4`) |
+| **Body Text** | Dark Charcoal (`#1F2937`) | Soft Charcoal (`#2B2D42`) | Deep Slate (`#1A2E35`) |
+| **Typography** | Crisp Sans-Serif | Relaxed line-height (1.6), tracking +0.6 | Predictable structure, tracking +0.2 |
+| **Study Sizing** | **5 cards per session** (strict cap) | 10 cards per session | 10 cards per session |
+| **Motion & Audio** | Engaging progress rings | Gentle cues, no glare | Zero autoplay motion, muted borders |
 
-## Local Encrypted Database Architecture (Milestone 2)
-
-Complete technical documentation: **[`lib/data/database/README.md`](lib/data/database/README.md)**
-
-The on-device relational database is implemented using **Drift ORM** and encrypted at rest with **SQLCipher AES-256** on native platforms (Android, iOS, Windows, macOS, Linux) and **sqlite3 WebAssembly** on Flutter Web.
-
-### Core Tables & Relationships
-* `UserProfiles`: `id` (PK), `profileType` (ADHD, Dyslexia, Autism), `themeSettings` (JSON), `createdAt`.
-* `SourceNotes`: `noteId` (PK), `rawOcrText`, `documentHash` (SHA-256), `createdAt`.
-* `Lessons`: `lessonId` (PK), `noteId` (FK, cascade delete), `title`, `conceptMapJson`, `promptVersion`, `source`, `createdAt`.
-* `Flashcards`: `cardId` (PK), `lessonId` (FK, cascade delete), `question`, `answer`, `sourceLineReference`, `groundingScore`, `verified`.
-* `ReviewProgress`: `progressId` (PK), `cardId` (FK, cascade delete), `box` (1..5), `spacedRepetitionInterval` (1, 3, 7, 14, 30), `nextReviewDate`, `lastReviewedAt`, `consecutiveCorrect`.
-
-Referential integrity enforces `onDelete: KeyAction.cascade` across all child relationships, ensuring atomic deletions and zero orphaned records.
+*All color combinations have been mathematically validated in `test/theme_wcag_test.dart` to exceed the WCAG 2.1 AA minimum contrast threshold of 4.5:1 for standard body text.*
 
 ---
 
-## The Eight Demoability Rules
+## How to Verify & Reproduce
 
-Development strictly adheres to the eight engineering rules defined in the milestone execution plan:
+The application is accompanied by a comprehensive, fully automated test suite. You can verify the entire project locally using standard Flutter tools:
 
-1. **Vertical Slices, Not Layers:** Each milestone delivers an end-to-end slice spanning presentation down to persistence.
-2. **Build Seams First, Fill Later:** External dependencies sit behind Dart/C# interfaces with working stand-ins (seed JSON, mock generators) prior to production integrations.
-3. **One Data Contract from Day One:** The Lesson JSON Schema (`docs/contracts/lesson.schema.json`) is frozen and identical across seed data, mock generators, Gemini, and on-device SLMs.
-4. **Main is Always Demoable:** Work merges to `main` only through passing pull requests with green CI checks.
-5. **Feature Flags Manage Demos:** Experimental or incomplete functionality is isolated behind compile-time `--dart-define` flags (`AppConfig`).
-6. **Honest Labels:** Stand-in modules are explicitly tagged in the UI (e.g., `'Demo generator'`) and never misrepresented.
-7. **Every Milestone Has a Safety Net:** Deliverables include tagged git releases, signed APKs, pre-seeded datasets, and offline fallback flows.
-8. **Early Usability Verification:** Informal peer testing at M2 and M4 surfaces usability defects well in advance of formal acceptance testing.
-
----
-
-## Milestone Execution Roadmap
-
-| Milestone | Target Period | Core Scope | Status | Git Release Tag |
-|---|---|---|---|---|
-| **M1: Planning & Design** | Oct – Nov 2026 | Requirements, system architecture, API contracts, Figma prototype, and runnable app shell. | **Complete** | `v0.1.0-m1` |
-| **M2: Frontend & Database** | Nov – Dec 2026 | Offline study app, encrypted Drift database, Leitner scheduler, interactive concept map, and source line provenance. | **Complete** | `v0.2.0-m2` |
-| **M3: Core Logic & CV** | Dec – Jan 2027 | Camera capture, OpenCV image cleaning, ML Kit OCR, review screen, and ASP.NET Core proxy with mock generator. | Scheduled | `v0.3.0-m3` |
-| **M4: AI & Validation** | Jan – Feb 2027 | Gemini 2.5 integration (4A), Grounding validator (4B), and on-device SLM fallback with offline queue (4C). | Scheduled | `v0.4.0-m4` |
-| **M5: Accessibility & QA** | Feb – Mar 2027 | Full profile experiences, TTS read-aloud, simplify wording mode, and comprehensive QA testing. | Scheduled | `v0.5.0-m5` |
-| **M6: Finalisation** | Mar – Apr 2027 | User Acceptance Testing (SUS evaluation), production hardening, final thesis report, and public release. | Scheduled | `v1.0.0` |
-
----
-
-## Repository Structure
-
-The project is arranged according to the standard Flutter application architecture, integrating mobile, web, and desktop clients, design guidelines, and formal specifications:
-
-```
-neuroscript-ai/
-├── .github/
-│   ├── workflows/            # GitHub Actions CI workflow (ci-app.yml)
-│   ├── ISSUE_TEMPLATE/       # Standardized issue templates
-│   └── PULL_REQUEST_TEMPLATE.md
-├── android/                  # Native Android host configuration
-├── ios/                      # Native iOS host configuration
-├── web/                      # Web host configuration and PWA manifest
-├── windows/                  # Native Windows desktop host configuration
-├── macos/                    # Native macOS desktop host configuration
-├── linux/                    # Native Linux desktop host configuration
-├── assets/seed/              # Bundled offline curriculum lessons
-├── lib/                      # Dart application source (feature-first architecture)
-│   ├── core/                 # AppConfig, theme engine, GoRouter navigation, widgets
-│   ├── data/                 # Drift ORM, SQLCipher, repositories, JSON models
-│   ├── features/             # Feature vertical slices (splash, library, review, concept map, etc.)
-│   ├── services/             # Leitner scheduler and seed loader
-│   └── main.dart             # Fast application entrypoint with splash initialization
-├── test/                     # 45 automated unit, repository, widget, and encryption security tests
-├── design/                   # UI/UX design specifications, wireframes, and tokens
-├── docs/                     # Formal contracts, requirements, personas, ER diagrams
-├── analysis_options.yaml     # Flutter strict lint configurations
-├── pubspec.yaml              # Flutter dependency manifest
-├── .editorconfig             # Cross-IDE formatting conventions
-├── .gitignore                # Comprehensive ignore rules
-├── CONTRIBUTING.md           # Engineering guidelines and pull request protocol
-├── LICENSE                   # Open-source license (MIT)
-└── NeuroScript_AI_Milestone_Execution_Plan.pdf  # Master project blueprint
-```
-
----
-
-## Platform Support & Verification Matrix
-
-| Platform | Build Status | Persistence Engine | Security & Cryptography | UI & Responsiveness | Verification Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Android (Mobile)** | `flutter build apk --debug` (Exit Code 0) | Drift + SQLite | SQLCipher AES-256 + Hardware Keystore (`FlutterSecureStorage`) | Responsive phone layout, 48 dp targets, WCAG AA contrast | **PASS (Verified)** |
-| **Windows (Desktop)** | Supported (Host Environment) | Drift + Native SQLite | SQLite3MultipleCiphers / SQLCipher with DPAPI Keystore | Responsive desktop layout (constrained max width 960 dp) | **PASS (Verified)** |
-| **Web (Browser)** | Pre-configured | Drift + WebAssembly | `sqlite3.wasm` + Web Worker (`drift_worker.js`) in IndexedDB | Responsive browser canvas, InteractiveViewer pan/zoom | **PASS (Verified)** |
-| **iOS** | Configured Runner | Drift + SQLite | SQLCipher AES-256 with iOS Keychain hardware storage | iOS Human Interface Guidelines touch targets & safe area | **PARTIAL (Awaits macOS host)** |
-| **macOS / Linux** | Native Runner | Drift + Native SQLite | SQLite3MultipleCiphers with native Keystores | Desktop window scaling, keyboard navigation | **PARTIAL (Awaits Linux host)** |
-
----
-
-## Build and Execution Guide
-
-### Prerequisites
-* Flutter SDK (version 3.29.x or higher)
-* Dart SDK (version 3.13.x or higher)
-* Android SDK (API Level 34 or higher, Build Tools 36.0.0)
-* Java Development Kit (JDK 17 or higher)
-
-### Clean Build & Verification Commands
+### 1. Static Analysis
+Verify that zero warnings, errors, or lints exist under our hardened analysis rules:
 ```bash
-# 1. Clean previous build artifacts
-flutter clean
-
-# 2. Fetch dependencies
-flutter pub get
-
-# 3. Generate type-safe Drift queries & tables
-dart run build_runner build --delete-conflicting-outputs
-
-# 4. Run static analysis (must report zero issues)
-flutter analyze --no-fatal-infos
-
-# 5. Execute automated test suite (45 tests covering encryption, repos, scheduler, widgets)
-flutter test
-
-# 6. Build debug APK for Android testing
-flutter build apk --debug
-
-# 7. Run application on connected device
-flutter run
+flutter analyze
 ```
-Generated binaries:
-* `build/app/outputs/flutter-apk/app-debug.apk` (Verified debug binary)
-* `build/app/outputs/flutter-apk/app-arm64-v8a-release.apk` (~19.5 MB, modern 64-bit devices)
-* `build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk` (~17.0 MB, older 32-bit devices)
-* `build/app/outputs/flutter-apk/app-x86_64-release.apk` (~20.8 MB, emulators)
+
+### 2. Code Formatting
+Verify that all source and test files adhere strictly to standard Dart style guidelines:
+```bash
+dart format --output=none --set-exit-if-changed lib test integration_test
+```
+
+### 3. Automated Test Suite
+Execute the full test suite (80 automated unit, widget, and integration tests):
+```bash
+flutter test
+```
+
+### 4. Code Coverage Report
+Generate code coverage metrics:
+```bash
+flutter test --coverage
+```
+
+### 5. Build Debug APK
+Build a reproducible debug Android application package:
+```bash
+flutter build apk --debug
+```
 
 ---
 
-## Contributing and Governance
+## Current Scope Limitations
 
-Contributions are managed through feature-branch pull requests adhering to the conventions defined in [CONTRIBUTING.md](CONTRIBUTING.md). Direct pushes to `main` are restricted. All pull requests must pass automated static analysis and unit testing before review and merge.
-
----
-
-## License
-
-This project is released under the terms of the [MIT License](LICENSE).
+In alignment with university FYP Milestone 1 & 2 evaluation guidelines:
+1. **Curriculum Source:** Study content in this release is loaded from pre-verified offline seed curriculum files (`assets/seed/*.json`) and developer test imports. Live camera capture and cloud LLM generation are scheduled for Milestones 3 and 4.
+2. **Grounding Evaluation:** Because seed content is author-written, LLM hallucination scoring is not simulated; grounding scores are set to `null` and displayed honestly as human-authored.
+3. **Audio / TTS:** Audio playback and Text-to-Speech engines are deferred to Milestone 5.
+4. **Platform Scope:** Fully tested and operational on Android, Windows, and Linux local environments.
